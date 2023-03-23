@@ -26,6 +26,10 @@ export class Variable {
     throw new Error("Value not set");
   }
 
+  get isKnown(): boolean {
+    return this._known;
+  }
+
   clear(): void {
     this._known = false;
     this._value = 0;

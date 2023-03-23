@@ -31,8 +31,28 @@ export class Point {
     this._M_z.value = value;
   }
 
+  get symbolF_x(): string {
+    return this._F_x.isKnown ? this._F_x.value.toString() : this._F_x.name;
+  }
+
+  get symbolF_y(): string {
+    return this._F_y.isKnown ? this._F_y.value.toString() : this._F_y.name;
+  }
+
+  get symbolM_z(): string {
+    return this._M_z.isKnown ? this._M_z.value.toString() : this._M_z.name;
+  }
+
   get name() {
     return this._name;
+  }
+
+  get x() {
+    return this._positionX;
+  }
+
+  get y() {
+    return this._positionY;
   }
 
   removeConditions(): void {

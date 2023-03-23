@@ -12,10 +12,26 @@ export class ExternalForce {
     F_y: number
   ) {
     this._name = name;
-    this._point = new Point(`F_${name}`, positionX, positionY);
+    this._point = new Point(`${name}`, positionX, positionY);
 
     this._point.F_x = F_x;
     this._point.F_y = F_y;
     this._point.M_z = 0;
+  }
+
+  get symbolF_x(): string {
+    return this._point.symbolF_x;
+  }
+
+  get symbolF_y(): string {
+    return this._point.symbolF_y;
+  }
+
+  get x(): number {
+    return this._point.x;
+  }
+
+  get y(): number {
+    return this._point.y;
   }
 }
