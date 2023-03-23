@@ -25,7 +25,9 @@ export function expressEquationsInMatrixMultiplication(
       const coefficientNumeric = parseInt(coefficient);
 
       if (!variable) {
-        topology[CONSTANT] = coefficientNumeric;
+        topology[CONSTANT] = topology[CONSTANT]
+          ? topology[CONSTANT] + coefficientNumeric
+          : coefficientNumeric;
       } else {
         topology[variable] = coefficientNumeric;
         allVariables.add(variable);
