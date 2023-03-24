@@ -1,11 +1,9 @@
 import { Point } from "../Point";
 import { Connection } from "./Connection";
 
-export class FreeConnection implements Connection {
-  private _points: Point[];
-
+export class FreeConnection extends Connection {
   constructor(points: Point[]) {
-    this._points = points;
+    super(points);
     this._points.forEach((point) => this.applyBoundaryCondition(point));
   }
 

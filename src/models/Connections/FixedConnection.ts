@@ -1,11 +1,9 @@
 import { Point } from "../Point";
 import { Connection } from "./Connection";
 
-export class FixedConnection implements Connection {
-  private _points: Point[];
-
+export class FixedConnection extends Connection {
   constructor(points: Point[]) {
-    this._points = points;
+    super(points);
   }
 
   addPoint(point: Point): void {

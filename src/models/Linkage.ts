@@ -1,3 +1,7 @@
+import {
+  formatForceForSolver,
+  formatMomentForSolver,
+} from "../utils/SolverUtils";
 import { ExternalForce } from "./ExternalForce";
 import { Point } from "./Point";
 
@@ -25,13 +29,13 @@ export class Linkage {
     const sigmaF_y: string[] = [];
 
     this._points.forEach((point) => {
-      sigmaF_x.push(this.formatForceForSolver(point.symbolF_x));
-      sigmaF_y.push(this.formatForceForSolver(point.symbolF_y));
+      sigmaF_x.push(formatForceForSolver(point.symbolF_x));
+      sigmaF_y.push(formatForceForSolver(point.symbolF_y));
     });
 
     this._externalForces.forEach((force) => {
-      sigmaF_x.push(this.formatForceForSolver(force.symbolF_x));
-      sigmaF_y.push(this.formatForceForSolver(force.symbolF_y));
+      sigmaF_x.push(formatForceForSolver(force.symbolF_x));
+      sigmaF_y.push(formatForceForSolver(force.symbolF_y));
     });
 
     return [sigmaF_x.join("+"), sigmaF_y.join("+")];
@@ -45,9 +49,9 @@ export class Linkage {
       const diffX = point.x - reference.x;
       const diffY = point.y - reference.y;
 
-      const m1 = this.formatMomentForSolver(diffY, point.symbolF_x);
-      const m2 = this.formatMomentForSolver(diffX, point.symbolF_y);
-      const m3 = this.formatMomentForSolver(1, point.symbolM_z);
+      const m1 = formatMomentForSolver(diffY, point.symbolF_x);
+      const m2 = formatMomentForSolver(diffX, point.symbolF_y);
+      const m3 = formatMomentForSolver(1, point.symbolM_z);
 
       const equation = `${m1}+-${m2}+${m3}`;
       sigmaM_z.push(equation);
@@ -57,30 +61,13 @@ export class Linkage {
       const diffX = force.x - reference.x;
       const diffY = force.y - reference.y;
 
-      const m1 = this.formatMomentForSolver(diffY, force.symbolF_x);
-      const m2 = this.formatMomentForSolver(diffX, force.symbolF_y);
+      const m1 = formatMomentForSolver(diffY, force.symbolF_x);
+      const m2 = formatMomentForSolver(diffX, force.symbolF_y);
 
       const equation = `${m1}+-${m2}`;
       sigmaM_z.push(equation);
     });
 
     return sigmaM_z.join("+");
-  }
-
-  private formatForceForSolver(force: string) {
-    if (Number.isNaN(parseFloat(force))) {
-      return `1*${force}`;
-    }
-
-    return force;
-  }
-
-  private formatMomentForSolver(signedDistance: number, value: string) {
-    const valueInNumber = parseFloat(value);
-    if (Number.isNaN(valueInNumber)) {
-      return `${signedDistance}*${value}`;
-    }
-
-    return `${signedDistance * valueInNumber}`;
   }
 }
