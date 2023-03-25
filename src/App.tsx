@@ -1,8 +1,16 @@
-import "./App.css";
+import { Container } from "@mui/material";
+import TitleBar from "./components/TitleBar";
+import ApplicationCanvas from "./components/ApplicationCanvas";
 
 function App() {
-
-  return <div>Hello world!</div>;
+  return (
+    <>
+      <TitleBar />
+      <Container maxWidth="xl">
+        <ApplicationCanvas />
+      </Container>
+    </>
+  );
 }
 
 export default App;

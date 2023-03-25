@@ -24,6 +24,10 @@ export class Linkage {
     return [...this.generateForceEquation(), this.generateMomentEquation()];
   }
 
+  get points() {
+    return this._points;
+  }
+
   private generateForceEquation() {
     console.log(this._points);
     const sigmaF_x: string[] = [];
