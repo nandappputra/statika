@@ -18,15 +18,15 @@ export class Structure {
     this._connections = connections;
   }
 
-  generateAllEquations(): string[] {
+  generateAllEquilibirum(): string[] {
     let equations: string[] = [];
 
     this._linkages.forEach((linkage) => {
-      equations = equations.concat(linkage.generateEquations());
+      equations = equations.concat(linkage.generateEquilibrium());
     });
 
     this._connections.forEach((connection) => {
-      equations = equations.concat(connection.generateEquations());
+      equations = equations.concat(connection.generateEquilibrium());
     });
 
     return equations;

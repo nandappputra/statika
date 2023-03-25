@@ -32,15 +32,15 @@ export class Point {
   }
 
   get symbolF_x(): string {
-    return this._F_x.isKnown ? this._F_x.value.toString() : this._F_x.name;
+    return this._F_x.getValueOrSymbol();
   }
 
   get symbolF_y(): string {
-    return this._F_y.isKnown ? this._F_y.value.toString() : this._F_y.name;
+    return this._F_y.getValueOrSymbol();
   }
 
   get symbolM_z(): string {
-    return this._M_z.isKnown ? this._M_z.value.toString() : this._M_z.name;
+    return this._M_z.getValueOrSymbol();
   }
 
   get name() {

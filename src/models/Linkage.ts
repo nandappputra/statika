@@ -20,7 +20,7 @@ export class Linkage {
     this._externalForces.push(externalForce);
   }
 
-  generateEquations(): string[] {
+  generateEquilibrium(): string[] {
     return [...this.generateForceEquation(), this.generateMomentEquation()];
   }
 

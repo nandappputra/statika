@@ -12,7 +12,7 @@ export abstract class Connection {
     return this._points;
   }
 
-  generateEquations(): string[] {
+  generateEquilibrium(): string[] {
     if (this._points.length == 1) {
       return [];
     }

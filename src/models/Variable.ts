@@ -1,16 +1,16 @@
 export class Variable {
-  private _name: string;
+  private _symbol: string;
   private _known: boolean;
   private _value: number;
 
-  constructor(name: string) {
-    this._name = name;
-    this._known = false;
-    this._value = 0;
+  constructor(name: string, value: number | undefined = undefined) {
+    this._symbol = name;
+    this._known = value ? true : false;
+    this._value = value ? value : 0;
   }
 
-  get name(): string {
-    return this._name;
+  get symbol(): string {
+    return this._symbol;
   }
 
   set value(value: number) {
@@ -33,5 +33,13 @@ export class Variable {
   clear(): void {
     this._known = false;
     this._value = 0;
+  }
+
+  getValueOrSymbol(): string {
+    if (this._known) {
+      return this._value.toString();
+    }
+
+    return this._symbol;
   }
 }
