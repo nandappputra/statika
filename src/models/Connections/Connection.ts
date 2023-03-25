@@ -6,7 +6,10 @@ export abstract class Connection {
 
   constructor(points: Point[]) {
     this._points = points;
+    this._points.forEach((point) => this.applyBoundaryCondition(point));
   }
+
+  abstract applyBoundaryCondition(point: Point): void;
 
   get points() {
     return this._points;
@@ -27,6 +30,4 @@ export abstract class Connection {
 
     return [sigmaF_x.join("+"), sigmaF_y.join("+")];
   }
-
-  abstract addPoint(point: Point): void;
 }
