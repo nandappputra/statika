@@ -25,6 +25,7 @@ export class Linkage {
   }
 
   private generateForceEquation() {
+    console.log(this._points);
     const sigmaF_x: string[] = [];
     const sigmaF_y: string[] = [];
 

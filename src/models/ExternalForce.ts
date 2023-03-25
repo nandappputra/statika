@@ -34,4 +34,8 @@ export class ExternalForce {
   get y(): number {
     return this._point.y;
   }
+
+  get name(): string {
+    return this._name;
+  }
 }
