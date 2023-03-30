@@ -4,10 +4,8 @@
 
 import { fabric } from "fabric";
 
-interface Coordinate {
-  x: number;
-  y: number;
-}
+import { Coordinate } from "./Coordinate";
+import { MovePointEvent } from "./Event";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -19,12 +17,39 @@ interface PolygonWithSetPositionDimension extends fabric.Polygon {
 }
 
 export class ConfigurablePolygon extends fabric.Polygon {
+  private _nameToIndexMap: Map<string, number>;
+  private _indexToNameMap: Map<number, string>;
+  private updateCallback: (movePointEvent: MovePointEvent) => void;
+
   constructor(
+    nameToIndexMap: Map<string, number>,
+    indexToNameMap: Map<number, string>,
     coordinates: Coordinate[],
+    updateCallback: (movePointEvent: MovePointEvent) => void,
     options: fabric.IPolylineOptions | undefined
   ) {
     super(coordinates, options);
+    this._nameToIndexMap = nameToIndexMap;
+    this._indexToNameMap = indexToNameMap;
     this._buildControlForPolygon();
+    this.updateCallback = updateCallback;
+  }
+
+  public updatePoint(movePointEvent: MovePointEvent) {
+    const pointIndex = this._nameToIndexMap.get(movePointEvent.name);
+
+    if (
+      typeof pointIndex === "undefined" ||
+      typeof this.points === "undefined"
+    ) {
+      throw new Error("missing point");
+    }
+
+    this.points[pointIndex].x = movePointEvent.coordinate.x;
+    this.points[pointIndex].y = movePointEvent.coordinate.y;
+    this.dirty = true;
+
+    this._updateBoundingBox(this);
   }
 
   private _buildControlForPolygon(): void {
@@ -167,6 +192,11 @@ export class ConfigurablePolygon extends fabric.Polygon {
     };
   }
 
+  private _updateBoundingBox(polygon: fabric.Polygon) {
+    const extendedPolygon = polygon as PolygonWithSetPositionDimension;
+    extendedPolygon._setPositionDimensions({});
+  }
+
   private _movePointOnControllerMovement(
     _pointeventData: MouseEvent,
     transform: fabric.Transform,
@@ -205,6 +235,21 @@ export class ConfigurablePolygon extends fabric.Polygon {
     polygon.points[pointIndex].x = finalPointPosition.x;
     polygon.points[pointIndex].y = finalPointPosition.y;
     polygon.dirty = true;
+
+    const origin = this._indexToNameMap.get(pointIndex);
+
+    if (typeof origin === "undefined") {
+      throw new Error("missing point");
+    }
+
+    this.updateCallback({
+      name: origin,
+      source: origin,
+      coordinate: {
+        x: finalPointPosition.x,
+        y: finalPointPosition.y,
+      },
+    });
 
     return true;
   }
