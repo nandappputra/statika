@@ -4,6 +4,7 @@ import { Coordinate } from "./Coordinate";
 import { Point } from "./Point";
 import { MovePointEvent } from "./Event";
 import { Connection } from "./connections/Connection";
+import { ConfigurableConnection } from "./ConfigurableConnection";
 
 interface ParsePointResult {
   nameToIndexMap: Map<string, number>;
@@ -15,11 +16,13 @@ export class Painter {
   private _canvas: fabric.Canvas;
   private _pointToPolygon: Map<string, ConfigurablePolygon>;
   private _pointToPoint: Map<string, string[]>;
+  private _pointToConnection: Map<string, ConfigurableConnection>;
 
   constructor(canvas: fabric.Canvas) {
     this._canvas = canvas;
     this._pointToPolygon = new Map<string, ConfigurablePolygon>();
     this._pointToPoint = new Map<string, string[]>();
+    this._pointToConnection = new Map<string, ConfigurableConnection>();
   }
 
   public drawLinkage(linkage: Linkage) {
@@ -47,6 +50,14 @@ export class Painter {
   }
 
   public updatePoint(movePointEvent: MovePointEvent) {
+    this.updateTargetPolygon(movePointEvent);
+    this.updateConnectedPolygon(movePointEvent);
+    this.updateConnectionIcon(movePointEvent);
+
+    this._canvas.renderAll();
+  }
+
+  private updateTargetPolygon(movePointEvent: MovePointEvent) {
     const targetPolygon = this._pointToPolygon.get(movePointEvent.name);
     if (typeof targetPolygon === "undefined") {
       throw new Error("polygon doesn't exist");
@@ -55,9 +66,10 @@ export class Painter {
     if (movePointEvent.source !== movePointEvent.name) {
       targetPolygon.updatePoint(movePointEvent);
     }
+  }
 
+  private updateConnectedPolygon(movePointEvent: MovePointEvent) {
     const points = this._pointToPoint.get(movePointEvent.name);
-
     if (typeof points === "undefined") {
       return;
     }
@@ -67,11 +79,33 @@ export class Painter {
 
       polygon?.updatePoint({ ...movePointEvent, name: point });
     });
+  }
+
+  private updateConnectionIcon(movePointEvent: MovePointEvent) {
+    const connection = this._pointToConnection.get(movePointEvent.name);
+    if (typeof connection === "undefined") {
+      return;
+    }
+
+    connection.setPosition(
+      movePointEvent.coordinate.x,
+      movePointEvent.coordinate.y
+    );
+  }
+
+  public addConnection(connection: Connection) {
+    const connectionIcon = new ConfigurableConnection("conn");
+    connectionIcon.setPosition(connection.points[0].x, connection.points[0].y);
+
+    this.registerPointEvent(connection);
+    this.registerConnectionEvent(connection, connectionIcon);
+
+    this._canvas.add(connectionIcon.icon);
 
     this._canvas.renderAll();
   }
 
-  public addConnection(connection: Connection) {
+  private registerPointEvent(connection: Connection) {
     connection.points.forEach((point1) => {
       connection.points.forEach((point2) => {
         if (point1.name === point2.name) {
@@ -85,6 +119,15 @@ export class Painter {
           this._pointToPoint.set(point1.name, [...points, point2.name]);
         }
       });
+    });
+  }
+
+  private registerConnectionEvent(
+    connection: Connection,
+    connectionIcon: ConfigurableConnection
+  ) {
+    connection.points.forEach((point) => {
+      this._pointToConnection.set(point.name, connectionIcon);
     });
   }
 
