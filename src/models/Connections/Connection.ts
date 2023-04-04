@@ -2,9 +2,11 @@ import { formatForceForSolver } from "../../utils/SolverUtils";
 import { Point } from "../Point";
 
 export abstract class Connection {
+  protected _name: string;
   protected _points: Point[];
 
-  constructor(points: Point[]) {
+  constructor(name: string, points: Point[]) {
+    this._name = name;
     this._points = points;
     this._points.forEach((point) => this.applyBoundaryCondition(point));
   }
@@ -13,6 +15,10 @@ export abstract class Connection {
 
   get points() {
     return this._points;
+  }
+
+  get name() {
+    return this._name;
   }
 
   generateEquilibrium(): string[] {

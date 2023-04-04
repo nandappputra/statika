@@ -12,6 +12,7 @@ export class ConfigurableConnection {
       originY: "center",
       left: x,
       top: y,
+      data: { name },
     });
     this._icon.hasControls = false;
   }

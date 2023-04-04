@@ -5,6 +5,7 @@ import { Point } from "./Point";
 import { MovePointEvent } from "./Event";
 import { Connection } from "./connections/Connection";
 import { ConfigurableConnection } from "./ConfigurableConnection";
+import { IEvent } from "fabric/fabric-impl";
 
 interface ParsePointResult {
   nameToIndexMap: Map<string, number>;
@@ -12,17 +13,58 @@ interface ParsePointResult {
   coordinates: Coordinate[];
 }
 
+interface NamedObject {
+  name: string;
+}
+
 export class Painter {
   private _canvas: fabric.Canvas;
   private _pointToPolygon: Map<string, ConfigurablePolygon>;
   private _pointToPoint: Map<string, string[]>;
   private _pointToConnection: Map<string, ConfigurableConnection>;
+  private _connectionToPoint: Map<string, string[]>;
 
   constructor(canvas: fabric.Canvas) {
     this._canvas = canvas;
     this._pointToPolygon = new Map<string, ConfigurablePolygon>();
     this._pointToPoint = new Map<string, string[]>();
     this._pointToConnection = new Map<string, ConfigurableConnection>();
+    this._connectionToPoint = new Map<string, string[]>();
+
+    this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
+  }
+
+  private handleMouseEvent(event: IEvent<MouseEvent>) {
+    const metadata: unknown = event.target?.data;
+    const coordinate = event.target?.getCenterPoint();
+
+    if (typeof coordinate === "undefined") {
+      return;
+    }
+
+    if (!this.isNamedObject(metadata)) {
+      return;
+    }
+
+    const point = this._connectionToPoint.get(metadata.name);
+    if (!point) {
+      return;
+    }
+
+    this.updatePoint({
+      name: point[0],
+      source: metadata.name,
+      coordinate: {
+        x: coordinate.x,
+        y: coordinate.y,
+      },
+    });
+  }
+
+  private isNamedObject(metadata: unknown): metadata is NamedObject {
+    return (
+      metadata !== null && typeof metadata === "object" && "name" in metadata
+    );
   }
 
   public drawLinkage(linkage: Linkage) {
@@ -95,7 +137,7 @@ export class Painter {
 
   public addConnection(connection: Connection) {
     const connectionIcon = new ConfigurableConnection(
-      "conn",
+      connection.name,
       connection.points[0].x,
       connection.points[0].y
     );
@@ -132,6 +174,11 @@ export class Painter {
     connection.points.forEach((point) => {
       this._pointToConnection.set(point.name, connectionIcon);
     });
+
+    this._connectionToPoint.set(
+      connection.name,
+      connection.points.map((point) => point.name)
+    );
   }
 
   private parsePoints(points: Point[]): ParsePointResult {
