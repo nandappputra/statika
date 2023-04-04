@@ -4,19 +4,22 @@ export class ConfigurableConnection {
   private _name: string;
   private _icon: fabric.Object;
 
-  constructor(name: string) {
+  constructor(name: string, x: number, y: number) {
     this._name = name;
     this._icon = new fabric.Circle({
       radius: 5,
       originX: "center",
       originY: "center",
+      left: x,
+      top: y,
     });
-    this._icon.controls = {};
+    this._icon.hasControls = false;
   }
 
   public setPosition(x: number, y: number) {
     this._icon.set("left", x);
     this._icon.set("top", y);
+    this.icon.setCoords();
   }
 
   get icon() {

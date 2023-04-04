@@ -94,8 +94,11 @@ export class Painter {
   }
 
   public addConnection(connection: Connection) {
-    const connectionIcon = new ConfigurableConnection("conn");
-    connectionIcon.setPosition(connection.points[0].x, connection.points[0].y);
+    const connectionIcon = new ConfigurableConnection(
+      "conn",
+      connection.points[0].x,
+      connection.points[0].y
+    );
 
     this.registerPointEvent(connection);
     this.registerConnectionEvent(connection, connectionIcon);
