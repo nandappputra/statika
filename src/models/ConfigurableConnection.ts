@@ -4,7 +4,7 @@ export class ConfigurableConnection {
   private _name: string;
   private _icon: fabric.Object;
 
-  constructor(name: string, x: number, y: number) {
+  constructor(name: string, x: number, y: number, pointName: string) {
     this._name = name;
     this._icon = new fabric.Circle({
       radius: 5,
@@ -12,7 +12,7 @@ export class ConfigurableConnection {
       originY: "center",
       left: x,
       top: y,
-      data: { name },
+      data: { name, pointName },
     });
     this._icon.hasControls = false;
   }

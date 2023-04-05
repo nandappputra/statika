@@ -15,21 +15,22 @@ interface ParsePointResult {
 
 interface NamedObject {
   name: string;
+  pointName: string;
 }
 
 export class Painter {
   private _canvas: fabric.Canvas;
   private _pointToPolygon: Map<string, ConfigurablePolygon>;
-  private _pointToPoint: Map<string, string[]>;
+  private _pointToPoint: Map<string, Set<string>>;
   private _pointToConnection: Map<string, ConfigurableConnection>;
-  private _connectionToPoint: Map<string, string[]>;
+  private _connectionToPoint: Map<string, Set<string>>;
 
   constructor(canvas: fabric.Canvas) {
     this._canvas = canvas;
     this._pointToPolygon = new Map<string, ConfigurablePolygon>();
-    this._pointToPoint = new Map<string, string[]>();
+    this._pointToPoint = new Map<string, Set<string>>();
     this._pointToConnection = new Map<string, ConfigurableConnection>();
-    this._connectionToPoint = new Map<string, string[]>();
+    this._connectionToPoint = new Map<string, Set<string>>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
   }
@@ -46,13 +47,8 @@ export class Painter {
       return;
     }
 
-    const point = this._connectionToPoint.get(metadata.name);
-    if (!point) {
-      return;
-    }
-
     this.updatePoint({
-      name: point[0],
+      name: metadata.pointName,
       source: metadata.name,
       coordinate: {
         x: coordinate.x,
@@ -63,7 +59,10 @@ export class Painter {
 
   private isNamedObject(metadata: unknown): metadata is NamedObject {
     return (
-      metadata !== null && typeof metadata === "object" && "name" in metadata
+      metadata !== null &&
+      typeof metadata === "object" &&
+      "name" in metadata &&
+      "pointName" in metadata
     );
   }
 
@@ -139,7 +138,8 @@ export class Painter {
     const connectionIcon = new ConfigurableConnection(
       connection.name,
       connection.points[0].x,
-      connection.points[0].y
+      connection.points[0].y,
+      connection.points[0].name
     );
 
     this.registerPointEvent(connection);
@@ -159,9 +159,9 @@ export class Painter {
 
         const points = this._pointToPoint.get(point1.name);
         if (typeof points === "undefined") {
-          this._pointToPoint.set(point1.name, [point2.name]);
+          this._pointToPoint.set(point1.name, new Set<string>([point2.name]));
         } else {
-          this._pointToPoint.set(point1.name, [...points, point2.name]);
+          points.add(point2.name);
         }
       });
     });
@@ -177,7 +177,7 @@ export class Painter {
 
     this._connectionToPoint.set(
       connection.name,
-      connection.points.map((point) => point.name)
+      new Set<string>(connection.points.map((point) => point.name))
     );
   }
 
