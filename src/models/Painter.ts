@@ -6,6 +6,7 @@ import { MovePointEvent } from "./Event";
 import { Connection } from "./connections/Connection";
 import { ConfigurableConnection } from "./ConfigurableConnection";
 import { IEvent } from "fabric/fabric-impl";
+import { USER } from "../utils/Constants";
 
 interface ParsePointResult {
   nameToIndexMap: Map<string, number>;
@@ -21,16 +22,12 @@ interface NamedObject {
 export class Painter {
   private _canvas: fabric.Canvas;
   private _pointToPolygon: Map<string, ConfigurablePolygon>;
-  private _pointToPoint: Map<string, Set<string>>;
   private _pointToConnection: Map<string, ConfigurableConnection>;
-  private _connectionToPoint: Map<string, Set<string>>;
 
   constructor(canvas: fabric.Canvas) {
     this._canvas = canvas;
     this._pointToPolygon = new Map<string, ConfigurablePolygon>();
-    this._pointToPoint = new Map<string, Set<string>>();
     this._pointToConnection = new Map<string, ConfigurableConnection>();
-    this._connectionToPoint = new Map<string, Set<string>>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
   }
@@ -49,7 +46,7 @@ export class Painter {
 
     this.updatePoint({
       name: metadata.pointName,
-      source: metadata.name,
+      source: USER,
       coordinate: {
         x: coordinate.x,
         y: coordinate.y,
@@ -92,7 +89,6 @@ export class Painter {
 
   public updatePoint(movePointEvent: MovePointEvent) {
     this.updateTargetPolygon(movePointEvent);
-    this.updateConnectedPolygon(movePointEvent);
     this.updateConnectionIcon(movePointEvent);
 
     this._canvas.renderAll();
@@ -109,62 +105,31 @@ export class Painter {
     }
   }
 
-  private updateConnectedPolygon(movePointEvent: MovePointEvent) {
-    const points = this._pointToPoint.get(movePointEvent.name);
-    if (typeof points === "undefined") {
-      return;
-    }
-
-    points.forEach((point) => {
-      const polygon = this._pointToPolygon.get(point);
-
-      polygon?.updatePoint({ ...movePointEvent, name: point });
-    });
-  }
-
   private updateConnectionIcon(movePointEvent: MovePointEvent) {
     const connection = this._pointToConnection.get(movePointEvent.name);
     if (typeof connection === "undefined") {
       return;
     }
 
-    connection.setPosition(
-      movePointEvent.coordinate.x,
-      movePointEvent.coordinate.y
-    );
+    if (connection.name != movePointEvent.source) {
+      connection.updatePosition(movePointEvent);
+    }
   }
 
   public addConnection(connection: Connection) {
+    const updateCallback = (movePointEvent: MovePointEvent) => {
+      this.updatePoint(movePointEvent);
+    };
+
     const connectionIcon = new ConfigurableConnection(
-      connection.name,
-      connection.points[0].x,
-      connection.points[0].y,
-      connection.points[0].name
+      connection,
+      updateCallback
     );
 
-    this.registerPointEvent(connection);
     this.registerConnectionEvent(connection, connectionIcon);
-
     this._canvas.add(connectionIcon.icon);
 
     this._canvas.renderAll();
-  }
-
-  private registerPointEvent(connection: Connection) {
-    connection.points.forEach((point1) => {
-      connection.points.forEach((point2) => {
-        if (point1.name === point2.name) {
-          return;
-        }
-
-        const points = this._pointToPoint.get(point1.name);
-        if (typeof points === "undefined") {
-          this._pointToPoint.set(point1.name, new Set<string>([point2.name]));
-        } else {
-          points.add(point2.name);
-        }
-      });
-    });
   }
 
   private registerConnectionEvent(
@@ -174,11 +139,6 @@ export class Painter {
     connection.points.forEach((point) => {
       this._pointToConnection.set(point.name, connectionIcon);
     });
-
-    this._connectionToPoint.set(
-      connection.name,
-      new Set<string>(connection.points.map((point) => point.name))
-    );
   }
 
   private parsePoints(points: Point[]): ParsePointResult {
