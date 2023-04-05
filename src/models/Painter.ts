@@ -126,18 +126,28 @@ export class Painter {
       updateCallback
     );
 
-    this.registerConnectionEvent(connection, connectionIcon);
+    connection.points.forEach((point) => {
+      this._pointToConnection.set(point.name, connectionIcon);
+    });
+
     this._canvas.add(connectionIcon.icon);
 
     this._canvas.renderAll();
   }
 
-  private registerConnectionEvent(
-    connection: Connection,
-    connectionIcon: ConfigurableConnection
-  ) {
+  public removeConnection(connection: Connection) {
+    const connectionObject = this._pointToConnection.get(
+      connection.points[0].name
+    );
+
+    if (!connectionObject) {
+      throw new Error("no such connection");
+    }
+
+    this._canvas.remove(connectionObject.icon);
+
     connection.points.forEach((point) => {
-      this._pointToConnection.set(point.name, connectionIcon);
+      this._pointToConnection.delete(point.name);
     });
   }
 
