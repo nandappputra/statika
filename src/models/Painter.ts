@@ -75,7 +75,7 @@ export class Painter {
       parsedPoints.indexToNameMap,
       parsedPoints.coordinates,
       updateCallback,
-      { stroke: "black", fill: "white" }
+      { stroke: "black", strokeWidth: 2, fill: "white" }
     );
 
     linkage.points.forEach((point) => {

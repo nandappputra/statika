@@ -33,6 +33,7 @@ export class ConfigurablePolygon extends fabric.Polygon {
     this._indexToNameMap = indexToNameMap;
     this._buildControlForPolygon();
     this.updateCallback = updateCallback;
+    this.perPixelTargetFind = true;
   }
 
   public updatePoint(movePointEvent: MovePointEvent) {
