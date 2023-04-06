@@ -7,6 +7,7 @@ import { Connection } from "./connections/Connection";
 import { ConfigurableConnection } from "./ConfigurableConnection";
 import { IEvent } from "fabric/fabric-impl";
 import { USER } from "../utils/Constants";
+import { PinConnection } from "./connections/PinConnection";
 
 interface ParsePointResult {
   nameToIndexMap: Map<string, number>;
@@ -23,11 +24,13 @@ export class Painter {
   private _canvas: fabric.Canvas;
   private _pointToPolygon: Map<string, ConfigurablePolygon>;
   private _pointToConnection: Map<string, ConfigurableConnection>;
+  private _freePoints: Set<string>;
 
   constructor(canvas: fabric.Canvas) {
     this._canvas = canvas;
     this._pointToPolygon = new Map<string, ConfigurablePolygon>();
     this._pointToConnection = new Map<string, ConfigurableConnection>();
+    this._freePoints = new Set<string>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
   }
@@ -75,14 +78,18 @@ export class Painter {
       parsedPoints.indexToNameMap,
       parsedPoints.coordinates,
       updateCallback,
-      { stroke: "black", strokeWidth: 2, fill: "white" }
+      { stroke: "black", strokeWidth: 3, fill: "white" }
     );
 
     linkage.points.forEach((point) => {
       this._pointToPolygon.set(point.name, polygon);
+      this._freePoints.add(point.name);
     });
 
     this._canvas.add(polygon);
+    polygon.snapCorner.forEach((corner) => {
+      this._canvas.add(corner);
+    });
 
     return polygon;
   }
@@ -91,7 +98,44 @@ export class Painter {
     this.updateTargetPolygon(movePointEvent);
     this.updateConnectionIcon(movePointEvent);
 
+    if (this._freePoints.has(movePointEvent.name)) {
+      this._freePoints.forEach((point) => {
+        const snapArea = this._pointToPolygon
+          .get(point)
+          ?.getSnapCornerByName(point);
+        if (!snapArea || !snapArea.left || !snapArea.top) {
+          console.log(snapArea);
+          throw new Error("missing point");
+        }
+
+        if (
+          movePointEvent.name != point &&
+          this.distance(movePointEvent.coordinate, {
+            x: snapArea.left,
+            y: snapArea.top,
+          }) < 10
+        ) {
+          const p1 = new Point(
+            movePointEvent.name,
+            movePointEvent.coordinate.x,
+            movePointEvent.coordinate.y
+          );
+          const p2 = new Point(point, snapArea.left, snapArea.top);
+          const newConnection = new PinConnection(`${p1}-${p2}`, [p1, p2]);
+
+          this.addConnection(newConnection);
+        }
+      });
+    }
+
     this._canvas.renderAll();
+  }
+
+  private distance(coordinate1: Coordinate, coordinate2: Coordinate) {
+    return (
+      Math.abs(coordinate1.x - coordinate2.x) +
+      Math.abs(coordinate1.y - coordinate2.y)
+    );
   }
 
   private updateTargetPolygon(movePointEvent: MovePointEvent) {
@@ -128,6 +172,13 @@ export class Painter {
 
     connection.points.forEach((point) => {
       this._pointToConnection.set(point.name, connectionIcon);
+      const snapArea = this._pointToPolygon
+        .get(point.name)
+        ?.getSnapCornerByName(point.name);
+      if (snapArea) {
+        this._canvas.remove(snapArea);
+      }
+      this._freePoints.delete(point.name);
     });
 
     this._canvas.add(connectionIcon.icon);
@@ -148,6 +199,13 @@ export class Painter {
 
     connection.points.forEach((point) => {
       this._pointToConnection.delete(point.name);
+      const snapArea = this._pointToPolygon
+        .get(point.name)
+        ?.getSnapCornerByName(point.name);
+      if (snapArea) {
+        this._canvas.add(snapArea);
+      }
+      this._freePoints.add(point.name);
     });
   }
 
