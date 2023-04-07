@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { Connection } from "../connections/Connection";
+import { Connection } from "../diagram_elements/connections/Connection";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 

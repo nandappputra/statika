@@ -1,13 +1,13 @@
-import { Linkage } from "./Linkage";
+import { Linkage } from "./diagram_elements/Linkage";
 import { ConfigurablePolygon } from "./canvas_entities/ConfigurablePolygon";
 import { Coordinate } from "./Coordinate";
 import { Point } from "./Point";
 import { MovePointEvent } from "./Event";
-import { Connection } from "./connections/Connection";
+import { Connection } from "./diagram_elements/connections/Connection";
 import { ConfigurableConnection } from "./canvas_entities/ConfigurableConnection";
 import { IEvent } from "fabric/fabric-impl";
 import { USER } from "../utils/Constants";
-import { PinConnection } from "./connections/PinConnection";
+import { PinConnection } from "./diagram_elements/connections/PinConnection";
 
 interface ParsePointResult {
   nameToIndexMap: Map<string, number>;

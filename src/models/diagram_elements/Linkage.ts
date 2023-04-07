@@ -1,11 +1,12 @@
 import {
   formatForceForSolver,
   formatMomentForSolver,
-} from "../utils/SolverUtils";
-import { ExternalForce } from "./ExternalForce";
-import { Point } from "./Point";
+} from "../../utils/SolverUtils";
+import { ExternalForce } from "../ExternalForce";
+import { Point } from "../Point";
+import { DiagramElement } from "./DiagramElement";
 
-export class Linkage {
+export class Linkage implements DiagramElement{
   private _name: string;
   private _externalForces: ExternalForce[];
   private _points: Point[];

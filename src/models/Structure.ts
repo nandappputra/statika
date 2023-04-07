@@ -1,5 +1,5 @@
-import { Connection } from "./connections/Connection";
-import { Linkage } from "./Linkage";
+import { Connection } from "./diagram_elements/connections/Connection";
+import { Linkage } from "./diagram_elements/Linkage";
 
 export class Structure {
   private _linkages: Linkage[];

@@ -1,11 +1,11 @@
 import { Point } from "../../models/Point";
-import { Connection } from "../../models/connections/Connection";
-import { PinConnection } from "../../models/connections/PinConnection";
-import { FixedConnection } from "../../models/connections/FixedConnection";
-import { HorizontalRollerConnection } from "../../models/connections/HorizontalRollerConnection";
-import { FreeConnection } from "../../models/connections/FreeConnection";
+import { Connection } from "../../models/diagram_elements/connections/Connection";
+import { PinConnection } from "../../models/diagram_elements/connections/PinConnection";
+import { FixedConnection } from "../../models/diagram_elements/connections/FixedConnection";
+import { HorizontalRollerConnection } from "../../models/diagram_elements/connections/HorizontalRollerConnection";
+import { FreeConnection } from "../../models/diagram_elements/connections/FreeConnection";
 import { ExternalForce } from "../../models/ExternalForce";
-import { Linkage } from "../../models/Linkage";
+import { Linkage } from "../../models/diagram_elements/Linkage";
 import { Structure } from "../../models/Structure";
 
 export enum ConnectionType {

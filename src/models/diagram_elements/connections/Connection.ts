@@ -1,7 +1,8 @@
-import { formatForceForSolver } from "../../utils/SolverUtils";
-import { Point } from "../Point";
+import { formatForceForSolver } from "../../../utils/SolverUtils";
+import { Point } from "../../Point";
+import { DiagramElement } from "../DiagramElement";
 
-export abstract class Connection {
+export abstract class Connection implements DiagramElement {
   protected _name: string;
   protected _points: Point[];
 
