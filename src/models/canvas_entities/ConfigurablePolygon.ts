@@ -7,6 +7,8 @@ import { fabric } from "fabric";
 import { Coordinate } from "../Coordinate";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
+import { Linkage } from "../diagram_elements/Linkage";
+import { EventMediator } from "../painters/EventMediator";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -18,30 +20,39 @@ interface PolygonWithSetPositionDimension extends fabric.Polygon {
 }
 
 export class ConfigurablePolygon implements CanvasEntity {
+  private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
-  private _updateCallback: (movePointEvent: MovePointEvent) => void;
   private _snapCorners: Map<string, fabric.Circle>;
   private _polygon: PolygonWithSetPositionDimension;
+  private _eventMediator: EventMediator;
 
   constructor(
-    nameToIndexMap: Map<string, number>,
-    indexToNameMap: Map<number, string>,
-    coordinates: Coordinate[],
-    updateCallback: (movePointEvent: MovePointEvent) => void,
+    linkage: Linkage,
+    eventMediator: EventMediator,
     options: fabric.IPolylineOptions | undefined
   ) {
+    this._name = linkage.name;
+    this._nameToIndexMap = new Map<string, number>();
+    this._indexToNameMap = new Map<number, string>();
+    const coordinates: Coordinate[] = [];
+
+    const points = linkage.points;
+    points.forEach((point, index) => {
+      this._nameToIndexMap.set(point.name, index);
+      this._indexToNameMap.set(index, point.name);
+      coordinates.push({ x: point.x, y: point.y });
+    });
+
     this._polygon = new fabric.Polygon(
       coordinates,
       options
     ) as PolygonWithSetPositionDimension;
-
-    this._nameToIndexMap = nameToIndexMap;
-    this._indexToNameMap = indexToNameMap;
-    this._snapCorners = new Map<string, fabric.Circle>();
-    this._buildControlForPolygon();
-    this._updateCallback = updateCallback;
     this._polygon.perPixelTargetFind = true;
+
+    this._snapCorners = new Map<string, fabric.Circle>();
+    this._eventMediator = eventMediator;
+    this._buildControlForPolygon();
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {
@@ -297,7 +308,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     snapArea.top = finalPointPosition.y;
     snapArea.dirty = true;
 
-    this._updateCallback({
+    this._eventMediator.updatePointPosition({
       name: origin,
       source: origin,
       coordinate: {
@@ -333,5 +344,9 @@ export class ConfigurablePolygon implements CanvasEntity {
     });
 
     return true;
+  }
+
+  get name() {
+    return this._name;
   }
 }

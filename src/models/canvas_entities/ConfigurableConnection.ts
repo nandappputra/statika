@@ -2,20 +2,18 @@ import { fabric } from "fabric";
 import { Connection } from "../diagram_elements/connections/Connection";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
+import { EventMediator } from "../painters/EventMediator";
 
 export class ConfigurableConnection implements CanvasEntity {
   private _name: string;
   private _connection: Connection;
-  private _updateCallback: (movePointEvent: MovePointEvent) => void;
+  private _eventMediator: EventMediator;
   private _icon: fabric.Object;
 
-  constructor(
-    connection: Connection,
-    updateCallback: (movePointEvent: MovePointEvent) => void
-  ) {
+  constructor(connection: Connection, eventMediator: EventMediator) {
     this._name = connection.name;
     this._connection = connection;
-    this._updateCallback = updateCallback;
+    this._eventMediator = eventMediator;
     this._icon = new fabric.Circle({
       radius: 5,
       originX: "center",
@@ -42,7 +40,7 @@ export class ConfigurableConnection implements CanvasEntity {
   private propagateEvent(movePointEvent: MovePointEvent) {
     this._connection.points.forEach((point) => {
       const moveEvent: MovePointEvent = { ...movePointEvent, name: point.name };
-      this._updateCallback(moveEvent);
+      this._eventMediator.updatePointPosition(moveEvent);
     });
   }
 

@@ -6,7 +6,7 @@ import { ExternalForce } from "../ExternalForce";
 import { Point } from "../Point";
 import { DiagramElement } from "./DiagramElement";
 
-export class Linkage implements DiagramElement{
+export class Linkage implements DiagramElement {
   private _name: string;
   private _externalForces: ExternalForce[];
   private _points: Point[];
@@ -75,5 +75,9 @@ export class Linkage implements DiagramElement{
     });
 
     return sigmaM_z.join("+");
+  }
+
+  get name() {
+    return this._name;
   }
 }
