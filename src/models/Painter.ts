@@ -1,10 +1,10 @@
 import { Linkage } from "./Linkage";
-import { ConfigurablePolygon } from "./ConfigurablePolygon";
+import { ConfigurablePolygon } from "./canvas_entities/ConfigurablePolygon";
 import { Coordinate } from "./Coordinate";
 import { Point } from "./Point";
 import { MovePointEvent } from "./Event";
 import { Connection } from "./connections/Connection";
-import { ConfigurableConnection } from "./ConfigurableConnection";
+import { ConfigurableConnection } from "./canvas_entities/ConfigurableConnection";
 import { IEvent } from "fabric/fabric-impl";
 import { USER } from "../utils/Constants";
 import { PinConnection } from "./connections/PinConnection";
@@ -86,7 +86,7 @@ export class Painter {
       this._freePoints.add(point.name);
     });
 
-    this._canvas.add(polygon);
+    this._canvas.add(...polygon.getObjectsToDraw());
     polygon.snapCorner.forEach((corner) => {
       this._canvas.add(corner);
     });
@@ -145,7 +145,7 @@ export class Painter {
     }
 
     if (movePointEvent.source !== movePointEvent.name) {
-      targetPolygon.updatePoint(movePointEvent);
+      targetPolygon.updatePosition(movePointEvent);
     }
   }
 
@@ -181,7 +181,7 @@ export class Painter {
       this._freePoints.delete(point.name);
     });
 
-    this._canvas.add(connectionIcon.icon);
+    this._canvas.add(...connectionIcon.getObjectsToDraw());
 
     this._canvas.renderAll();
   }
@@ -195,7 +195,7 @@ export class Painter {
       throw new Error("no such connection");
     }
 
-    this._canvas.remove(connectionObject.icon);
+    this._canvas.remove(...connectionObject.getObjectsToDraw());
 
     connection.points.forEach((point) => {
       this._pointToConnection.delete(point.name);

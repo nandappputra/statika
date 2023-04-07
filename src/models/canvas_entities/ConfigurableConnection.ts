@@ -1,8 +1,9 @@
 import { fabric } from "fabric";
-import { Connection } from "./connections/Connection";
-import { MovePointEvent } from "./Event";
+import { Connection } from "../connections/Connection";
+import { MovePointEvent } from "../Event";
+import { CanvasEntity } from "./CanvasEntity";
 
-export class ConfigurableConnection {
+export class ConfigurableConnection implements CanvasEntity {
   private _name: string;
   private _connection: Connection;
   private _updateCallback: (movePointEvent: MovePointEvent) => void;
@@ -29,9 +30,13 @@ export class ConfigurableConnection {
   public updatePosition(movePointEvent: MovePointEvent) {
     this._icon.set("left", movePointEvent.coordinate.x);
     this._icon.set("top", movePointEvent.coordinate.y);
-    this.icon.setCoords();
+    this._icon.setCoords();
 
     this.propagateEvent({ ...movePointEvent, source: this._connection.name });
+  }
+
+  public getObjectsToDraw() {
+    return [this._icon];
   }
 
   private propagateEvent(movePointEvent: MovePointEvent) {
@@ -39,10 +44,6 @@ export class ConfigurableConnection {
       const moveEvent: MovePointEvent = { ...movePointEvent, name: point.name };
       this._updateCallback(moveEvent);
     });
-  }
-
-  get icon() {
-    return this._icon;
   }
 
   get name() {

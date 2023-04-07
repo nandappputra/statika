@@ -4,8 +4,9 @@
 
 import { fabric } from "fabric";
 
-import { Coordinate } from "./Coordinate";
-import { MovePointEvent } from "./Event";
+import { Coordinate } from "../Coordinate";
+import { MovePointEvent } from "../Event";
+import { CanvasEntity } from "./CanvasEntity";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -16,11 +17,12 @@ interface PolygonWithSetPositionDimension extends fabric.Polygon {
   _setPositionDimensions(argument: object): unknown;
 }
 
-export class ConfigurablePolygon extends fabric.Polygon {
+export class ConfigurablePolygon implements CanvasEntity {
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
   private _updateCallback: (movePointEvent: MovePointEvent) => void;
   private _snapCorners: Map<string, fabric.Circle>;
+  private _polygon: PolygonWithSetPositionDimension;
 
   constructor(
     nameToIndexMap: Map<string, number>,
@@ -29,35 +31,43 @@ export class ConfigurablePolygon extends fabric.Polygon {
     updateCallback: (movePointEvent: MovePointEvent) => void,
     options: fabric.IPolylineOptions | undefined
   ) {
-    super(coordinates, options);
+    this._polygon = new fabric.Polygon(
+      coordinates,
+      options
+    ) as PolygonWithSetPositionDimension;
+
     this._nameToIndexMap = nameToIndexMap;
     this._indexToNameMap = indexToNameMap;
     this._snapCorners = new Map<string, fabric.Circle>();
     this._buildControlForPolygon();
     this._updateCallback = updateCallback;
-    this.perPixelTargetFind = true;
+    this._polygon.perPixelTargetFind = true;
   }
 
-  public updatePoint(movePointEvent: MovePointEvent) {
+  public updatePosition(movePointEvent: MovePointEvent) {
     const pointIndex = this._nameToIndexMap.get(movePointEvent.name);
     const snapArea = this._snapCorners.get(movePointEvent.name);
     if (
       typeof pointIndex === "undefined" ||
-      typeof this.points === "undefined" ||
+      typeof this._polygon.points === "undefined" ||
       typeof snapArea === "undefined"
     ) {
       throw new Error("missing point");
     }
 
-    this.points[pointIndex].x = movePointEvent.coordinate.x;
-    this.points[pointIndex].y = movePointEvent.coordinate.y;
-    this.dirty = true;
+    this._polygon.points[pointIndex].x = movePointEvent.coordinate.x;
+    this._polygon.points[pointIndex].y = movePointEvent.coordinate.y;
+    this._polygon.dirty = true;
 
     snapArea.left = movePointEvent.coordinate.x;
     snapArea.top = movePointEvent.coordinate.y;
     snapArea.dirty = true;
 
-    this._updateBoundingBox(this);
+    this._updateBoundingBox(this._polygon);
+  }
+
+  public getObjectsToDraw(): fabric.Object[] {
+    return [this._polygon, ...Array.from(this._snapCorners.values())];
   }
 
   get snapCorner() {
@@ -69,15 +79,15 @@ export class ConfigurablePolygon extends fabric.Polygon {
   }
 
   private _buildControlForPolygon(): void {
-    this.cornerStyle = "circle";
-    this.cornerColor = "rgba(255,255,255,0.5)";
-    this.lockMovementX = true;
-    this.lockMovementY = true;
-    this.controls = this._buildControlForPoints();
+    this._polygon.cornerStyle = "circle";
+    this._polygon.cornerColor = "rgba(255,255,255,0.5)";
+    this._polygon.lockMovementX = true;
+    this._polygon.lockMovementY = true;
+    this._polygon.controls = this._buildControlForPoints();
   }
 
   private _buildControlForPoints(): ControlMap {
-    const points = this.points;
+    const points = this._polygon.points;
     if (typeof points === "undefined") {
       throw new Error("Missing points");
     }
