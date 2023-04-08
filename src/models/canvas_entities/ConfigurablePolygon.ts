@@ -23,7 +23,6 @@ export class ConfigurablePolygon implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
-  private _snapCorners: Map<string, fabric.Object>;
   private _polygon: PolygonWithSetPositionDimension;
   private _eventMediator: EventMediator;
 
@@ -50,18 +49,15 @@ export class ConfigurablePolygon implements CanvasEntity {
     ) as PolygonWithSetPositionDimension;
     this._polygon.perPixelTargetFind = true;
 
-    this._snapCorners = new Map<string, fabric.Object>();
     this._eventMediator = eventMediator;
     this._buildControlForPolygon();
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {
     const pointIndex = this._nameToIndexMap.get(movePointEvent.name);
-    const snapArea = this._snapCorners.get(movePointEvent.name);
     if (
       typeof pointIndex === "undefined" ||
-      typeof this._polygon.points === "undefined" ||
-      typeof snapArea === "undefined"
+      typeof this._polygon.points === "undefined"
     ) {
       throw new Error("missing point");
     }
@@ -70,23 +66,11 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._polygon.points[pointIndex].y = movePointEvent.coordinate.y;
     this._polygon.dirty = true;
 
-    snapArea.left = movePointEvent.coordinate.x;
-    snapArea.top = movePointEvent.coordinate.y;
-    snapArea.dirty = true;
-
     this._updateBoundingBox(this._polygon);
   }
 
   public getObjectsToDraw(): fabric.Object[] {
-    return [this._polygon, ...Array.from(this._snapCorners.values())];
-  }
-
-  get snapCorner() {
-    return this._snapCorners;
-  }
-
-  public getSnapCornerByName(name: string) {
-    return this._snapCorners.get(name);
+    return [this._polygon];
   }
 
   private _buildControlForPolygon(): void {
@@ -113,26 +97,6 @@ export class ConfigurablePolygon implements CanvasEntity {
         positionHandler: this._placeControllerAtPoint(point),
         actionHandler: this._handleControllerMovement(anchor, index),
       });
-
-      const snapArea = new fabric.Circle({
-        originX: "center",
-        originY: "center",
-        radius: 8,
-        left: point.x,
-        top: point.y,
-      });
-
-      snapArea.hasControls = false;
-      snapArea.selectable = false;
-      snapArea.lockMovementX = true;
-      snapArea.lockMovementY = true;
-
-      const name = this._indexToNameMap.get(index);
-      if (!name) {
-        throw new Error("point name not found");
-      }
-
-      this._snapCorners.set(name, snapArea);
 
       controlMap[key] = control;
     });
@@ -299,15 +263,6 @@ export class ConfigurablePolygon implements CanvasEntity {
       throw new Error("missing point");
     }
 
-    const snapArea = this._snapCorners.get(origin);
-    if (!snapArea) {
-      throw new Error("missing corner data");
-    }
-
-    snapArea.left = finalPointPosition.x;
-    snapArea.top = finalPointPosition.y;
-    snapArea.dirty = true;
-
     this._eventMediator.updatePointPosition({
       name: origin,
       source: origin,
@@ -348,9 +303,5 @@ export class ConfigurablePolygon implements CanvasEntity {
 
   get name() {
     return this._name;
-  }
-
-  get snapArea() {
-    return this._snapCorners;
   }
 }
