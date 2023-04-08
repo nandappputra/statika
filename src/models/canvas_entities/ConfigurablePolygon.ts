@@ -23,7 +23,7 @@ export class ConfigurablePolygon implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
-  private _snapCorners: Map<string, fabric.Circle>;
+  private _snapCorners: Map<string, fabric.Object>;
   private _polygon: PolygonWithSetPositionDimension;
   private _eventMediator: EventMediator;
 
@@ -50,7 +50,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     ) as PolygonWithSetPositionDimension;
     this._polygon.perPixelTargetFind = true;
 
-    this._snapCorners = new Map<string, fabric.Circle>();
+    this._snapCorners = new Map<string, fabric.Object>();
     this._eventMediator = eventMediator;
     this._buildControlForPolygon();
   }
@@ -348,5 +348,9 @@ export class ConfigurablePolygon implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  get snapArea() {
+    return this._snapCorners;
   }
 }

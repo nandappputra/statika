@@ -8,6 +8,8 @@ import { USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
+import { Feature } from "./features/Feature";
+import { Point } from "../Point";
 
 interface NamedObject {
   name: string;
@@ -17,14 +19,18 @@ interface NamedObject {
 export class Painter implements EventMediator {
   private _canvas: fabric.Canvas;
   private _pointToEntity: Map<string, Set<CanvasEntity>>;
-  private _freePoints: Set<string>;
+  private _nameToEntity: Map<string, CanvasEntity>;
   private _elementToEntity: Map<DiagramElement, CanvasEntity>;
+  private _painterFeatures: Feature[];
+  private _nameToPoint: Map<string, Point>;
 
-  constructor(canvas: fabric.Canvas) {
+  constructor(canvas: fabric.Canvas, painterFeatures: Feature[]) {
     this._canvas = canvas;
     this._pointToEntity = new Map<string, Set<CanvasEntity>>();
-    this._freePoints = new Set<string>();
+    this._nameToEntity = new Map<string, CanvasEntity>();
     this._elementToEntity = new Map<DiagramElement, CanvasEntity>();
+    this._painterFeatures = painterFeatures;
+    this._nameToPoint = new Map<string, Point>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
   }
@@ -67,15 +73,18 @@ export class Painter implements EventMediator {
       fill: "white",
     });
 
+    this._nameToEntity.set(linkage.name, polygon);
+
     linkage.points.forEach((point) => {
       this._addCanvasEntityToMap(point.name, polygon);
-      this._freePoints.add(point.name);
+      this._nameToPoint.set(point.name, point);
+    });
+
+    this._painterFeatures.forEach((feature) => {
+      feature.handleElementAddition(this, linkage);
     });
 
     this._canvas.add(...polygon.getObjectsToDraw());
-    polygon.snapCorner.forEach((corner) => {
-      this._canvas.add(corner);
-    });
 
     return polygon;
   }
@@ -94,47 +103,22 @@ export class Painter implements EventMediator {
   }
 
   public updatePointPosition(movePointEvent: MovePointEvent) {
+    const pointToUpdate = this._nameToPoint.get(movePointEvent.name);
+    if (!pointToUpdate) {
+      throw new Error("missing point");
+    }
+
+    pointToUpdate.x = movePointEvent.coordinate.x;
+    pointToUpdate.y = movePointEvent.coordinate.y;
+
     this._updateCanvasEntity(movePointEvent);
 
-    // if (this._freePoints.has(movePointEvent.name)) {
-    //   this._freePoints.forEach((point) => {
-    //     const snapArea = this._pointToPolygon
-    //       .get(point)
-    //       ?.getSnapCornerByName(point);
-    //     if (!snapArea || !snapArea.left || !snapArea.top) {
-    //       console.log(snapArea);
-    //       throw new Error("missing point");
-    //     }
-
-    //     if (
-    //       movePointEvent.name != point &&
-    //       this.distance(movePointEvent.coordinate, {
-    //         x: snapArea.left,
-    //         y: snapArea.top,
-    //       }) < 10
-    //     ) {
-    //       const p1 = new Point(
-    //         movePointEvent.name,
-    //         movePointEvent.coordinate.x,
-    //         movePointEvent.coordinate.y
-    //       );
-    //       const p2 = new Point(point, snapArea.left, snapArea.top);
-    //       const newConnection = new PinConnection(`${p1}-${p2}`, [p1, p2]);
-
-    //       this.addConnection(newConnection);
-    //     }
-    //   });
-    // }
+    this._painterFeatures.forEach((feature) => {
+      feature.handlePointUpdate(this, movePointEvent);
+    });
 
     this._canvas.renderAll();
   }
-
-  // private distance(coordinate1: Coordinate, coordinate2: Coordinate) {
-  //   return (
-  //     Math.abs(coordinate1.x - coordinate2.x) +
-  //     Math.abs(coordinate1.y - coordinate2.y)
-  //   );
-  // }
 
   private _updateCanvasEntity(movePointEvent: MovePointEvent) {
     const affectedEntity = this._pointToEntity.get(movePointEvent.name);
@@ -152,17 +136,15 @@ export class Painter implements EventMediator {
   public addConnection(connection: Connection) {
     const connectionIcon = new ConfigurableConnection(connection, this);
 
+    this._nameToEntity.set(connection.name, connectionIcon);
     this._elementToEntity.set(connection, connectionIcon);
+
     connection.points.forEach((point) => {
       this._addCanvasEntityToMap(point.name, connectionIcon);
+    });
 
-      // const snapArea = this._pointToPolygon
-      //   .get(point.name)
-      //   ?.getSnapCornerByName(point.name);
-      // if (snapArea) {
-      //   this._canvas.remove(snapArea);
-      // }
-      // this._freePoints.delete(point.name);
+    this._painterFeatures.forEach((feature) => {
+      feature.handleElementAddition(this, connection);
     });
 
     this._canvas.add(...connectionIcon.getObjectsToDraw());
@@ -171,6 +153,7 @@ export class Painter implements EventMediator {
   }
 
   public removeConnection(connection: Connection) {
+    this._nameToEntity.delete(connection.name);
     const connectionObject = this._elementToEntity.get(connection);
     if (!connectionObject) {
       throw new Error("no such connection");
@@ -180,13 +163,18 @@ export class Painter implements EventMediator {
 
     connection.points.forEach((point) => {
       this._pointToEntity.get(point.name)?.delete(connectionObject);
-      // const snapArea = this._pointToPolygon
-      //   .get(point.name)
-      //   ?.getSnapCornerByName(point.name);
-      // if (snapArea) {
-      //   this._canvas.add(snapArea);
-      // }
-      // this._freePoints.add(point.name);
     });
+
+    this._painterFeatures.forEach((feature) => {
+      feature.handleElementRemoval(this, connection);
+    });
+  }
+
+  public getCanvasEntity(diagramElement: DiagramElement) {
+    return this._nameToEntity.get(diagramElement.name);
+  }
+
+  public getPoint(pointName: string) {
+    return this._nameToPoint.get(pointName);
   }
 }

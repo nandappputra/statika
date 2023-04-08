@@ -51,8 +51,16 @@ export class Point {
     return this._positionX;
   }
 
+  set x(x: number) {
+    this._positionX = x;
+  }
+
   get y() {
     return this._positionY;
+  }
+
+  set y(y: number) {
+    this._positionY = y;
   }
 
   removeConditions(): void {

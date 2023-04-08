@@ -9,6 +9,7 @@ export class ConfigurableConnection implements CanvasEntity {
   private _connection: Connection;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
+  private _snapArea: Map<string, fabric.Object>;
 
   constructor(connection: Connection, eventMediator: EventMediator) {
     this._name = connection.name;
@@ -23,6 +24,8 @@ export class ConfigurableConnection implements CanvasEntity {
       data: { name: connection.name, pointName: connection.points[0].name },
     });
     this._icon.hasControls = false;
+    this._snapArea = new Map<string, fabric.Object>();
+    this._snapArea.set(this._name, this._icon);
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {
@@ -46,5 +49,9 @@ export class ConfigurableConnection implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  get snapArea() {
+    return this._snapArea;
   }
 }
