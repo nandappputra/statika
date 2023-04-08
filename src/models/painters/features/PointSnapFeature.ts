@@ -59,7 +59,7 @@ export class PointSnapFeature implements Feature {
 
           const newConnection = new PinConnection(`${p1}-${p2}`, [p1, p2]);
 
-          painter.addConnection(newConnection);
+          painter.addElement(newConnection);
         }
       });
     }
