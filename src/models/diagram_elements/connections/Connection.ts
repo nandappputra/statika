@@ -1,15 +1,18 @@
 import { formatForceForSolver } from "../../../utils/SolverUtils";
+import { ExternalForce } from "../../ExternalForce";
 import { Point } from "../../Point";
 import { DiagramElement } from "../DiagramElement";
 
 export abstract class Connection implements DiagramElement {
   protected _name: string;
   protected _points: Point[];
+  protected _externalForces: ExternalForce[];
 
   constructor(name: string, points: Point[]) {
     this._name = name;
     this._points = points;
     this._points.forEach((point) => this.applyBoundaryCondition(point));
+    this._externalForces = [];
   }
 
   abstract applyBoundaryCondition(point: Point): void;
@@ -20,6 +23,10 @@ export abstract class Connection implements DiagramElement {
 
   get name() {
     return this._name;
+  }
+
+  addExternalForce(externalForce: ExternalForce) {
+    this._externalForces.push(externalForce);
   }
 
   generateEquilibrium(): string[] {
@@ -33,6 +40,11 @@ export abstract class Connection implements DiagramElement {
     this._points.forEach((point) => {
       sigmaF_x.push(formatForceForSolver(point.symbolF_x));
       sigmaF_y.push(formatForceForSolver(point.symbolF_y));
+    });
+
+    this._externalForces.forEach((force) => {
+      sigmaF_x.push(formatForceForSolver(force.symbolF_x));
+      sigmaF_y.push(formatForceForSolver(force.symbolF_y));
     });
 
     return [sigmaF_x.join("+"), sigmaF_y.join("+")];
