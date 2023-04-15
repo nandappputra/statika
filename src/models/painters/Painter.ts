@@ -12,6 +12,7 @@ import { Feature } from "./features/Feature";
 import { Point } from "../Point";
 import { IPolylineOptions } from "fabric/fabric-impl";
 import { ICircleOptions } from "fabric/fabric-impl";
+import { ExternalForce } from "../ExternalForce";
 
 interface NamedObject {
   name: string;
@@ -106,6 +107,25 @@ export class Painter implements EventMediator {
     });
 
     this._canvas.renderAll();
+  }
+
+  public addExternalLoad(
+    location: Point | Connection,
+    externalLoad: ExternalForce
+  ) {
+    if (location instanceof Point) {
+      const affectedEntity = this._pointToEntity.get(location.name);
+      if (typeof affectedEntity === "undefined") {
+        throw new Error("unrecognized point");
+      }
+
+      affectedEntity.forEach((entity) => {
+        if (entity instanceof ConfigurablePolygon) {
+          const arrow = entity.addExternalForce(location, externalLoad);
+          this._canvas.add(...arrow.getObjectsToDraw());
+        }
+      });
+    }
   }
 
   private _updateCanvasEntity(movePointEvent: MovePointEvent) {

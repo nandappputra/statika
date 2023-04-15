@@ -10,6 +10,8 @@ import { CanvasEntity } from "./CanvasEntity";
 import { Linkage } from "../diagram_elements/Linkage";
 import { EventMediator } from "../painters/EventMediator";
 import { ConfigurableArrow } from "./ConfigurableArrow";
+import { Point } from "../Point";
+import { ExternalForce } from "../ExternalForce";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -336,5 +338,23 @@ export class ConfigurablePolygon implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  public addExternalForce(location: Point, externalForce: ExternalForce) {
+    const icons = this._nameToIconMap.get(location.name);
+    const force = new ConfigurableArrow(
+      externalForce.name,
+      { x: location.x, y: location.y },
+      parseFloat(externalForce.symbolF_x),
+      parseFloat(externalForce.symbolF_y)
+    );
+
+    if (!icons) {
+      this._nameToIconMap.set(location.name, [force]);
+    } else {
+      icons.push(force);
+    }
+
+    return force;
   }
 }
