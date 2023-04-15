@@ -10,9 +10,9 @@ function TitleBar(): JSX.Element {
         backgroundColor: "white",
         boxShadow: "none",
         borderRadius: "0.5em",
-        borderWidth: "2px",
+        borderWidth: "3px",
         borderStyle: "solid",
-        borderColor: "darkgrey",
+        borderColor: "black",
       }}
     >
       <Container maxWidth="xl">
