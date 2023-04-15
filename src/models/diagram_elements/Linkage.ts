@@ -57,4 +57,8 @@ export class Linkage implements DiagramElement {
   get name() {
     return this._name;
   }
+
+  addPoint(point: Point) {
+    this._points.push(point);
+  }
 }

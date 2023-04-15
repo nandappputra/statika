@@ -197,4 +197,21 @@ export class Painter implements EventMediator {
   public getPoint(pointName: string) {
     return this._pointNameToPoint.get(pointName);
   }
+
+  public addPointToLinkage(point: Point, linkage: Linkage) {
+    this._pointNameToPoint.set(point.name, point);
+
+    const entity = this._entityNameToEntity.get(linkage.name);
+    if (!entity) {
+      throw new Error("missing entity");
+    }
+
+    const entitySet = new Set<CanvasEntity>();
+    entitySet.add(entity);
+    this._pointToEntity.set(point.name, entitySet);
+
+    if (entity instanceof ConfigurablePolygon) {
+      entity.addPoint(point);
+    }
+  }
 }

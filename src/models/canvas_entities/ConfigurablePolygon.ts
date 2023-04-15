@@ -266,7 +266,7 @@ export class ConfigurablePolygon implements CanvasEntity {
       throw "Invalid object type";
     }
 
-    if (typeof polygon.points === "undefined") {
+    if (!polygon.points) {
       throw "Missing points";
     }
 
@@ -293,7 +293,6 @@ export class ConfigurablePolygon implements CanvasEntity {
     polygon.dirty = true;
 
     const origin = this._indexToNameMap.get(pointIndex);
-
     if (typeof origin === "undefined") {
       throw new Error("missing point");
     }
@@ -356,5 +355,21 @@ export class ConfigurablePolygon implements CanvasEntity {
     }
 
     return force;
+  }
+
+  public addPoint(point: Point) {
+    if (!this._polygon.points) {
+      throw new Error("missing points in polygon");
+    }
+
+    this._polygon.points.push(new fabric.Point(point.x, point.y));
+    const index = this._polygon.points.length - 1;
+
+    this._indexToNameMap.set(index, point.name);
+    this._nameToIndexMap.set(point.name, index);
+
+    this._buildControlForPolygon();
+    this._polygon._setPositionDimensions({});
+    this._polygon.dirty = true;
   }
 }
