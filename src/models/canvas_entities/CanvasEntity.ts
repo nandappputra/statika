@@ -5,5 +5,5 @@ export interface CanvasEntity {
   name: string;
 
   updatePosition(movePointEvent: MovePointEvent): void;
-  getObjectsToDraw(): fabric.Object[];
+  getObjectsToDraw(): (fabric.Object | fabric.Group)[];
 }

@@ -15,6 +15,9 @@ export class ConfigurableConnection implements CanvasEntity {
     this._connection = connection;
     this._eventMediator = eventMediator;
     this._icon = new fabric.Circle({
+      fill: "white",
+      stroke: "black",
+      strokeWidth: 3,
       radius: 5,
       originX: "center",
       originY: "center",

@@ -2,23 +2,16 @@ import {
   formatForceForSolver,
   formatMomentForSolver,
 } from "../../utils/SolverUtils";
-import { ExternalForce } from "../ExternalForce";
 import { Point } from "../Point";
 import { DiagramElement } from "./DiagramElement";
 
 export class Linkage implements DiagramElement {
   private _name: string;
-  private _externalForces: ExternalForce[];
   private _points: Point[];
 
   constructor(name: string, p1: Point, p2: Point) {
     this._name = name;
     this._points = [p1, p2];
-    this._externalForces = [];
-  }
-
-  addExternalForce(externalForce: ExternalForce) {
-    this._externalForces.push(externalForce);
   }
 
   generateEquilibrium(): string[] {
@@ -39,11 +32,6 @@ export class Linkage implements DiagramElement {
       sigmaF_y.push(formatForceForSolver(point.symbolF_y));
     });
 
-    this._externalForces.forEach((force) => {
-      sigmaF_x.push(formatForceForSolver(force.symbolF_x));
-      sigmaF_y.push(formatForceForSolver(force.symbolF_y));
-    });
-
     return [sigmaF_x.join("+"), sigmaF_y.join("+")];
   }
 
@@ -60,17 +48,6 @@ export class Linkage implements DiagramElement {
       const m3 = formatMomentForSolver(1, point.symbolM_z);
 
       const equation = `${m1}+-${m2}+${m3}`;
-      sigmaM_z.push(equation);
-    });
-
-    this._externalForces.forEach((force) => {
-      const diffX = force.x - reference.x;
-      const diffY = force.y - reference.y;
-
-      const m1 = formatMomentForSolver(diffY, force.symbolF_x);
-      const m2 = formatMomentForSolver(diffX, force.symbolF_y);
-
-      const equation = `${m1}+-${m2}`;
       sigmaM_z.push(equation);
     });
 

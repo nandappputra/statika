@@ -1,9 +1,11 @@
+import { ExternalForce } from "./ExternalForce";
 import { Variable } from "./Variable";
 
 export class Point {
   private _name: string;
   private _positionX: number;
   private _positionY: number;
+  private _externalForces: ExternalForce[];
 
   private _F_x: Variable;
   private _F_y: Variable;
@@ -13,6 +15,7 @@ export class Point {
     this._name = name;
     this._positionX = positionX;
     this._positionY = positionY;
+    this._externalForces = [];
 
     this._F_x = new Variable(`F_${name}x`);
     this._F_y = new Variable(`F_${name}y`);
@@ -32,11 +35,21 @@ export class Point {
   }
 
   get symbolF_x(): string {
-    return this._F_x.getValueOrSymbol();
+    let result: string = this._F_x.getValueOrSymbol();
+    this._externalForces.forEach((force) => {
+      result += force.symbolF_x;
+    });
+
+    return result;
   }
 
   get symbolF_y(): string {
-    return this._F_y.getValueOrSymbol();
+    let result: string = this._F_y.getValueOrSymbol();
+    this._externalForces.forEach((force) => {
+      result += force.symbolF_y;
+    });
+
+    return result;
   }
 
   get symbolM_z(): string {
@@ -67,5 +80,17 @@ export class Point {
     this._F_x.clear();
     this._F_y.clear();
     this._M_z.clear();
+  }
+
+  addExternalForce(externalForce: ExternalForce) {
+    this._externalForces.push(externalForce);
+  }
+
+  hasExternalForce(): boolean {
+    return this._externalForces.length !== 0;
+  }
+
+  get externalForces() {
+    return this._externalForces;
   }
 }

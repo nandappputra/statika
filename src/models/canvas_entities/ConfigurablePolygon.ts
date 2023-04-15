@@ -9,6 +9,7 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { Linkage } from "../diagram_elements/Linkage";
 import { EventMediator } from "../painters/EventMediator";
+import { ConfigurableArrow } from "./ConfigurableArrow";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -23,6 +24,7 @@ export class ConfigurablePolygon implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
+  private _nameToIconMap: Map<string, ConfigurableArrow[]>;
   private _polygon: PolygonWithSetPositionDimension;
   private _eventMediator: EventMediator;
 
@@ -34,6 +36,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._name = linkage.name;
     this._nameToIndexMap = new Map<string, number>();
     this._indexToNameMap = new Map<number, string>();
+    this._nameToIconMap = new Map<string, ConfigurableArrow[]>();
     const coordinates: Coordinate[] = [];
 
     const points = linkage.points;
@@ -41,6 +44,23 @@ export class ConfigurablePolygon implements CanvasEntity {
       this._nameToIndexMap.set(point.name, index);
       this._indexToNameMap.set(index, point.name);
       coordinates.push({ x: point.x, y: point.y });
+
+      if (point.hasExternalForce()) {
+        const arrows: ConfigurableArrow[] = [];
+
+        point.externalForces.forEach((force) => {
+          arrows.push(
+            new ConfigurableArrow(
+              force.name,
+              { x: point.x, y: point.y },
+              parseFloat(force.symbolF_x),
+              parseFloat(force.symbolF_y)
+            )
+          );
+        });
+
+        this._nameToIconMap.set(point.name, arrows);
+      }
     });
 
     this._polygon = new fabric.Polygon(
@@ -66,11 +86,24 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._polygon.points[pointIndex].y = movePointEvent.coordinate.y;
     this._polygon.dirty = true;
 
+    const icons = this._nameToIconMap.get(movePointEvent.name);
+    if (icons) {
+      icons.forEach((icon) => icon.updatePosition(movePointEvent));
+    }
+
     this._updateBoundingBox(this._polygon);
   }
 
-  public getObjectsToDraw(): fabric.Object[] {
-    return [this._polygon];
+  public getObjectsToDraw() {
+    const objects: (fabric.Object | fabric.Group)[] = [];
+    objects.push(this._polygon);
+    this._nameToIconMap.forEach((icons) => {
+      icons.forEach((icon) => {
+        objects.push(...icon.getObjectsToDraw());
+      });
+    });
+
+    return objects;
   }
 
   private _buildControlForPolygon(): void {
