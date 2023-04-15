@@ -213,5 +213,9 @@ export class Painter implements EventMediator {
     if (entity instanceof ConfigurablePolygon) {
       entity.addPoint(point);
     }
+
+    this._painterFeatures.forEach((feature) =>
+      feature.handlePointAddition(this, linkage, point)
+    );
   }
 }
