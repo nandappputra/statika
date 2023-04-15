@@ -211,7 +211,8 @@ export class Painter implements EventMediator {
     this._pointToEntity.set(point.name, entitySet);
 
     if (entity instanceof ConfigurablePolygon) {
-      entity.addPoint(point);
+      const configurablePoint = entity.addPoint(point);
+      this._canvas.add(...configurablePoint.getObjectsToDraw());
     }
 
     this._painterFeatures.forEach((feature) =>

@@ -357,7 +357,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     return force;
   }
 
-  public addPoint(point: Point) {
+public addPoint(point: Point) {
     if (!this._polygon.points) {
       throw new Error("missing points in polygon");
     }
@@ -371,5 +371,12 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._buildControlForPolygon();
     this._polygon._setPositionDimensions({});
     this._polygon.dirty = true;
+    const pointIcon = new ConfigurablePoint(point.name, {
+      x: point.x,
+      y: point.y,
+    });
+    this._nameToIconMap.set(point.name, [pointIcon]);
+
+    return pointIcon;
   }
 }
