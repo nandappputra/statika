@@ -12,6 +12,7 @@ import { EventMediator } from "../painters/EventMediator";
 import { ConfigurableArrow } from "./ConfigurableArrow";
 import { Point } from "../Point";
 import { ExternalForce } from "../ExternalForce";
+import { ConfigurablePoint } from "./ConfigurablePoint";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -26,7 +27,7 @@ export class ConfigurablePolygon implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
-  private _nameToIconMap: Map<string, ConfigurableArrow[]>;
+  private _nameToIconMap: Map<string, CanvasEntity[]>;
   private _polygon: PolygonWithSetPositionDimension;
   private _eventMediator: EventMediator;
 
@@ -38,7 +39,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._name = linkage.name;
     this._nameToIndexMap = new Map<string, number>();
     this._indexToNameMap = new Map<number, string>();
-    this._nameToIconMap = new Map<string, ConfigurableArrow[]>();
+    this._nameToIconMap = new Map<string, CanvasEntity[]>();
     const coordinates: Coordinate[] = [];
 
     const points = linkage.points;
@@ -47,11 +48,11 @@ export class ConfigurablePolygon implements CanvasEntity {
       this._indexToNameMap.set(index, point.name);
       coordinates.push({ x: point.x, y: point.y });
 
+      const icon: CanvasEntity[] = [];
+      icon.push(new ConfigurablePoint(point.name, { x: point.x, y: point.y }));
       if (point.hasExternalForce()) {
-        const arrows: ConfigurableArrow[] = [];
-
         point.externalForces.forEach((force) => {
-          arrows.push(
+          icon.push(
             new ConfigurableArrow(
               force.name,
               { x: point.x, y: point.y },
@@ -60,9 +61,8 @@ export class ConfigurablePolygon implements CanvasEntity {
             )
           );
         });
-
-        this._nameToIconMap.set(point.name, arrows);
       }
+      this._nameToIconMap.set(point.name, icon);
     });
 
     this._polygon = new fabric.Polygon(
