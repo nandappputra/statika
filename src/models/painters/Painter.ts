@@ -26,11 +26,13 @@ export interface EntityConfig {
 
 export class Painter implements EventMediator {
   private _canvas: fabric.Canvas;
-  private _pointToEntity: Map<string, Set<CanvasEntity>>;
   private _entityNameToEntity: Map<string, CanvasEntity>;
   private _painterFeatures: Feature[];
   private _pointNameToPoint: Map<string, Point>;
   private _entityConfig: EntityConfig;
+
+  private _pointNameToPolygon: Map<string, ConfigurablePolygon>;
+  private _pointNameToConnection: Map<string, ConfigurableConnection>;
 
   constructor(
     canvas: fabric.Canvas,
@@ -38,11 +40,13 @@ export class Painter implements EventMediator {
     entityConfig: EntityConfig
   ) {
     this._canvas = canvas;
-    this._pointToEntity = new Map<string, Set<CanvasEntity>>();
     this._entityNameToEntity = new Map<string, CanvasEntity>();
     this._painterFeatures = painterFeatures;
     this._pointNameToPoint = new Map<string, Point>();
     this._entityConfig = entityConfig;
+
+    this._pointNameToPolygon = new Map<string, ConfigurablePolygon>();
+    this._pointNameToConnection = new Map<string, ConfigurableConnection>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
   }
@@ -79,22 +83,15 @@ export class Painter implements EventMediator {
   }
 
   private _addCanvasEntityToMap(key: string, canvasEntity: CanvasEntity) {
-    const entitySet = this._pointToEntity.get(key);
-
-    if (!entitySet) {
-      const newEntitySet = new Set<CanvasEntity>();
-      newEntitySet.add(canvasEntity);
-
-      this._pointToEntity.set(key, newEntitySet);
-    } else {
-      entitySet.add(canvasEntity);
+    if (canvasEntity instanceof ConfigurablePolygon) {
+      this._pointNameToPolygon.set(key, canvasEntity);
+    } else if (canvasEntity instanceof ConfigurableConnection) {
+      this._pointNameToConnection.set(key, canvasEntity);
     }
   }
 
   public updatePointPosition(movePointEvent: MovePointEvent) {
-    console.log("updating");
     const pointToUpdate = this._pointNameToPoint.get(movePointEvent.name);
-    console.log(movePointEvent.name);
     if (!pointToUpdate) {
       throw new Error("missing point");
     }
@@ -116,17 +113,13 @@ export class Painter implements EventMediator {
     externalLoad: ExternalForce
   ) {
     if (location instanceof Point) {
-      const affectedEntity = this._pointToEntity.get(location.name);
-      if (typeof affectedEntity === "undefined") {
+      const affectedPolygon = this._pointNameToPolygon.get(location.name);
+      if (!affectedPolygon) {
         throw new Error("unrecognized point");
       }
 
-      affectedEntity.forEach((entity) => {
-        if (entity instanceof ConfigurablePolygon) {
-          const arrow = entity.addExternalForce(location, externalLoad);
-          this._canvas.add(...arrow.getObjectsToDraw());
-        }
-      });
+      const arrow = affectedPolygon.addExternalForce(location, externalLoad);
+      this._canvas.add(...arrow.getObjectsToDraw());
     }
   }
 
@@ -135,33 +128,28 @@ export class Painter implements EventMediator {
     externalLoad: ExternalForce
   ) {
     if (location instanceof Point) {
-      const affectedEntity = this._pointToEntity.get(location.name);
-      if (typeof affectedEntity === "undefined") {
+      const affectedPolygon = this._pointNameToPolygon.get(location.name);
+      if (!affectedPolygon) {
         throw new Error("unrecognized point");
       }
 
-      affectedEntity.forEach((entity) => {
-        if (entity instanceof ConfigurablePolygon) {
-          const arrow = entity.removeExternalForce(location, externalLoad);
-          this._canvas.remove(...arrow.getObjectsToDraw());
-        }
-      });
+      const arrow = affectedPolygon.removeExternalForce(location, externalLoad);
+      this._canvas.remove(...arrow.getObjectsToDraw());
     }
 
     this._canvas.renderAll();
   }
 
   private _updateCanvasEntity(movePointEvent: MovePointEvent) {
-    const affectedEntity = this._pointToEntity.get(movePointEvent.name);
-    if (typeof affectedEntity === "undefined") {
-      throw new Error("unrecognized point");
+    const polygon = this._pointNameToPolygon.get(movePointEvent.name);
+    if (polygon && movePointEvent.source != polygon.name) {
+      polygon.updatePosition(movePointEvent);
     }
 
-    affectedEntity.forEach((entity) => {
-      if (movePointEvent.source != entity.name) {
-        entity.updatePosition(movePointEvent);
-      }
-    });
+    const connection = this._pointNameToConnection.get(movePointEvent.name);
+    if (connection && movePointEvent.source != connection.name) {
+      connection.updatePosition(movePointEvent);
+    }
   }
 
   public addElement(diagramElement: DiagramElement) {
@@ -205,7 +193,11 @@ export class Painter implements EventMediator {
     this._entityNameToEntity.delete(diagramElement.name);
 
     diagramElement.points.forEach((point) => {
-      this._pointToEntity.get(point.name)?.delete(entity);
+      if (entity instanceof ConfigurablePolygon) {
+        this._pointNameToPolygon.delete(point.name);
+      } else if (entity instanceof ConfigurableConnection) {
+        this._pointNameToConnection.delete(point.name);
+      }
     });
 
     this._painterFeatures.forEach((feature) => {
@@ -225,18 +217,14 @@ export class Painter implements EventMediator {
     this._pointNameToPoint.set(point.name, point);
 
     const entity = this._entityNameToEntity.get(linkage.name);
-    if (!entity) {
-      throw new Error("missing entity");
+    if (!entity || !(entity instanceof ConfigurablePolygon)) {
+      throw new Error("missing or invalid entity found");
     }
 
-    const entitySet = new Set<CanvasEntity>();
-    entitySet.add(entity);
-    this._pointToEntity.set(point.name, entitySet);
+    this._pointNameToPolygon.set(point.name, entity);
 
-    if (entity instanceof ConfigurablePolygon) {
-      const configurablePoint = entity.addPoint(point);
-      this._canvas.add(...configurablePoint.getObjectsToDraw());
-    }
+    const configurablePoint = entity.addPoint(point);
+    this._canvas.add(...configurablePoint.getObjectsToDraw());
 
     this._painterFeatures.forEach((feature) =>
       feature.handlePointAddition(this, linkage, point)
@@ -244,24 +232,20 @@ export class Painter implements EventMediator {
   }
 
   public removePointFromLinkage(point: Point, linkage: Linkage) {
-    this._pointNameToPoint.delete(point.name);
-
-    const entitySet = this._pointToEntity.get(point.name);
-    if (!entitySet) {
-      throw new Error("missing entity set");
+    const targetLinkage = this._pointNameToPolygon.get(point.name);
+    if (!targetLinkage) {
+      throw new Error("target linkage not found");
     }
 
-    entitySet.forEach((entity) => {
-      if (entity instanceof ConfigurablePolygon) {
-        const entityToDelete = entity.deletePoint(point);
+    this._pointNameToPoint.delete(point.name);
 
-        entityToDelete.forEach((ent) => {
-          this._canvas.remove(...ent.getObjectsToDraw());
-        });
-      } else if (entity instanceof ConfigurableConnection) {
-        entity.deletePoint(point);
-      }
+    const canvasElement = targetLinkage?.deletePoint(point);
+    canvasElement.forEach((ent) => {
+      this._canvas.remove(...ent.getObjectsToDraw());
     });
+
+    const affectedConnection = this._pointNameToConnection.get(point.name);
+    affectedConnection?.deletePoint(point);
 
     this._painterFeatures.forEach((feature) =>
       feature.handlePointRemoval(this, linkage, point)
