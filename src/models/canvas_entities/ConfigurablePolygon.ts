@@ -9,10 +9,8 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { Linkage } from "../diagram_elements/Linkage";
 import { EventMediator } from "../painters/EventMediator";
-import { ConfigurableArrow } from "./ConfigurableArrow";
 import { Point } from "../Point";
 import { ExternalForce } from "../ExternalForce";
-import { ConfigurablePoint } from "./ConfigurablePoint";
 
 interface ControlMap {
   [key: string]: fabric.Control;
@@ -27,7 +25,7 @@ export class ConfigurablePolygon implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
-  private _nameToIconMap: Map<string, CanvasEntity[]>;
+  private _nameToIconMap: Map<string, (fabric.Group | fabric.Object)[]>;
   private _polygon: PolygonWithSetPositionDimension;
   private _eventMediator: EventMediator;
 
@@ -39,7 +37,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._name = linkage.name;
     this._nameToIndexMap = new Map<string, number>();
     this._indexToNameMap = new Map<number, string>();
-    this._nameToIconMap = new Map<string, CanvasEntity[]>();
+    this._nameToIconMap = new Map<string, (fabric.Group | fabric.Object)[]>();
     const coordinates: Coordinate[] = [];
 
     const points = linkage.points;
@@ -48,18 +46,11 @@ export class ConfigurablePolygon implements CanvasEntity {
       this._indexToNameMap.set(index, point.name);
       coordinates.push({ x: point.x, y: point.y });
 
-      const icon: CanvasEntity[] = [];
-      icon.push(new ConfigurablePoint(point.name, { x: point.x, y: point.y }));
+      const icon: (fabric.Group | fabric.Object)[] = [];
+      icon.push(this.buildPointIcon(point));
       if (point.hasExternalForce()) {
         point.externalForces.forEach((force) => {
-          icon.push(
-            new ConfigurableArrow(
-              force.name,
-              { x: point.x, y: point.y },
-              parseFloat(force.symbolF_x),
-              parseFloat(force.symbolF_y)
-            )
-          );
+          icon.push(this.buildArrowIcon(force, point));
         });
       }
       this._nameToIconMap.set(point.name, icon);
@@ -73,6 +64,53 @@ export class ConfigurablePolygon implements CanvasEntity {
 
     this._eventMediator = eventMediator;
     this._buildControlForPolygon();
+  }
+
+  private buildArrowIcon(force: ExternalForce, point: Point) {
+    const line = new fabric.Line([0, 0, 0, 50], {
+      originY: "center",
+      originX: "center",
+      stroke: "black",
+      strokeWidth: 3,
+    });
+    const cap = new fabric.Triangle({
+      width: 15,
+      height: 15,
+      originY: "bottom",
+      originX: "center",
+      top: 50,
+      angle: 180,
+    });
+
+    const arrow = new fabric.Group([line, cap], {
+      originX: "center",
+      originY: "bottom",
+      angle:
+        (Math.atan2(parseFloat(force.symbolF_y), parseFloat(force.symbolF_x)) *
+          180) /
+          3.14 -
+        90,
+      left: point.x,
+      top: point.y,
+      lockMovementX: true,
+      lockMovementY: true,
+      hasControls: false,
+      data: { name: force.name },
+    });
+
+    return arrow;
+  }
+
+  private buildPointIcon(point: Point) {
+    return new fabric.Circle({
+      radius: 4,
+      originX: "center",
+      originY: "center",
+      left: point.x,
+      top: point.y,
+      selectable: false,
+      hoverCursor: "default",
+    });
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {
@@ -90,7 +128,10 @@ export class ConfigurablePolygon implements CanvasEntity {
 
     const icons = this._nameToIconMap.get(movePointEvent.name);
     if (icons) {
-      icons.forEach((icon) => icon.updatePosition(movePointEvent));
+      icons.forEach((icon) => {
+        icon.left = movePointEvent.coordinate.x;
+        icon.top = movePointEvent.coordinate.y;
+      });
     }
 
     this._updateBoundingBox(this._polygon);
@@ -101,7 +142,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     objects.push(this._polygon);
     this._nameToIconMap.forEach((icons) => {
       icons.forEach((icon) => {
-        objects.push(...icon.getObjectsToDraw());
+        objects.push(icon);
       });
     });
 
@@ -341,12 +382,7 @@ export class ConfigurablePolygon implements CanvasEntity {
 
   public addExternalForce(location: Point, externalForce: ExternalForce) {
     const icons = this._nameToIconMap.get(location.name);
-    const force = new ConfigurableArrow(
-      externalForce.name,
-      { x: location.x, y: location.y },
-      parseFloat(externalForce.symbolF_x),
-      parseFloat(externalForce.symbolF_y)
-    );
+    const force = this.buildArrowIcon(externalForce, location);
 
     if (!icons) {
       this._nameToIconMap.set(location.name, [force]);
@@ -364,7 +400,7 @@ export class ConfigurablePolygon implements CanvasEntity {
       throw new Error("icons not found");
     }
 
-    const force = icons.find((icon) => icon.name === externalForce.name);
+    const force = icons.find((icon) => icon.data?.name === externalForce.name);
     if (!force) {
       throw new Error("force not found");
     }
@@ -391,10 +427,7 @@ export class ConfigurablePolygon implements CanvasEntity {
     this._buildControlForPolygon();
     this._polygon._setPositionDimensions({});
     this._polygon.dirty = true;
-    const pointIcon = new ConfigurablePoint(point.name, {
-      x: point.x,
-      y: point.y,
-    });
+    const pointIcon = this.buildPointIcon(point);
     this._nameToIconMap.set(point.name, [pointIcon]);
 
     return pointIcon;

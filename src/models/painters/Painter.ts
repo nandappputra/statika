@@ -119,7 +119,7 @@ export class Painter implements EventMediator {
       }
 
       const arrow = affectedPolygon.addExternalForce(location, externalLoad);
-      this._canvas.add(...arrow.getObjectsToDraw());
+      this._canvas.add(arrow);
     }
   }
 
@@ -134,7 +134,7 @@ export class Painter implements EventMediator {
       }
 
       const arrow = affectedPolygon.removeExternalForce(location, externalLoad);
-      this._canvas.remove(...arrow.getObjectsToDraw());
+      this._canvas.remove(arrow);
     }
 
     this._canvas.renderAll();
@@ -224,7 +224,7 @@ export class Painter implements EventMediator {
     this._pointNameToPolygon.set(point.name, entity);
 
     const configurablePoint = entity.addPoint(point);
-    this._canvas.add(...configurablePoint.getObjectsToDraw());
+    this._canvas.add(configurablePoint);
 
     this._painterFeatures.forEach((feature) =>
       feature.handlePointAddition(this, linkage, point)
@@ -241,7 +241,7 @@ export class Painter implements EventMediator {
 
     const canvasElement = targetLinkage?.deletePoint(point);
     canvasElement.forEach((ent) => {
-      this._canvas.remove(...ent.getObjectsToDraw());
+      this._canvas.remove(ent);
     });
 
     const affectedConnection = this._pointNameToConnection.get(point.name);

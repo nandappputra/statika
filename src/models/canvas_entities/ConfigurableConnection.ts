@@ -15,7 +15,11 @@ export class ConfigurableConnection implements CanvasEntity {
     this._name = connection.name;
     this._connection = connection;
     this._eventMediator = eventMediator;
-    this._icon = new fabric.Circle({
+    this._icon = this.buildConnectionIcon(connection);
+  }
+
+  private buildConnectionIcon(connection: Connection) {
+    return new fabric.Circle({
       fill: "white",
       stroke: "black",
       strokeWidth: 3,
@@ -25,8 +29,8 @@ export class ConfigurableConnection implements CanvasEntity {
       left: connection.points[0].x,
       top: connection.points[0].y,
       data: { name: connection.name, pointName: connection.points[0].name },
+      hasControls: false,
     });
-    this._icon.hasControls = false;
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {
