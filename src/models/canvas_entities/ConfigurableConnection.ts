@@ -3,6 +3,7 @@ import { Connection } from "../diagram_elements/connections/Connection";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
+import { Point } from "../Point";
 
 export class ConfigurableConnection implements CanvasEntity {
   private _name: string;
@@ -49,5 +50,13 @@ export class ConfigurableConnection implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  public deletePoint(_point: Point) {
+    if (!this._icon.data?.pointName) {
+      throw new Error("missing pointName in metadata");
+    }
+
+    this._icon.data.pointName = this._connection.points[0].name;
   }
 }

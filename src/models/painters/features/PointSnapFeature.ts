@@ -74,6 +74,10 @@ export class PointSnapFeature implements Feature {
     this._freePoints.add(point.name);
   }
 
+  handlePointRemoval(painter: Painter, linkage: Linkage, point: Point): void {
+    this._freePoints.delete(point.name);
+  }
+
   private distance(coordinate1: Coordinate, coordinate2: Coordinate) {
     return (
       Math.abs(coordinate1.x - coordinate2.x) +

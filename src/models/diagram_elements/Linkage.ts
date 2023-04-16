@@ -23,7 +23,6 @@ export class Linkage implements DiagramElement {
   }
 
   private generateForceEquation() {
-    console.log(this._points);
     const sigmaF_x: string[] = [];
     const sigmaF_y: string[] = [];
 
@@ -60,5 +59,9 @@ export class Linkage implements DiagramElement {
 
   addPoint(point: Point) {
     this._points.push(point);
+  }
+
+  removePoint(point: Point) {
+    this._points = this._points.filter((data) => data.name !== point.name);
   }
 }

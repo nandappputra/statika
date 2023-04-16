@@ -399,4 +399,58 @@ export class ConfigurablePolygon implements CanvasEntity {
 
     return pointIcon;
   }
+
+  public deletePoint(point: Point) {
+    if (!this._polygon.points) {
+      throw new Error("missing points in polygon");
+    }
+
+    const index = this._nameToIndexMap.get(point.name);
+    if (!index) {
+      throw new Error("point not found in polygon");
+    }
+
+    const icons = this._nameToIconMap.get(point.name);
+    if (!icons) {
+      throw new Error("icons not found in polygon");
+    }
+
+    this._polygon.points.splice(index, 1);
+    this.updateIndexAfterPointDeletion(point.name, index);
+
+    this._buildControlForPolygon();
+    this._polygon._setPositionDimensions({});
+    this._polygon.dirty = true;
+
+    this._nameToIconMap.delete(point.name);
+
+    return icons;
+  }
+
+  private updateIndexAfterPointDeletion(pointName: string, index: number) {
+    this._nameToIndexMap.delete(pointName);
+    this._indexToNameMap.delete(index);
+
+    const newNameToIndexMap = new Map<string, number>();
+    const newIndexToNameMap = new Map<number, string>();
+
+    this._nameToIndexMap.forEach((value, key) => {
+      if (value > index) {
+        newNameToIndexMap.set(key, value - 1);
+      } else {
+        newNameToIndexMap.set(key, value);
+      }
+    });
+
+    this._indexToNameMap.forEach((value, key) => {
+      if (key > index) {
+        newIndexToNameMap.set(key - 1, value);
+      } else {
+        newIndexToNameMap.set(key, value);
+      }
+    });
+
+    this._nameToIndexMap = newNameToIndexMap;
+    this._indexToNameMap = newIndexToNameMap;
+  }
 }

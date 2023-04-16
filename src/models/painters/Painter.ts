@@ -92,7 +92,9 @@ export class Painter implements EventMediator {
   }
 
   public updatePointPosition(movePointEvent: MovePointEvent) {
+    console.log("updating");
     const pointToUpdate = this._pointNameToPoint.get(movePointEvent.name);
+    console.log(movePointEvent.name);
     if (!pointToUpdate) {
       throw new Error("missing point");
     }
@@ -238,6 +240,31 @@ export class Painter implements EventMediator {
 
     this._painterFeatures.forEach((feature) =>
       feature.handlePointAddition(this, linkage, point)
+    );
+  }
+
+  public removePointFromLinkage(point: Point, linkage: Linkage) {
+    this._pointNameToPoint.delete(point.name);
+
+    const entitySet = this._pointToEntity.get(point.name);
+    if (!entitySet) {
+      throw new Error("missing entity set");
+    }
+
+    entitySet.forEach((entity) => {
+      if (entity instanceof ConfigurablePolygon) {
+        const entityToDelete = entity.deletePoint(point);
+
+        entityToDelete.forEach((ent) => {
+          this._canvas.remove(...ent.getObjectsToDraw());
+        });
+      } else if (entity instanceof ConfigurableConnection) {
+        entity.deletePoint(point);
+      }
+    });
+
+    this._painterFeatures.forEach((feature) =>
+      feature.handlePointRemoval(this, linkage, point)
     );
   }
 }

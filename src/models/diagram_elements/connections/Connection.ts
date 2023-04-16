@@ -49,4 +49,10 @@ export abstract class Connection implements DiagramElement {
 
     return [sigmaF_x.join("+"), sigmaF_y.join("+")];
   }
+
+  public removePoint(deletedPoint: Point) {
+    this._points = this.points.filter(
+      (point) => point.name !== deletedPoint.name
+    );
+  }
 }

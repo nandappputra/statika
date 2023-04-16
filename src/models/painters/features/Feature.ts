@@ -9,4 +9,5 @@ export interface Feature {
   handleElementRemoval(painter: Painter, element: DiagramElement): void;
   handlePointUpdate(painter: Painter, movePointEvent: MovePointEvent): void;
   handlePointAddition(painter: Painter, linkage: Linkage, point: Point): void;
+  handlePointRemoval(painter: Painter, linkage: Linkage, point: Point): void;
 }
