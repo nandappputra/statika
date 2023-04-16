@@ -1,9 +1,4 @@
-/*
-    reference: http://fabricjs.com/custom-controls-polygon
-*/
-
 import { fabric } from "fabric";
-
 import { Coordinate } from "../Coordinate";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
@@ -11,22 +6,14 @@ import { Linkage } from "../diagram_elements/Linkage";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
 import { ExternalForce } from "../ExternalForce";
-
-interface ControlMap {
-  [key: string]: fabric.Control;
-}
-
-// temporary solution until fabric 6.0.0 exposes setDimensions
-interface PolygonWithSetPositionDimension extends fabric.Polygon {
-  _setPositionDimensions(argument: object): unknown;
-}
+import { ConfigurablePolygon } from "./ConfigurablePolygon";
 
 export class LinkageEntity implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
   private _nameToIconMap: Map<string, (fabric.Group | fabric.Object)[]>;
-  private _polygon: PolygonWithSetPositionDimension;
+  private _polygon: ConfigurablePolygon;
   private _eventMediator: EventMediator;
 
   constructor(
@@ -56,14 +43,13 @@ export class LinkageEntity implements CanvasEntity {
       this._nameToIconMap.set(point.name, icon);
     });
 
-    this._polygon = new fabric.Polygon(
-      coordinates,
-      options
-    ) as PolygonWithSetPositionDimension;
-    this._polygon.perPixelTargetFind = true;
-
     this._eventMediator = eventMediator;
-    this._buildControlForPolygon();
+    this._polygon = new ConfigurablePolygon(
+      points,
+      this._indexToNameMap,
+      this._eventMediator,
+      options
+    );
   }
 
   private buildArrowIcon(force: ExternalForce, point: Point) {
@@ -134,7 +120,7 @@ export class LinkageEntity implements CanvasEntity {
       });
     }
 
-    this._updateBoundingBox(this._polygon);
+    this._polygon.updateBoundingBox();
   }
 
   public getObjectsToDraw() {
@@ -147,233 +133,6 @@ export class LinkageEntity implements CanvasEntity {
     });
 
     return objects;
-  }
-
-  private _buildControlForPolygon(): void {
-    this._polygon.cornerStyle = "circle";
-    this._polygon.cornerColor = "rgba(255,255,255,0.5)";
-    this._polygon.lockMovementX = true;
-    this._polygon.lockMovementY = true;
-    this._polygon.controls = this._buildControlForPoints();
-  }
-
-  private _buildControlForPoints(): ControlMap {
-    const points = this._polygon.points;
-    if (typeof points === "undefined") {
-      throw new Error("Missing points");
-    }
-
-    const controlMap: ControlMap = {};
-
-    points.map((point, index) => {
-      const anchor = index > 0 ? index - 1 : points.length - 1;
-      const key = `P${index}`;
-      const control = new fabric.Control({
-        actionName: "modifyPolygon",
-        positionHandler: this._placeControllerAtPoint(point),
-        actionHandler: this._handleControllerMovement(anchor, index),
-      });
-
-      controlMap[key] = control;
-    });
-
-    return controlMap;
-  }
-
-  private _placeControllerAtPoint(
-    point: fabric.Point
-  ): (
-    dim: Coordinate,
-    finalMatrix: unknown,
-    fabricObject: fabric.Path,
-    currentControl: fabric.Control
-  ) => fabric.Point {
-    return (
-      _dim: Coordinate,
-      _finalMatrix: unknown,
-      fabricPolygon: fabric.Path,
-      _currentControl: fabric.Control
-    ) => {
-      const coordinate = {
-        x: point.x - fabricPolygon.pathOffset.x,
-        y: point.y - fabricPolygon.pathOffset.y,
-      };
-
-      const objectSpacePosition = new fabric.Point(coordinate.x, coordinate.y);
-
-      let totalTransformationMatrix: unknown[];
-
-      const objectToCanvasSpaceTransformationMatrix =
-        fabricPolygon.calcTransformMatrix();
-
-      if (!this._isNumberArray(objectToCanvasSpaceTransformationMatrix)) {
-        throw new Error("invalid transformation matrix");
-      }
-
-      if (fabricPolygon.canvas?.viewportTransform) {
-        totalTransformationMatrix = fabric.util.multiplyTransformMatrices(
-          fabricPolygon.canvas?.viewportTransform,
-          objectToCanvasSpaceTransformationMatrix
-        );
-      } else {
-        totalTransformationMatrix = objectToCanvasSpaceTransformationMatrix;
-      }
-
-      return fabric.util.transformPoint(
-        objectSpacePosition,
-        totalTransformationMatrix
-      );
-    };
-  }
-
-  private _handleControllerMovement(anchorIndex: number, pointIndex: number) {
-    return (
-      pointeventData: MouseEvent,
-      transform: fabric.Transform,
-      x: number,
-      y: number
-    ) => {
-      if (!(transform.target instanceof fabric.Polygon)) {
-        throw "Invalid object type";
-      }
-
-      const polygon = transform.target as PolygonWithSetPositionDimension;
-
-      if (typeof polygon.points === "undefined") {
-        throw "Missing points";
-      }
-
-      const referencePointBeforeModification = new fabric.Point(
-        polygon.points[anchorIndex].x - polygon.pathOffset.x,
-        polygon.points[anchorIndex].y - polygon.pathOffset.y
-      );
-
-      const canvasSpaceReferencePosition = fabric.util.transformPoint(
-        referencePointBeforeModification,
-        polygon.calcTransformMatrix()
-      );
-
-      const isMovementApplied = this._movePointOnControllerMovement(
-        pointeventData,
-        transform,
-        x,
-        y,
-        pointIndex
-      );
-
-      const referencePointAfterModification = new fabric.Point(
-        polygon.points[anchorIndex].x - polygon.pathOffset.x,
-        polygon.points[anchorIndex].y - polygon.pathOffset.y
-      );
-      const canvasSpaceReferencePositionAfterModification =
-        fabric.util.transformPoint(
-          referencePointAfterModification,
-          polygon.calcTransformMatrix()
-        );
-
-      const centerFinal = polygon.getCenterPoint();
-      const translation = canvasSpaceReferencePosition.subtract(
-        canvasSpaceReferencePositionAfterModification
-      );
-
-      polygon.setPositionByOrigin(
-        translation.add(centerFinal),
-        "center",
-        "center"
-      );
-
-      // temporary solution until fabric 6.0.0 exposes setDimensions
-      polygon._setPositionDimensions({});
-
-      return isMovementApplied;
-    };
-  }
-
-  private _updateBoundingBox(polygon: fabric.Polygon) {
-    const extendedPolygon = polygon as PolygonWithSetPositionDimension;
-    extendedPolygon._setPositionDimensions({});
-  }
-
-  private _movePointOnControllerMovement(
-    _pointeventData: MouseEvent,
-    transform: fabric.Transform,
-    x: number,
-    y: number,
-    pointIndex: number
-  ): boolean {
-    const polygon = transform.target;
-
-    if (!(polygon instanceof fabric.Polygon)) {
-      throw "Invalid object type";
-    }
-
-    if (!polygon.points) {
-      throw "Missing points";
-    }
-
-    const objectSpaceSize = this._getObjectSizeWithStroke(polygon);
-    const canvasSpaceSize = polygon._getTransformedDimensions();
-
-    const mouseLocalPosition = polygon.toLocalPoint(
-      new fabric.Point(x, y),
-      "center",
-      "center"
-    );
-
-    const finalPointPosition = {
-      x:
-        mouseLocalPosition.x * (objectSpaceSize.x / canvasSpaceSize.x) +
-        polygon.pathOffset.x,
-      y:
-        mouseLocalPosition.y * (objectSpaceSize.y / canvasSpaceSize.y) +
-        polygon.pathOffset.y,
-    };
-
-    polygon.points[pointIndex].x = finalPointPosition.x;
-    polygon.points[pointIndex].y = finalPointPosition.y;
-    polygon.dirty = true;
-
-    const origin = this._indexToNameMap.get(pointIndex);
-    if (typeof origin === "undefined") {
-      throw new Error("missing point");
-    }
-
-    this._eventMediator.updatePointPosition({
-      name: origin,
-      source: origin,
-      coordinate: {
-        x: finalPointPosition.x,
-        y: finalPointPosition.y,
-      },
-    });
-
-    return true;
-  }
-
-  private _getObjectSizeWithStroke(object: fabric.Object) {
-    const scaleX = object.scaleX ? object.scaleX : 1;
-    const scaleY = object.scaleY ? object.scaleY : 1;
-    const strokeWidth = object.strokeWidth ? object.strokeWidth : 0;
-
-    const stroke = new fabric.Point(
-      object.strokeUniform ? 1 / scaleX : 1,
-      object.strokeUniform ? 1 / scaleY : 1
-    ).multiply(strokeWidth);
-
-    const width = object.width ? object.width : 0;
-    const height = object.height ? object.height : 0;
-
-    return new fabric.Point(width + stroke.x, height + stroke.y);
-  }
-
-  private _isNumberArray(anyArray: unknown[]): anyArray is number[] {
-    anyArray.forEach((element) => {
-      if (typeof element !== "number") {
-        return false;
-      }
-    });
-
-    return true;
   }
 
   get name() {
@@ -417,16 +176,13 @@ export class LinkageEntity implements CanvasEntity {
     if (!this._polygon.points) {
       throw new Error("missing points in polygon");
     }
-
-    this._polygon.points.push(new fabric.Point(point.x, point.y));
     const index = this._polygon.points.length - 1;
+
+    this._polygon.addPoint(point);
 
     this._indexToNameMap.set(index, point.name);
     this._nameToIndexMap.set(point.name, index);
 
-    this._buildControlForPolygon();
-    this._polygon._setPositionDimensions({});
-    this._polygon.dirty = true;
     const pointIcon = this.buildPointIcon(point);
     this._nameToIconMap.set(point.name, [pointIcon]);
 
@@ -434,28 +190,20 @@ export class LinkageEntity implements CanvasEntity {
   }
 
   public deletePoint(point: Point) {
-    if (!this._polygon.points) {
-      throw new Error("missing points in polygon");
-    }
-
     const index = this._nameToIndexMap.get(point.name);
     if (!index) {
       throw new Error("point not found in polygon");
     }
 
+    this._polygon.deletePoint(point, index);
+
     const icons = this._nameToIconMap.get(point.name);
     if (!icons) {
       throw new Error("icons not found in polygon");
     }
-
-    this._polygon.points.splice(index, 1);
-    this.updateIndexAfterPointDeletion(point.name, index);
-
-    this._buildControlForPolygon();
-    this._polygon._setPositionDimensions({});
-    this._polygon.dirty = true;
-
     this._nameToIconMap.delete(point.name);
+
+    this.updateIndexAfterPointDeletion(point.name, index);
 
     return icons;
   }
