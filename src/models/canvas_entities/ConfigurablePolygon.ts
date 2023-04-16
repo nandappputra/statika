@@ -357,7 +357,27 @@ export class ConfigurablePolygon implements CanvasEntity {
     return force;
   }
 
-public addPoint(point: Point) {
+  public removeExternalForce(location: Point, externalForce: ExternalForce) {
+    const icons = this._nameToIconMap.get(location.name);
+
+    if (!icons) {
+      throw new Error("icons not found");
+    }
+
+    const force = icons.find((icon) => icon.name === externalForce.name);
+    if (!force) {
+      throw new Error("force not found");
+    }
+
+    this._nameToIconMap.set(
+      location.name,
+      icons.filter((icon) => icon.name !== externalForce.name)
+    );
+
+    return force;
+  }
+
+  public addPoint(point: Point) {
     if (!this._polygon.points) {
       throw new Error("missing points in polygon");
     }

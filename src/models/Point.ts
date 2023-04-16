@@ -86,6 +86,12 @@ export class Point {
     this._externalForces.push(externalForce);
   }
 
+  removeExternalForce(externalForce: ExternalForce) {
+    this._externalForces = this.externalForces.filter(
+      (force) => force.name !== externalForce.name
+    );
+  }
+
   hasExternalForce(): boolean {
     return this._externalForces.length !== 0;
   }

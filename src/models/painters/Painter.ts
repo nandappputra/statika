@@ -128,6 +128,27 @@ export class Painter implements EventMediator {
     }
   }
 
+  public removeExternalLoad(
+    location: Point | Connection,
+    externalLoad: ExternalForce
+  ) {
+    if (location instanceof Point) {
+      const affectedEntity = this._pointToEntity.get(location.name);
+      if (typeof affectedEntity === "undefined") {
+        throw new Error("unrecognized point");
+      }
+
+      affectedEntity.forEach((entity) => {
+        if (entity instanceof ConfigurablePolygon) {
+          const arrow = entity.removeExternalForce(location, externalLoad);
+          this._canvas.remove(...arrow.getObjectsToDraw());
+        }
+      });
+    }
+
+    this._canvas.renderAll();
+  }
+
   private _updateCanvasEntity(movePointEvent: MovePointEvent) {
     const affectedEntity = this._pointToEntity.get(movePointEvent.name);
     if (typeof affectedEntity === "undefined") {
