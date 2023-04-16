@@ -5,7 +5,7 @@ import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
 
-export class ConfigurableConnection implements CanvasEntity {
+export class ConnectionEntity implements CanvasEntity {
   private _name: string;
   private _connection: Connection;
   private _eventMediator: EventMediator;

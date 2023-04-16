@@ -21,7 +21,7 @@ interface PolygonWithSetPositionDimension extends fabric.Polygon {
   _setPositionDimensions(argument: object): unknown;
 }
 
-export class ConfigurablePolygon implements CanvasEntity {
+export class LinkageEntity implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;

@@ -1,8 +1,8 @@
 import { Linkage } from "../diagram_elements/Linkage";
-import { ConfigurablePolygon } from "../canvas_entities/ConfigurablePolygon";
+import { LinkageEntity } from "../canvas_entities/LinkageEntity";
 import { MovePointEvent } from "../Event";
 import { Connection } from "../diagram_elements/connections/Connection";
-import { ConfigurableConnection } from "../canvas_entities/ConfigurableConnection";
+import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
 import { USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
@@ -31,8 +31,8 @@ export class Painter implements EventMediator {
   private _pointNameToPoint: Map<string, Point>;
   private _entityConfig: EntityConfig;
 
-  private _pointNameToPolygon: Map<string, ConfigurablePolygon>;
-  private _pointNameToConnection: Map<string, ConfigurableConnection>;
+  private _pointNameToPolygon: Map<string, LinkageEntity>;
+  private _pointNameToConnection: Map<string, ConnectionEntity>;
 
   constructor(
     canvas: fabric.Canvas,
@@ -45,8 +45,8 @@ export class Painter implements EventMediator {
     this._pointNameToPoint = new Map<string, Point>();
     this._entityConfig = entityConfig;
 
-    this._pointNameToPolygon = new Map<string, ConfigurablePolygon>();
-    this._pointNameToConnection = new Map<string, ConfigurableConnection>();
+    this._pointNameToPolygon = new Map<string, LinkageEntity>();
+    this._pointNameToConnection = new Map<string, ConnectionEntity>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
   }
@@ -83,9 +83,9 @@ export class Painter implements EventMediator {
   }
 
   private _addCanvasEntityToMap(key: string, canvasEntity: CanvasEntity) {
-    if (canvasEntity instanceof ConfigurablePolygon) {
+    if (canvasEntity instanceof LinkageEntity) {
       this._pointNameToPolygon.set(key, canvasEntity);
-    } else if (canvasEntity instanceof ConfigurableConnection) {
+    } else if (canvasEntity instanceof ConnectionEntity) {
       this._pointNameToConnection.set(key, canvasEntity);
     }
   }
@@ -156,13 +156,13 @@ export class Painter implements EventMediator {
     let entity: CanvasEntity;
 
     if (diagramElement instanceof Linkage) {
-      entity = new ConfigurablePolygon(
+      entity = new LinkageEntity(
         diagramElement,
         this,
         this._entityConfig.linkageConfig
       );
     } else if (diagramElement instanceof Connection) {
-      entity = new ConfigurableConnection(diagramElement, this);
+      entity = new ConnectionEntity(diagramElement, this);
     } else {
       throw new Error("unknown type of element");
     }
@@ -193,9 +193,9 @@ export class Painter implements EventMediator {
     this._entityNameToEntity.delete(diagramElement.name);
 
     diagramElement.points.forEach((point) => {
-      if (entity instanceof ConfigurablePolygon) {
+      if (entity instanceof LinkageEntity) {
         this._pointNameToPolygon.delete(point.name);
-      } else if (entity instanceof ConfigurableConnection) {
+      } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnection.delete(point.name);
       }
     });
@@ -217,7 +217,7 @@ export class Painter implements EventMediator {
     this._pointNameToPoint.set(point.name, point);
 
     const entity = this._entityNameToEntity.get(linkage.name);
-    if (!entity || !(entity instanceof ConfigurablePolygon)) {
+    if (!entity || !(entity instanceof LinkageEntity)) {
       throw new Error("missing or invalid entity found");
     }
 
