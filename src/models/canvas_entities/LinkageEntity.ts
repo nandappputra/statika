@@ -7,6 +7,9 @@ import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
 import { ExternalForce } from "../ExternalForce";
 import { ConfigurablePolygon } from "./ConfigurablePolygon";
+import { RADIAN_TO_DEGREE_MULTIPLIER } from "../../utils/Constants";
+
+const ARROW_ANGLE_ADJUSTMENT = 90;
 
 export class LinkageEntity implements CanvasEntity {
   private _name: string;
@@ -72,10 +75,9 @@ export class LinkageEntity implements CanvasEntity {
       originX: "center",
       originY: "bottom",
       angle:
-        (Math.atan2(parseFloat(force.symbolF_y), parseFloat(force.symbolF_x)) *
-          180) /
-          3.14 -
-        90,
+        Math.atan2(parseFloat(force.symbolF_y), parseFloat(force.symbolF_x)) *
+          RADIAN_TO_DEGREE_MULTIPLIER -
+        ARROW_ANGLE_ADJUSTMENT,
       left: point.x,
       top: point.y,
       lockMovementX: true,
