@@ -13,6 +13,7 @@ import { Point } from "../Point";
 import { IPolylineOptions } from "fabric/fabric-impl";
 import { ICircleOptions } from "fabric/fabric-impl";
 import { ExternalForce } from "../ExternalForce";
+import { EventSubscriber } from "./EventTrigger";
 
 interface NamedObject {
   name: string;
@@ -26,6 +27,7 @@ export interface EntityConfig {
 
 export class Painter implements EventMediator {
   private _canvas: fabric.Canvas;
+  private _eventSubscribers: EventSubscriber[];
   private _entityNameToEntity: Map<string, CanvasEntity>;
   private _painterFeatures: Feature[];
   private _pointNameToPoint: Map<string, Point>;
@@ -36,10 +38,12 @@ export class Painter implements EventMediator {
 
   constructor(
     canvas: fabric.Canvas,
+    eventSubscriber: EventSubscriber[],
     painterFeatures: Feature[],
     entityConfig: EntityConfig
   ) {
     this._canvas = canvas;
+    this._eventSubscribers = eventSubscriber;
     this._entityNameToEntity = new Map<string, CanvasEntity>();
     this._painterFeatures = painterFeatures;
     this._pointNameToPoint = new Map<string, Point>();
@@ -100,6 +104,10 @@ export class Painter implements EventMediator {
     pointToUpdate.y = movePointEvent.coordinate.y;
 
     this._updateCanvasEntity(movePointEvent);
+
+    this._eventSubscribers.forEach((subscriber) => {
+      subscriber.notifyMovePointEvent(movePointEvent);
+    });
 
     this._painterFeatures.forEach((feature) => {
       feature.handlePointUpdate(this, movePointEvent);
