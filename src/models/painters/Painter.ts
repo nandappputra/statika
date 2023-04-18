@@ -53,6 +53,23 @@ export class Painter implements EventMediator {
     this._pointNameToConnection = new Map<string, ConnectionEntity>();
 
     this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
+    this._canvas.on("selection:updated", (event) =>
+      this.handleObjectSelectionEvent(event)
+    );
+    this._canvas.on("selection:created", (event) =>
+      this.handleObjectSelectionEvent(event)
+    );
+  }
+
+  private handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
+    const metadata: unknown = this._canvas.getActiveObject()?.data;
+    if (!this.isNamedObject(metadata)) {
+      return;
+    }
+
+    this._eventSubscribers.forEach((subscriber) => {
+      subscriber.notifyObjectSelectionEvent({ name: metadata.name });
+    });
   }
 
   private handleMouseEvent(event: IEvent<MouseEvent>) {

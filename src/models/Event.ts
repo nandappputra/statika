@@ -5,3 +5,7 @@ export interface MovePointEvent {
   source: string;
   coordinate: Coordinate;
 }
+
+export interface ObjectSelectionEvent {
+  name: string;
+}
