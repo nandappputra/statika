@@ -62,13 +62,14 @@ export class Painter implements EventMediator {
   }
 
   private handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
-    const metadata: unknown = this._canvas.getActiveObject()?.data;
-    if (!this.isNamedObject(metadata)) {
+    const name: unknown = this._canvas.getActiveObject()?.data?.name;
+
+    if (!(typeof name === "string")) {
       return;
     }
 
     this._eventSubscribers.forEach((subscriber) => {
-      subscriber.notifyObjectSelectionEvent({ name: metadata.name });
+      subscriber.notifyObjectSelectionEvent({ name });
     });
   }
 

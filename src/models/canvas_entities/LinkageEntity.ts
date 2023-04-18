@@ -53,6 +53,7 @@ export class LinkageEntity implements CanvasEntity {
       this._eventMediator,
       options
     );
+    this._polygon.data = { name: this._name };
   }
 
   private buildArrowIcon(force: ExternalForce, point: Point) {
