@@ -68,4 +68,8 @@ export class ConnectionEntity implements CanvasEntity {
 
     this._icon.data.pointName = this._connection.points[0].name;
   }
+
+  public getFocusableObject(): fabric.Object {
+    return this._icon;
+  }
 }

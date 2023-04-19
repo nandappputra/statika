@@ -6,4 +6,5 @@ export interface CanvasEntity {
 
   updatePosition(movePointEvent: MovePointEvent): void;
   getObjectsToDraw(): (fabric.Object | fabric.Group)[];
+  getFocusableObject(): fabric.Object;
 }

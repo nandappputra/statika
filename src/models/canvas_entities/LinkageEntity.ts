@@ -240,4 +240,8 @@ export class LinkageEntity implements CanvasEntity {
     this._nameToIndexMap = newNameToIndexMap;
     this._indexToNameMap = newIndexToNameMap;
   }
+
+  public getFocusableObject(): fabric.Object {
+    return this._polygon;
+  }
 }

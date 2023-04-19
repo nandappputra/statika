@@ -91,6 +91,16 @@ export class Painter implements EventMediator {
     return [...this._entityNameToEntity.keys()];
   }
 
+  public setFocus(name: string) {
+    const entity = this._entityNameToEntity.get(name);
+    if (!entity) {
+      throw new Error("failed to set focus");
+    }
+
+    this._canvas.setActiveObject(entity.getFocusableObject());
+    this._canvas.renderAll();
+  }
+
   private handleMouseEvent(event: IEvent<MouseEvent>) {
     const metadata: unknown = event.target?.data;
     const coordinate = event.target?.getCenterPoint();

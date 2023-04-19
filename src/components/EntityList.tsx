@@ -6,9 +6,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { SyntheticEvent } from "react";
 
 type Props = {
   entityList: string[];
+  onClick: (name: string) => void;
 };
 
 function EntityList(props: Props) {
@@ -54,7 +56,7 @@ function EntityList(props: Props) {
         {props.entityList.map((entity) => {
           return (
             <ListItem key={entity} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={() => props.onClick(entity)}>
                 <ListItemText primary={entity} />
               </ListItemButton>
             </ListItem>
