@@ -305,4 +305,8 @@ export class Painter implements EventMediator {
       feature.handlePointRemoval(this, linkage, point)
     );
   }
+
+  public getCanvasCenter() {
+    return this._canvas.getCenter();
+  }
 }
