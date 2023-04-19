@@ -87,6 +87,10 @@ export class Painter implements EventMediator {
     });
   }
 
+  public getAllEntityName() {
+    return [...this._entityNameToEntity.keys()];
+  }
+
   private handleMouseEvent(event: IEvent<MouseEvent>) {
     const metadata: unknown = event.target?.data;
     const coordinate = event.target?.getCenterPoint();

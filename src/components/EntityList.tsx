@@ -7,7 +7,11 @@ import {
   Typography,
 } from "@mui/material";
 
-function EntityList() {
+type Props = {
+  entityList: string[];
+};
+
+function EntityList(props: Props) {
   return (
     <Container
       disableGutters
@@ -47,36 +51,15 @@ function EntityList() {
           scrollbarWidth: "none",
         }}
       >
-        <ListItem disablePadding disableGutters>
-          <ListItemButton>
-            <ListItemText primary="L1" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding disableGutters>
-          <ListItemButton>
-            <ListItemText primary="L2" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding disableGutters>
-          <ListItemButton>
-            <ListItemText primary="L2" />
-          </ListItemButton>
-        </ListItem>{" "}
-        <ListItem disablePadding disableGutters>
-          <ListItemButton>
-            <ListItemText primary="L2" />
-          </ListItemButton>
-        </ListItem>{" "}
-        <ListItem disablePadding disableGutters>
-          <ListItemButton>
-            <ListItemText primary="L2" />
-          </ListItemButton>
-        </ListItem>{" "}
-        <ListItem disablePadding disableGutters>
-          <ListItemButton>
-            <ListItemText primary="L2" />
-          </ListItemButton>
-        </ListItem>
+        {props.entityList.map((entity) => {
+          return (
+            <ListItem key={entity} disablePadding>
+              <ListItemButton>
+                <ListItemText primary={entity} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </Container>
   );
