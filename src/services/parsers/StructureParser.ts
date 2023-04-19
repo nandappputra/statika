@@ -7,13 +7,7 @@ import { FreeConnection } from "../../models/diagram_elements/connections/FreeCo
 import { ExternalForce } from "../../models/ExternalForce";
 import { Linkage } from "../../models/diagram_elements/Linkage";
 import { Structure } from "../../models/Structure";
-
-export enum ConnectionType {
-  PIN = "PIN",
-  FIXED = "FIXED",
-  FREE = "FREE",
-  HORIZONTAL_ROLLER = "HORIZONTAL_ROLLER",
-}
+import { ConnectionType } from "../../utils/Constants";
 
 interface PointJson {
   name: string;

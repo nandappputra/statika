@@ -1,18 +1,21 @@
+import { ElementFactory } from "../../../factories/ElementFactory";
+import { ConnectionType } from "../../../utils/Constants";
 import { Coordinate } from "../../Coordinate";
 import { MovePointEvent } from "../../Event";
 import { Point } from "../../Point";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { Linkage } from "../../diagram_elements/Linkage";
 import { Connection } from "../../diagram_elements/connections/Connection";
-import { PinConnection } from "../../diagram_elements/connections/PinConnection";
 import { Painter } from "../Painter";
 import { Feature } from "./Feature";
 
 export class PointSnapFeature implements Feature {
   private _freePoints: Set<string>;
+  private _elementFactory: ElementFactory;
 
-  constructor() {
+  constructor(elementFactory: ElementFactory) {
     this._freePoints = new Set<string>();
+    this._elementFactory = elementFactory;
   }
 
   handleElementAddition(painter: Painter, element: DiagramElement): void {
@@ -60,7 +63,10 @@ export class PointSnapFeature implements Feature {
               throw new Error("mising reference point");
             }
 
-            const newConnection = new PinConnection(`${p1}-${p2}`, [p1, p2]);
+            const newConnection = this._elementFactory.buildConnection(
+              [p1, p2],
+              ConnectionType.PIN
+            );
 
             painter.addElement(newConnection);
             console.log("SNAPPING:", p1.name, p2.name);
