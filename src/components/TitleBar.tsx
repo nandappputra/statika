@@ -5,7 +5,6 @@ import Container from "@mui/material/Container";
 function TitleBar(): JSX.Element {
   return (
     <AppBar
-      position="sticky"
       sx={{
         backgroundColor: "white",
         boxShadow: "none",
@@ -13,15 +12,19 @@ function TitleBar(): JSX.Element {
         borderWidth: "3px",
         borderStyle: "solid",
         borderColor: "black",
+        position: "fixed",
+        left: "1vw",
+        maxWidth: "96.5vw",
+        top: "1vh",
       }}
     >
-      <Container maxWidth="xl">
+      <Container>
         <Typography
           variant="h6"
           noWrap
           sx={{
             mr: 2,
-            display: { xs: "none", md: "flex" },
+            display: "flex",
             fontFamily: "sans-serif",
             fontWeight: 700,
             color: "black",

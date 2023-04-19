@@ -6,7 +6,6 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { SyntheticEvent } from "react";
 
 type Props = {
   entityList: string[];
@@ -16,6 +15,7 @@ type Props = {
 function EntityList(props: Props) {
   return (
     <Container
+      maxWidth={false}
       disableGutters
       sx={{
         backgroundColor: "white",
@@ -25,9 +25,10 @@ function EntityList(props: Props) {
         borderStyle: "solid",
         borderColor: "black",
         maxWidth: "200px",
-        maxHeight: "300px",
-        p: 0,
-        scrollbarWidth: "thin",
+        maxHeight: "200px",
+        position: "fixed",
+        left: "1vw",
+        top: "10vh",
       }}
     >
       <Typography
@@ -35,20 +36,23 @@ function EntityList(props: Props) {
         noWrap
         sx={{
           mr: 2,
-          display: { xs: "none", md: "flex" },
+          display: "flex",
           fontFamily: "sans-serif",
           fontWeight: 700,
           color: "black",
           textDecoration: "none",
+          justifyContent: "center",
+          width: "100%",
         }}
       >
         Elements
       </Typography>
       <List
         sx={{
+          borderTop: "3px black solid",
           maxHeight: 150,
           padding: 0,
-          margin: "0px",
+          margin: "5px 0px",
           overflow: "auto",
           scrollbarWidth: "none",
         }}
