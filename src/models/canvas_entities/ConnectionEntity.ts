@@ -4,6 +4,7 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
+import { ElementType } from "../../utils/Constants";
 
 export class ConnectionEntity implements CanvasEntity {
   private _name: string;
@@ -28,7 +29,11 @@ export class ConnectionEntity implements CanvasEntity {
       originY: "center",
       left: connection.points[0].x,
       top: connection.points[0].y,
-      data: { name: connection.name, pointName: connection.points[0].name },
+      data: {
+        name: connection.name,
+        pointName: connection.points[0].name,
+        type: ElementType.CONNECTION,
+      },
       hasControls: false,
     });
   }

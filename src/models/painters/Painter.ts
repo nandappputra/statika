@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { Connection } from "../diagram_elements/connections/Connection";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
-import { USER } from "../../utils/Constants";
+import { ElementType, USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
@@ -63,13 +63,27 @@ export class Painter implements EventMediator {
 
   private handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
     const name: unknown = this._canvas.getActiveObject()?.data?.name;
+    const elementType: unknown = this._canvas.getActiveObject()?.data?.type;
 
-    if (!(typeof name === "string")) {
+    if (
+      !(typeof name === "string") ||
+      !(typeof elementType === "string") ||
+      !Object.values<string>(ElementType).includes(elementType)
+    ) {
+      return;
+    }
+
+    const canvasEntity = this._entityNameToEntity.get(name);
+
+    if (!canvasEntity) {
       return;
     }
 
     this._eventSubscribers.forEach((subscriber) => {
-      subscriber.notifyObjectSelectionEvent({ name });
+      subscriber.notifyObjectSelectionEvent({
+        name,
+        type: elementType as ElementType,
+      });
     });
   }
 

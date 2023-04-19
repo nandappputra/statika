@@ -1,3 +1,4 @@
+import { ElementType } from "../utils/Constants";
 import { Coordinate } from "./Coordinate";
 
 export interface MovePointEvent {
@@ -8,4 +9,5 @@ export interface MovePointEvent {
 
 export interface ObjectSelectionEvent {
   name: string;
+  type: ElementType;
 }

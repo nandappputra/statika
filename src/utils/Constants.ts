@@ -6,6 +6,7 @@ export enum ElementType {
   CONNECTION = "C",
   POINT = "P",
   FORCE = "F",
+  NONE = "",
 }
 
 export enum ConnectionType {

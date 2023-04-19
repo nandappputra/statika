@@ -7,7 +7,10 @@ import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
 import { ExternalForce } from "../ExternalForce";
 import { ConfigurablePolygon } from "./ConfigurablePolygon";
-import { RADIAN_TO_DEGREE_MULTIPLIER } from "../../utils/Constants";
+import {
+  ElementType,
+  RADIAN_TO_DEGREE_MULTIPLIER,
+} from "../../utils/Constants";
 
 const ARROW_ANGLE_ADJUSTMENT = 90;
 
@@ -53,7 +56,7 @@ export class LinkageEntity implements CanvasEntity {
       this._eventMediator,
       options
     );
-    this._polygon.data = { name: this._name };
+    this._polygon.data = { name: this._name, type: ElementType.LINKAGE };
   }
 
   private buildArrowIcon(force: ExternalForce, point: Point) {
@@ -84,7 +87,7 @@ export class LinkageEntity implements CanvasEntity {
       lockMovementX: true,
       lockMovementY: true,
       hasControls: false,
-      data: { name: force.name },
+      data: { name: force.name, type: ElementType.FORCE },
     });
 
     return arrow;
