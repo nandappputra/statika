@@ -82,7 +82,7 @@ export class Painter implements EventMediator {
     this._eventSubscribers.forEach((subscriber) => {
       subscriber.notifyObjectSelectionEvent({
         name,
-        type: elementType as ElementType,
+        entity: canvasEntity,
       });
     });
   }

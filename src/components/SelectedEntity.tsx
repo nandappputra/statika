@@ -1,21 +1,17 @@
 import { Container, Typography } from "@mui/material";
-import { ElementType } from "../utils/Constants";
+import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
+import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
+import LinkageSettings from "./LinkageSettings";
 
 type Props = {
   name: string;
-  type: ElementType;
+  entity: CanvasEntity | null;
 };
 
 function SelectedEntity(props: Props) {
-  const longType = new Map<string, string>();
-  longType.set(ElementType.CONNECTION, "Connection");
-  longType.set(ElementType.FORCE, "Force");
-  longType.set(ElementType.LINKAGE, "Linkage");
-  longType.set(ElementType.POINT, "Point");
-
   return (
     <>
-      {!props.name ? (
+      {!props.entity ? (
         <></>
       ) : (
         <Container
@@ -28,7 +24,7 @@ function SelectedEntity(props: Props) {
             borderWidth: "3px",
             borderStyle: "solid",
             borderColor: "black",
-            maxWidth: "200px",
+            maxWidth: "300px",
             maxHeight: "500px",
             position: "fixed",
             right: "1vw",
@@ -54,15 +50,19 @@ function SelectedEntity(props: Props) {
             noWrap
             sx={{
               display: "flex",
-              fontWeight: 700,
               color: "grey",
               textDecoration: "none",
               justifyContent: "center",
               width: "100%",
             }}
           >
-            {longType.get(props.type)}
+            {props.entity.constructor.name}
           </Typography>
+          {props.entity instanceof LinkageEntity ? (
+            <LinkageSettings linkage={props.entity} />
+          ) : (
+            <></>
+          )}
         </Container>
       )}
     </>

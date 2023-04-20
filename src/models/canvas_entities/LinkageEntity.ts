@@ -21,6 +21,7 @@ export class LinkageEntity implements CanvasEntity {
   private _nameToIconMap: Map<string, (fabric.Group | fabric.Object)[]>;
   private _polygon: ConfigurablePolygon;
   private _eventMediator: EventMediator;
+  private _linkage: Linkage;
 
   constructor(
     linkage: Linkage,
@@ -28,6 +29,7 @@ export class LinkageEntity implements CanvasEntity {
     options: fabric.IPolylineOptions | undefined
   ) {
     this._name = linkage.name;
+    this._linkage = linkage;
     this._nameToIndexMap = new Map<string, number>();
     this._indexToNameMap = new Map<number, string>();
     this._nameToIconMap = new Map<string, (fabric.Group | fabric.Object)[]>();
@@ -243,5 +245,9 @@ export class LinkageEntity implements CanvasEntity {
 
   public getFocusableObject(): fabric.Object {
     return this._polygon;
+  }
+
+  public getAllPoints(): Point[] {
+    return this._linkage.points;
   }
 }

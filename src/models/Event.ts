@@ -1,5 +1,5 @@
-import { ElementType } from "../utils/Constants";
 import { Coordinate } from "./Coordinate";
+import { CanvasEntity } from "./canvas_entities/CanvasEntity";
 
 export interface MovePointEvent {
   name: string;
@@ -9,5 +9,5 @@ export interface MovePointEvent {
 
 export interface ObjectSelectionEvent {
   name: string;
-  type: ElementType;
+  entity: CanvasEntity;
 }
