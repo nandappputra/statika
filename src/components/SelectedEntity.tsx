@@ -1,7 +1,9 @@
 import { Container, Typography } from "@mui/material";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
-import LinkageSettings from "./LinkageSettings";
+import LinkageSetting from "./LinkageSetting";
+import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
+import ConnectionSetting from "./ConnectionSetting";
 
 type Props = {
   name: string;
@@ -59,7 +61,9 @@ function SelectedEntity(props: Props) {
             {props.entity.constructor.name}
           </Typography>
           {props.entity instanceof LinkageEntity ? (
-            <LinkageSettings linkage={props.entity} />
+            <LinkageSetting linkage={props.entity} />
+          ) : props.entity instanceof ConnectionEntity ? (
+            <ConnectionSetting connection={props.entity} />
           ) : (
             <></>
           )}

@@ -17,7 +17,7 @@ type Props = {
   linkage: LinkageEntity;
 };
 
-function LinkageSettings(props: Props) {
+function LinkageSetting(props: Props) {
   return (
     <div>
       <List
@@ -107,4 +107,4 @@ function LinkageSettings(props: Props) {
   );
 }
 
-export default LinkageSettings;
+export default LinkageSetting;

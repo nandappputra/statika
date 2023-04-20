@@ -61,6 +61,18 @@ export class ConnectionEntity implements CanvasEntity {
     return this._name;
   }
 
+  get x() {
+    return this._connection.points[0].x;
+  }
+
+  get y() {
+    return this._connection.points[0].y;
+  }
+
+  public getAllPoints() {
+    return this._connection.points;
+  }
+
   public deletePoint(_point: Point) {
     if (!this._icon.data?.pointName) {
       throw new Error("missing pointName in metadata");
