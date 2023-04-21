@@ -80,15 +80,11 @@ export class PointSnapFeature implements Feature {
   }
 
   handleObjectDrop(painter: Painter, movePointEvent: objectDropEvent): void {
-    console.log("CHECKING");
     const entity = movePointEvent.entity;
-    console.log(movePointEvent);
-    console.log(this._freePoints);
     if (
       !(entity instanceof PointEntity) ||
       !this._freePoints.has(movePointEvent.name)
     ) {
-      console.log("DIDNT PASS");
       return;
     }
 

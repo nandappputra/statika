@@ -395,6 +395,7 @@ export class Painter implements EventMediator {
       throw new Error("unrecognized point");
     }
 
+    this._entityNameToEntity.delete(point.name);
     this._pointNameToPointEntity.delete(point.name);
     this._canvas.remove(...affectedPoint.getObjectsToDraw());
 
