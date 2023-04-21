@@ -17,6 +17,7 @@ type Props = {
   linkage: LinkageEntity;
   removeEntity: () => void;
   addPointToLinkage: () => void;
+  removePointFromLinkage: (name: string) => void;
 };
 
 function LinkageSetting(props: Props) {
@@ -55,7 +56,9 @@ function LinkageSetting(props: Props) {
                 maxWidth: "25%",
               }}
             />
-            <IconButton>
+            <IconButton
+              onClick={() => props.removePointFromLinkage(point.name)}
+            >
               <HighlightOffIcon />
             </IconButton>
           </ListItem>
