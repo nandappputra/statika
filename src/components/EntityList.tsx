@@ -1,4 +1,5 @@
 import {
+  Button,
   Container,
   List,
   ListItem,
@@ -7,9 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
 type Props = {
   entityList: string[];
   onClick: (name: string) => void;
+  buildLinkage: () => void;
 };
 
 function EntityList(props: Props) {
@@ -25,12 +29,33 @@ function EntityList(props: Props) {
         borderStyle: "solid",
         borderColor: "black",
         maxWidth: "200px",
-        maxHeight: "200px",
         position: "fixed",
         left: "1vw",
-        top: "10vh",
+        top: "7vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
       }}
     >
+      <Button
+        startIcon={<AddCircleOutlineIcon />}
+        onClick={props.buildLinkage}
+        sx={{
+          backgroundColor: "white",
+          boxShadow: "none",
+          borderRadius: "0.5em",
+          borderWidth: "3px",
+          borderStyle: "solid",
+          borderColor: "black",
+          textTransform: "none",
+          fontFamily: "sans-serif",
+          fontWeight: 700,
+          color: "black",
+          margin: "1em",
+        }}
+      >
+        Add linkage
+      </Button>
       <Typography
         variant="h6"
         noWrap
@@ -50,14 +75,14 @@ function EntityList(props: Props) {
       <List
         sx={{
           borderTop: "3px black solid",
-          maxHeight: 150,
+          maxHeight: "70vh",
+          margin: "5px 0",
           padding: 0,
-          margin: "5px 0px",
           overflow: "auto",
           scrollbarWidth: "none",
         }}
       >
-        {props.entityList.map((entity) => {
+        {[...props.entityList].reverse().map((entity) => {
           return (
             <ListItem key={entity} disablePadding>
               <ListItemButton onClick={() => props.onClick(entity)}>

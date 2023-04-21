@@ -22,16 +22,16 @@ export class EntityListFeature implements Feature {
   }
 
   handlePointAddition(
-    _painter: Painter,
+    painter: Painter,
     _linkage: Linkage,
     _point: Point
-  ): void {}
+  ): void {
+    this._setElementList(painter.getAllEntityName());
+  }
 
-  handlePointRemoval(
-    _painter: Painter,
-    _linkage: Linkage,
-    _point: Point
-  ): void {}
+  handlePointRemoval(painter: Painter, _linkage: Linkage, _point: Point): void {
+    this._setElementList(painter.getAllEntityName());
+  }
 
   handlePointUpdate(_painter: Painter, _movePointEvent: MovePointEvent): void {}
 

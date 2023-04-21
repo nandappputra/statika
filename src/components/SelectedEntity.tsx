@@ -30,7 +30,7 @@ function SelectedEntity(props: Props) {
             maxHeight: "500px",
             position: "fixed",
             right: "1vw",
-            top: "10vh",
+            top: "7vh",
           }}
         >
           <Typography
