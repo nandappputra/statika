@@ -11,3 +11,8 @@ export interface ObjectSelectionEvent {
   name: string;
   entity: CanvasEntity;
 }
+
+export interface objectDropEvent {
+  name: string;
+  entity: CanvasEntity;
+}

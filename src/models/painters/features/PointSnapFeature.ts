@@ -1,8 +1,9 @@
 import { ElementFactory } from "../../../factories/ElementFactory";
 import { ConnectionType } from "../../../utils/Constants";
 import { Coordinate } from "../../Coordinate";
-import { MovePointEvent } from "../../Event";
+import { MovePointEvent, objectDropEvent } from "../../Event";
 import { Point } from "../../Point";
+import { PointEntity } from "../../canvas_entities/PointEntity";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { Linkage } from "../../diagram_elements/Linkage";
 import { Connection } from "../../diagram_elements/connections/Connection";
@@ -54,7 +55,48 @@ export class PointSnapFeature implements Feature {
             this.distance(movePointEvent.coordinate, {
               x: referencePoint.x,
               y: referencePoint.y,
-            }) < 10
+            }) < 20
+          ) {
+            const p1 = painter.getPoint(movePointEvent.name);
+            const p2 = referencePoint;
+
+            if (!p1) {
+              throw new Error("mising reference point");
+            }
+
+            console.log("ABLE TO COMBINE:", p1.name, p2.name);
+            added = true;
+          }
+        }
+      });
+    }
+  }
+
+  handleObjectDrop(painter: Painter, movePointEvent: objectDropEvent): void {
+    const entity = movePointEvent.entity;
+    if (!(entity instanceof PointEntity)) {
+      return;
+    }
+
+    if (this._freePoints.has(movePointEvent.name)) {
+      let added = false;
+      this._freePoints.forEach((point) => {
+        if (!added) {
+          const referencePoint = painter.getPoint(point);
+
+          if (!referencePoint) {
+            throw new Error("mising reference point");
+          }
+
+          if (
+            movePointEvent.name != point &&
+            this.distance(
+              { x: entity.getElement().x, y: entity.getElement().y },
+              {
+                x: referencePoint.x,
+                y: referencePoint.y,
+              }
+            ) < 20
           ) {
             const p1 = painter.getPoint(movePointEvent.name);
             const p2 = referencePoint;
@@ -64,13 +106,18 @@ export class PointSnapFeature implements Feature {
             }
 
             const newConnection = this._elementFactory.buildConnection(
-              [p1, p2],
+              [p2, p1],
               ConnectionType.PIN
             );
 
             painter.addElement(newConnection);
-            console.log("SNAPPING:", p1.name, p2.name);
             added = true;
+
+            painter.updatePointPosition({
+              name: p1.name,
+              source: newConnection.name,
+              coordinate: { x: p2.x, y: p2.y },
+            });
           }
         }
       });

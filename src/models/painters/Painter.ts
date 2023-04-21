@@ -43,6 +43,8 @@ export class Painter implements EventMediator {
   >;
   private _pointNameToPointEntity: Map<string, PointEntity>;
 
+  private _isDragging = false;
+
   constructor(
     canvas: fabric.Canvas,
     eventSubscriber: EventSubscriber[],
@@ -64,7 +66,10 @@ export class Painter implements EventMediator {
     >();
     this._pointNameToPointEntity = new Map<string, PointEntity>();
 
-    this._canvas.on("object:moving", (event) => this.handleMouseEvent(event));
+    this._canvas.on("object:moving", (event) =>
+      this.handleObjectMotionEvent(event)
+    );
+    this._canvas.on("mouse:up", (event) => this.handleMouseUpEvent(event));
     this._canvas.on("selection:updated", (event) =>
       this.handleObjectSelectionEvent(event)
     );
@@ -74,6 +79,34 @@ export class Painter implements EventMediator {
     this._canvas.on("selection:cleared", () =>
       this.handleObjectSelectionClearEvent()
     );
+  }
+
+  private handleMouseUpEvent(_event: IEvent<MouseEvent>) {
+    if (this._isDragging) {
+      const name: unknown = this._canvas.getActiveObject()?.data?.name;
+      const elementType: unknown = this._canvas.getActiveObject()?.data?.type;
+
+      if (
+        !(typeof name === "string") ||
+        !(typeof elementType === "string") ||
+        !Object.values<string>(ElementType).includes(elementType)
+      ) {
+        return;
+      }
+
+      const canvasEntity = this._entityNameToEntity.get(name);
+      if (!canvasEntity) {
+        return;
+      }
+
+      this._painterFeatures.forEach((feature) =>
+        feature.handleObjectDrop(this, {
+          name,
+          entity: canvasEntity,
+        })
+      );
+      this._isDragging = false;
+    }
   }
 
   private handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
@@ -102,6 +135,7 @@ export class Painter implements EventMediator {
   }
 
   private handleObjectSelectionClearEvent() {
+    this._isDragging = false;
     this._eventSubscribers.forEach((subscriber) => {
       subscriber.notifyObjectSelectionClearEvent();
     });
@@ -121,7 +155,8 @@ export class Painter implements EventMediator {
     this._canvas.renderAll();
   }
 
-  private handleMouseEvent(event: IEvent<MouseEvent>) {
+  private handleObjectMotionEvent(event: IEvent<MouseEvent>) {
+    this._isDragging = true;
     const metadata: unknown = event.target?.data;
     const coordinate = event.target?.getCenterPoint();
 

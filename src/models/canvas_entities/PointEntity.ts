@@ -36,6 +36,10 @@ export class PointEntity implements CanvasEntity {
     return this._name;
   }
 
+  public getElement() {
+    return this._point;
+  }
+
   private _buildIcon(point: Point) {
     return new fabric.Circle({
       radius: 4,

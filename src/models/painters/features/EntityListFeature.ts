@@ -34,4 +34,6 @@ export class EntityListFeature implements Feature {
   ): void {}
 
   handlePointUpdate(_painter: Painter, _movePointEvent: MovePointEvent): void {}
+
+  handleObjectDrop(_painter: Painter): void {}
 }
