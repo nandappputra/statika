@@ -2,7 +2,6 @@ import {
   Button,
   Container,
   IconButton,
-  InputLabel,
   List,
   ListItem,
   ListItemText,
@@ -87,7 +86,7 @@ function ConnectionSetting(props: Props) {
         }}
       >
         {props.connection.getAllPoints().map((point) => (
-          <ListItem>
+          <ListItem key={`${props.connection.name}-${point.name}`}>
             <ListItemText>{point.name}</ListItemText>
             <IconButton>
               <HighlightOffIcon />

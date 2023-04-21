@@ -31,7 +31,7 @@ function LinkageSetting(props: Props) {
         }}
       >
         {props.linkage.getAllPoints().map((point) => (
-          <ListItem>
+          <ListItem key={point.name}>
             <ListItemText>{point.name}</ListItemText>
 
             <TextField

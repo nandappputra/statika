@@ -3,6 +3,7 @@ import { Point } from "../Point";
 import { EventMediator } from "../painters/EventMediator";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";
+import { ElementType } from "../../utils/Constants";
 
 export class PointEntity implements CanvasEntity {
   private _name: string;
@@ -20,6 +21,7 @@ export class PointEntity implements CanvasEntity {
   public updatePosition(movePointEvent: MovePointEvent): void {
     this._icon.left = movePointEvent.coordinate.x;
     this._icon.top = movePointEvent.coordinate.y;
+    this._icon.setCoords();
   }
 
   public getObjectsToDraw(): (fabric.Object | fabric.Group)[] {
@@ -41,8 +43,12 @@ export class PointEntity implements CanvasEntity {
       originY: "center",
       left: point.x,
       top: point.y,
-      selectable: false,
-      hoverCursor: "default",
+      hasControls: false,
+      data: {
+        name: point.name,
+        pointName: point.name,
+        type: ElementType.POINT,
+      },
     });
   }
 }
