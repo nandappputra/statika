@@ -145,6 +145,10 @@ export class Painter implements EventMediator {
     return [...this._entityNameToEntity.keys()];
   }
 
+  public getEntityByName(name: string) {
+    return this._entityNameToEntity.get(name);
+  }
+
   public setFocus(name: string) {
     const entity = this._entityNameToEntity.get(name);
     if (!entity) {
@@ -407,6 +411,19 @@ export class Painter implements EventMediator {
     this._painterFeatures.forEach((feature) =>
       feature.handlePointRemoval(this, linkage, point)
     );
+  }
+
+  public addPointToConnection(point: Point, connection: Connection) {
+    const affectedConnection = this.getCanvasEntity(connection);
+    if (
+      !affectedConnection ||
+      !(affectedConnection instanceof ConnectionEntity)
+    ) {
+      throw new Error("missing or invalid entity");
+    }
+
+    this._pointNameToConnectionEntity.set(point.name, affectedConnection);
+    affectedConnection.addPoint(point);
   }
 
   public getCanvasCenter() {

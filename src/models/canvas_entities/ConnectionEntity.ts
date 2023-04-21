@@ -73,17 +73,25 @@ export class ConnectionEntity implements CanvasEntity {
     return this._connection.points;
   }
 
+  public addPoint(point: Point) {
+    this._connection.addPoint(point);
+  }
+
   public deletePoint(point: Point) {
     if (!this._icon.data?.pointName) {
       throw new Error("missing pointName in metadata");
     }
 
-    this._connection.removePoint(point);
-
     this._icon.data.pointName = this._connection.points[0].name;
+
+    this._connection.removePoint(point);
   }
 
   public getFocusableObject(): fabric.Object {
     return this._icon;
+  }
+
+  public getElement() {
+    return this._connection;
   }
 }
