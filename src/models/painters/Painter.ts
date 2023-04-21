@@ -270,6 +270,7 @@ export class Painter implements EventMediator {
     }
 
     this._entityNameToEntity.set(diagramElement.name, entity);
+    this._canvas.add(...entity.getObjectsToDraw());
 
     diagramElement.points.forEach((point) => {
       this._addCanvasEntityToMap(point.name, entity);
@@ -286,8 +287,6 @@ export class Painter implements EventMediator {
     this._painterFeatures.forEach((feature) => {
       feature.handleElementAddition(this, diagramElement);
     });
-
-    this._canvas.add(...entity.getObjectsToDraw());
 
     return entity;
   }
