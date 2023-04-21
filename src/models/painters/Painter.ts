@@ -71,6 +71,9 @@ export class Painter implements EventMediator {
     this._canvas.on("selection:created", (event) =>
       this.handleObjectSelectionEvent(event)
     );
+    this._canvas.on("selection:cleared", () =>
+      this.handleObjectSelectionClearEvent()
+    );
   }
 
   private handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
@@ -95,6 +98,12 @@ export class Painter implements EventMediator {
         name,
         entity: canvasEntity,
       });
+    });
+  }
+
+  private handleObjectSelectionClearEvent() {
+    this._eventSubscribers.forEach((subscriber) => {
+      subscriber.notifyObjectSelectionClearEvent();
     });
   }
 

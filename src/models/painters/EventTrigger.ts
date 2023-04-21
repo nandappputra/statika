@@ -3,6 +3,7 @@ import { MovePointEvent, ObjectSelectionEvent } from "../Event";
 export interface EventSubscriber {
   notifyMovePointEvent(movePointEvent: MovePointEvent): void;
   notifyObjectSelectionEvent(objectSelectionEvent: ObjectSelectionEvent): void;
+  notifyObjectSelectionClearEvent(): void;
 }
 
 interface EventTriggerer {
@@ -12,6 +13,7 @@ interface EventTriggerer {
   setObjectSelectionEventHandler(
     callback: (objectSelectionEvent: ObjectSelectionEvent) => void
   ): void;
+  setObjectSelectionClearEventHandler(callback: () => void): void;
 }
 
 export class EventTrigger implements EventSubscriber, EventTriggerer {
@@ -19,6 +21,7 @@ export class EventTrigger implements EventSubscriber, EventTriggerer {
   private _objectSelectionEventCallback: (
     objectSelectionEvent: ObjectSelectionEvent
   ) => void;
+  private _objectSelectionClearEventCallback: () => void;
 
   constructor() {
     this._movePointEventCallback = (_movePointEvent: MovePointEvent) => {
@@ -27,6 +30,9 @@ export class EventTrigger implements EventSubscriber, EventTriggerer {
     this._objectSelectionEventCallback = (
       _objectSelectionEvent: ObjectSelectionEvent
     ) => {
+      throw new Error("missing event handler");
+    };
+    this._objectSelectionClearEventCallback = () => {
       throw new Error("missing event handler");
     };
   }
@@ -41,6 +47,10 @@ export class EventTrigger implements EventSubscriber, EventTriggerer {
     this._objectSelectionEventCallback(objectSelectionEvent);
   }
 
+  public notifyObjectSelectionClearEvent(): void {
+    this._objectSelectionClearEventCallback();
+  }
+
   public setMovePointEventHandler(
     callback: (movePointEvent: MovePointEvent) => void
   ): void {
@@ -51,5 +61,9 @@ export class EventTrigger implements EventSubscriber, EventTriggerer {
     callback: (objectSelectionEvent: ObjectSelectionEvent) => void
   ): void {
     this._objectSelectionEventCallback = callback;
+  }
+
+  public setObjectSelectionClearEventHandler(callback: () => void): void {
+    this._objectSelectionClearEventCallback = callback;
   }
 }
