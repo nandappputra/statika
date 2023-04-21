@@ -9,6 +9,7 @@ type Props = {
   name: string;
   entity: CanvasEntity | null;
   removeEntity: () => void;
+  addPointToLinkage: () => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -65,6 +66,7 @@ function SelectedEntity(props: Props) {
             <LinkageSetting
               linkage={props.entity}
               removeEntity={props.removeEntity}
+              addPointToLinkage={props.addPointToLinkage}
             />
           ) : props.entity instanceof ConnectionEntity ? (
             <ConnectionSetting

@@ -16,6 +16,7 @@ import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 type Props = {
   linkage: LinkageEntity;
   removeEntity: () => void;
+  addPointToLinkage: () => void;
 };
 
 function LinkageSetting(props: Props) {
@@ -70,6 +71,7 @@ function LinkageSetting(props: Props) {
         }}
       >
         <Button
+          onClick={props.addPointToLinkage}
           startIcon={<AddCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

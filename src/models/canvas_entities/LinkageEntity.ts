@@ -146,4 +146,8 @@ export class LinkageEntity implements CanvasEntity {
   public getElement() {
     return this._linkage;
   }
+
+  public getCenter() {
+    return this._polygon.getCenterPoint();
+  }
 }
