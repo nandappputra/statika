@@ -10,11 +10,12 @@ import {
   TextField,
 } from "@mui/material";
 import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import LinkOffIcon from "@mui/icons-material/LinkOff";
 
 type Props = {
   connection: ConnectionEntity;
+  removeEntity: () => void;
 };
 
 function ConnectionSetting(props: Props) {
@@ -89,7 +90,7 @@ function ConnectionSetting(props: Props) {
           <ListItem key={`${props.connection.name}-${point.name}`}>
             <ListItemText>{point.name}</ListItemText>
             <IconButton>
-              <HighlightOffIcon />
+              <LinkOffIcon />
             </IconButton>
           </ListItem>
         ))}
@@ -104,6 +105,7 @@ function ConnectionSetting(props: Props) {
         }}
       >
         <Button
+          onClick={props.removeEntity}
           startIcon={<RemoveCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

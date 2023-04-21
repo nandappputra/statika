@@ -142,4 +142,8 @@ export class LinkageEntity implements CanvasEntity {
   public getAllPoints(): Point[] {
     return this._linkage.points;
   }
+
+  public getElement() {
+    return this._linkage;
+  }
 }

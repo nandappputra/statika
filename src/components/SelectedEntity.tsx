@@ -8,6 +8,7 @@ import ConnectionSetting from "./ConnectionSetting";
 type Props = {
   name: string;
   entity: CanvasEntity | null;
+  removeEntity: () => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -61,9 +62,15 @@ function SelectedEntity(props: Props) {
             {props.entity.constructor.name}
           </Typography>
           {props.entity instanceof LinkageEntity ? (
-            <LinkageSetting linkage={props.entity} />
+            <LinkageSetting
+              linkage={props.entity}
+              removeEntity={props.removeEntity}
+            />
           ) : props.entity instanceof ConnectionEntity ? (
-            <ConnectionSetting connection={props.entity} />
+            <ConnectionSetting
+              connection={props.entity}
+              removeEntity={props.removeEntity}
+            />
           ) : (
             <></>
           )}

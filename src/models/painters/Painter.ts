@@ -351,6 +351,22 @@ export class Painter implements EventMediator {
     diagramElement.points.forEach((point) => {
       if (entity instanceof LinkageEntity) {
         this._pointNameToLinkageEntity.delete(point.name);
+
+        const pointEntity = this._pointNameToPointEntity.get(point.name);
+        if (!pointEntity) {
+          return;
+        }
+
+        this._canvas.remove(...pointEntity.getObjectsToDraw());
+
+        this._pointNameToLinkageEntity.delete(point.name);
+        this._entityNameToEntity.delete(point.name);
+        this._pointNameToPointEntity.delete(point.name);
+
+        const affectedConnection = this._pointNameToConnectionEntity.get(
+          point.name
+        );
+        affectedConnection?.deletePoint(point);
       } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnectionEntity.delete(point.name);
       }
