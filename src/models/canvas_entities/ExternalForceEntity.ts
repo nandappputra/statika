@@ -16,6 +16,7 @@ export class ExternalForceEntity implements CanvasEntity {
   private _externalForce: ExternalForce;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
+  private _point: Point;
 
   constructor(
     externalForce: ExternalForce,
@@ -26,6 +27,7 @@ export class ExternalForceEntity implements CanvasEntity {
     this._externalForce = externalForce;
     this._eventMediator = eventMediator;
     this._icon = this._buildIcon(externalForce, point);
+    this._point = point;
   }
 
   public updatePosition(movePointEvent: MovePointEvent): void {
@@ -83,5 +85,9 @@ export class ExternalForceEntity implements CanvasEntity {
 
   public getElement() {
     return this._externalForce;
+  }
+
+  get point() {
+    return this._point;
   }
 }

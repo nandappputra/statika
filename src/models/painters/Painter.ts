@@ -267,6 +267,7 @@ export class Painter implements EventMediator {
         .get(location.name)
         ?.delete(entity as ExternalForceEntity);
       this._canvas.remove(...entity.getObjectsToDraw());
+      location.removeExternalForce(externalLoad);
     }
 
     this._canvas.renderAll();

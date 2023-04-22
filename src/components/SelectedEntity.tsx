@@ -4,6 +4,7 @@ import ConnectionSetting from "./ConnectionSetting";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import PointSetting from "./PointSetting";
+import ForceSetting from "./ForceSetting";
 
 type Props = {
   name: string;
@@ -15,6 +16,7 @@ type Props = {
     pointName: string,
     selectedConnection: string
   ) => void;
+  removeExternalForceFromPoint: (externalForce: string, pointName: string) => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -93,6 +95,12 @@ function SelectedEntity(props: Props) {
               pointName={props.name}
               getEntity={props.getEntity}
               removePointFromLinkage={props.removePointFromLinkage}
+            />
+          ) : entityType === "ExternalForceEntity" ? (
+            <ForceSetting
+              forceName={props.name}
+              getEntity={props.getEntity}
+              removeExternalForceFromPoint={props.removeExternalForceFromPoint}
             />
           ) : (
             <></>
