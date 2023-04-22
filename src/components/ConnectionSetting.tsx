@@ -9,16 +9,38 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
+import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
+import { useEffect, useState } from "react";
+import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
+import { Point } from "../models/Point";
 
 type Props = {
-  connection: ConnectionEntity;
-  removeEntity: () => void;
+  connectionName: string;
+  getEntity: (entityName: string) => CanvasEntity | undefined;
+  removeEntity: (entityName: string) => void;
+  removePointFromConnection: (
+    pointName: string,
+    selectedConnection: string
+  ) => void;
 };
 
 function ConnectionSetting(props: Props) {
+  const [points, setPoints] = useState<Point[]>([]);
+
+  useEffect(() => {
+    updatePoints();
+  }, []);
+
+  const updatePoints = () => {
+    const entity = props.getEntity(props.connectionName);
+
+    if (entity instanceof ConnectionEntity) {
+      setPoints(entity.getAllPoints());
+    }
+  };
+
   return (
     <div>
       <Container
@@ -31,20 +53,20 @@ function ConnectionSetting(props: Props) {
         }}
       >
         <TextField
-          id={`${props.connection.name}-X`}
+          id={`${props.connectionName}-X`}
           label="X"
           variant="outlined"
-          value={props.connection.x}
+          value={points[0] ? points[0].x : "0"}
           sx={{
             maxWidth: "25%",
             margin: "0 0.5em",
           }}
         />
         <TextField
-          id={`${props.connection.name}-Y`}
+          id={`${props.connectionName}-Y`}
           label="Y"
           variant="outlined"
-          value={props.connection.x}
+          value={points[0] ? points[0].y : "0"}
           sx={{
             maxWidth: "25%",
           }}
@@ -86,10 +108,18 @@ function ConnectionSetting(props: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {props.connection.getAllPoints().map((point) => (
-          <ListItem key={`${props.connection.name}-${point.name}`}>
+        {points.map((point) => (
+          <ListItem key={`${props.connectionName}-${point.name}`}>
             <ListItemText>{point.name}</ListItemText>
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                props.removePointFromConnection(
+                  point.name,
+                  props.connectionName
+                );
+                updatePoints();
+              }}
+            >
               <LinkOffIcon />
             </IconButton>
           </ListItem>
@@ -105,7 +135,7 @@ function ConnectionSetting(props: Props) {
         }}
       >
         <Button
-          onClick={props.removeEntity}
+          onClick={() => props.removeEntity(props.connectionName)}
           startIcon={<RemoveCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

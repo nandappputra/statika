@@ -94,7 +94,7 @@ export class LinkageEntity implements CanvasEntity {
 
   public deletePoint(point: Point) {
     const index = this._nameToIndexMap.get(point.name);
-    if (!index || !this._polygon.points) {
+    if (index === undefined || !this._polygon.points) {
       throw new Error("point not found in polygon");
     }
 

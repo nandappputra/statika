@@ -366,7 +366,12 @@ export class Painter implements EventMediator {
         const affectedConnection = this._pointNameToConnectionEntity.get(
           point.name
         );
-        affectedConnection?.deletePoint(point);
+        if (affectedConnection) {
+          this.removePointFromConnection(
+            point,
+            affectedConnection.getElement()
+          );
+        }
       } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnectionEntity.delete(point.name);
       }
@@ -423,11 +428,17 @@ export class Painter implements EventMediator {
     const affectedConnection = this._pointNameToConnectionEntity.get(
       point.name
     );
-    affectedConnection?.deletePoint(point);
+    if (affectedConnection) {
+      this.removePointFromConnection(point, affectedConnection.getElement());
+    }
 
     this._painterFeatures.forEach((feature) =>
       feature.handlePointRemoval(this, linkage, point)
     );
+
+    if (targetLinkage && targetLinkage?.getAllPoints().length == 1) {
+      this.removeElement(targetLinkage.getElement());
+    }
   }
 
   public addPointToConnection(point: Point, connection: Connection) {
@@ -454,6 +465,12 @@ export class Painter implements EventMediator {
 
     this._pointNameToConnectionEntity.delete(point.name);
     affectedConnection.deletePoint(point);
+    if (affectedConnection.getAllPoints().length === 0) {
+      this.removeElement(connection);
+    }
+    this._painterFeatures.forEach((feature) =>
+      feature.handlePointDisconnection(this, connection, point)
+    );
   }
 
   public getCanvasCenter() {

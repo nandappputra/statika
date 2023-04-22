@@ -127,6 +127,7 @@ export class PointSnapFeature implements Feature {
             source: newConnection.name,
             coordinate: { x: p2.x, y: p2.y },
           });
+          painter.setFocus(newConnection.name);
         }
       }
     });
@@ -188,6 +189,14 @@ export class PointSnapFeature implements Feature {
 
   handlePointRemoval(painter: Painter, linkage: Linkage, point: Point): void {
     this._freePoints.delete(point.name);
+  }
+
+  handlePointDisconnection(
+    _painter: Painter,
+    _connection: Connection,
+    point: Point
+  ): void {
+    this._freePoints.add(point.name);
   }
 
   private distance(coordinate1: Coordinate, coordinate2: Coordinate) {

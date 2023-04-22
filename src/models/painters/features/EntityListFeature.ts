@@ -3,6 +3,7 @@ import { MovePointEvent } from "../../Event";
 import { Point } from "../../Point";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { Linkage } from "../../diagram_elements/Linkage";
+import { Connection } from "../../diagram_elements/connections/Connection";
 import { Painter } from "../Painter";
 import { Feature } from "./Feature";
 
@@ -36,4 +37,10 @@ export class EntityListFeature implements Feature {
   handlePointUpdate(_painter: Painter, _movePointEvent: MovePointEvent): void {}
 
   handleObjectDrop(_painter: Painter): void {}
+
+  handlePointDisconnection(
+    _painter: Painter,
+    _connection: Connection,
+    _point: Point
+  ): void {}
 }

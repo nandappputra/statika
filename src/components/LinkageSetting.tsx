@@ -10,17 +10,34 @@ import {
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-
+import { Point } from "../models/Point";
+import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
+import { useEffect, useState } from "react";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 
 type Props = {
-  linkage: LinkageEntity;
-  removeEntity: () => void;
-  addPointToLinkage: () => void;
-  removePointFromLinkage: (name: string) => void;
+  linkageName: string;
+  getEntity: (entityName: string) => CanvasEntity | undefined;
+  removeEntity: (entityName: string) => void;
+  addPointToLinkage: (selectedLinkage: string) => void;
+  removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
 };
 
 function LinkageSetting(props: Props) {
+  const [points, setPoints] = useState<Point[]>([]);
+
+  useEffect(() => {
+    updatePoints();
+  }, []);
+
+  const updatePoints = () => {
+    const entity = props.getEntity(props.linkageName);
+
+    if (entity instanceof LinkageEntity) {
+      setPoints(entity.getAllPoints());
+    }
+  };
+
   return (
     <div>
       <List
@@ -33,7 +50,7 @@ function LinkageSetting(props: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {props.linkage.getAllPoints().map((point) => (
+        {points.map((point) => (
           <ListItem key={point.name}>
             <ListItemText>{point.name}</ListItemText>
 
@@ -57,7 +74,10 @@ function LinkageSetting(props: Props) {
               }}
             />
             <IconButton
-              onClick={() => props.removePointFromLinkage(point.name)}
+              onClick={() => {
+                props.removePointFromLinkage(point.name, props.linkageName);
+                updatePoints();
+              }}
             >
               <HighlightOffIcon />
             </IconButton>
@@ -74,7 +94,7 @@ function LinkageSetting(props: Props) {
         }}
       >
         <Button
-          onClick={props.addPointToLinkage}
+          onClick={() => props.addPointToLinkage(props.linkageName)}
           startIcon={<AddCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",
@@ -92,7 +112,7 @@ function LinkageSetting(props: Props) {
           Add point
         </Button>
         <Button
-          onClick={props.removeEntity}
+          onClick={() => props.removeEntity(props.linkageName)}
           startIcon={<RemoveCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

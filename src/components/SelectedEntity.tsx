@@ -1,22 +1,31 @@
 import { Container, Typography } from "@mui/material";
-import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
-import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import LinkageSetting from "./LinkageSetting";
-import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
 import ConnectionSetting from "./ConnectionSetting";
+import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
+import { useEffect, useState } from "react";
 
 type Props = {
   name: string;
-  entity: CanvasEntity | null;
-  removeEntity: () => void;
-  addPointToLinkage: () => void;
-  removePointFromLinkage: (name: string) => void;
+  getEntity: (entityName: string) => CanvasEntity | undefined;
+  removeEntity: (entityName: string) => void;
+  addPointToLinkage: (selectedLinkage: string) => void;
+  removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
+  removePointFromConnection: (
+    pointName: string,
+    selectedConnection: string
+  ) => void;
 };
 
 function SelectedEntity(props: Props) {
+  const [entityType, setEntityType] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setEntityType(props.getEntity(props.name)?.constructor.name);
+  }, [props.name]);
+
   return (
     <>
-      {!props.entity ? (
+      {!props.name ? (
         <></>
       ) : (
         <Container
@@ -61,19 +70,22 @@ function SelectedEntity(props: Props) {
               width: "100%",
             }}
           >
-            {props.entity.constructor.name}
+            {entityType}
           </Typography>
-          {props.entity instanceof LinkageEntity ? (
+          {entityType === "LinkageEntity" ? (
             <LinkageSetting
-              linkage={props.entity}
+              linkageName={props.name}
               removeEntity={props.removeEntity}
               addPointToLinkage={props.addPointToLinkage}
               removePointFromLinkage={props.removePointFromLinkage}
+              getEntity={props.getEntity}
             />
-          ) : props.entity instanceof ConnectionEntity ? (
+          ) : entityType === "ConnectionEntity" ? (
             <ConnectionSetting
-              connection={props.entity}
+              connectionName={props.name}
               removeEntity={props.removeEntity}
+              removePointFromConnection={props.removePointFromConnection}
+              getEntity={props.getEntity}
             />
           ) : (
             <></>
