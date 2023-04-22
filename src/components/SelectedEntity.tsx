@@ -3,6 +3,7 @@ import LinkageSetting from "./LinkageSetting";
 import ConnectionSetting from "./ConnectionSetting";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
+import PointSetting from "./PointSetting";
 
 type Props = {
   name: string;
@@ -86,6 +87,12 @@ function SelectedEntity(props: Props) {
               removeEntity={props.removeEntity}
               removePointFromConnection={props.removePointFromConnection}
               getEntity={props.getEntity}
+            />
+          ) : entityType === "PointEntity" ? (
+            <PointSetting
+              pointName={props.name}
+              getEntity={props.getEntity}
+              removePointFromLinkage={props.removePointFromLinkage}
             />
           ) : (
             <></>
