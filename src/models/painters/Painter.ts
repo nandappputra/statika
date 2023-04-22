@@ -372,6 +372,12 @@ export class Painter implements EventMediator {
             affectedConnection.getElement()
           );
         }
+        const affectedForce = this._pointNameToExternalForceEntity.get(
+          point.name
+        );
+        affectedForce?.forEach((force) =>
+          this.removeExternalLoad(point, force.getElement())
+        );
       } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnectionEntity.delete(point.name);
       }

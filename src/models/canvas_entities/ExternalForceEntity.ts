@@ -80,4 +80,8 @@ export class ExternalForceEntity implements CanvasEntity {
 
     return arrow;
   }
+
+  public getElement() {
+    return this._externalForce;
+  }
 }
