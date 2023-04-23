@@ -12,12 +12,12 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PointEntity } from "../models/canvas_entities/PointEntity";
-import { Point } from "../models/Point";
 import { ExternalForce } from "../models/ExternalForce";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import { Linkage } from "../models/diagram_elements/Linkage";
+import { Coordinate } from "../models/Coordinate";
 
 type Props = {
   pointName: string;
@@ -29,10 +29,12 @@ type Props = {
   ) => void;
   getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
   addExternalForceToPoint: (pointName: string) => void;
+  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
 };
 
 function PointSetting(props: Props) {
-  const [point, setPoint] = useState<Point | undefined>(undefined);
+  const [x, setX] = useState<number>(0);
+  const [y, setY] = useState<number>(0);
   const [forces, setForces] = useState<ExternalForce[] | undefined>(undefined);
   const [linkage, setLinkage] = useState<Linkage | undefined>(undefined);
 
@@ -45,9 +47,10 @@ function PointSetting(props: Props) {
     const parentLinkage = props.getLinkageFromPoint(props.pointName);
 
     if (entity instanceof PointEntity && parentLinkage) {
-      setPoint(entity.getElement());
       setForces(entity.getElement().externalForces);
       setLinkage(parentLinkage.getElement());
+      setX(entity.getElement().x);
+      setY(entity.getElement().y);
     }
   };
 
@@ -60,6 +63,32 @@ function PointSetting(props: Props) {
   const addExternalForceToPoint = (pointName: string) => {
     props.addExternalForceToPoint(pointName);
     updatePoint();
+  };
+
+  const handlePositionChangeX = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const xValue = event.target.valueAsNumber;
+    if (Number.isNaN(xValue)) {
+      setX(0);
+      props.updatePointPosition(props.pointName, { x: 0, y });
+    } else {
+      setX(xValue);
+      props.updatePointPosition(props.pointName, { x: xValue, y });
+    }
+  };
+
+  const handlePositionChangeY = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const yValue = event.target.valueAsNumber;
+    if (Number.isNaN(yValue)) {
+      setY(0);
+      props.updatePointPosition(props.pointName, { x, y: 0 });
+    } else {
+      setY(yValue);
+      props.updatePointPosition(props.pointName, { x, y: yValue });
+    }
   };
 
   return (
@@ -88,20 +117,24 @@ function PointSetting(props: Props) {
           id={`${props.pointName}-X`}
           label="X"
           variant="outlined"
-          value={point ? point.x : "0"}
+          value={x}
+          type="number"
           sx={{
             maxWidth: "25%",
             margin: "0 0.5em",
           }}
+          onChange={handlePositionChangeX}
         />
         <TextField
           id={`${props.pointName}-Y`}
           label="Y"
           variant="outlined"
-          value={point ? point.y : "0"}
+          value={y}
+          type="number"
           sx={{
             maxWidth: "25%",
           }}
+          onChange={handlePositionChangeY}
         />
       </Container>
       <List

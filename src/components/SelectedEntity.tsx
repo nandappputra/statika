@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import PointSetting from "./PointSetting";
 import ForceSetting from "./ForceSetting";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
+import { Coordinate } from "../models/Coordinate";
 
 type Props = {
   name: string;
@@ -23,6 +24,7 @@ type Props = {
   ) => void;
   getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
   addExternalForceToPoint: (pointName: string) => void;
+  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -104,6 +106,7 @@ function SelectedEntity(props: Props) {
               removeExternalForceFromPoint={props.removeExternalForceFromPoint}
               getLinkageFromPoint={props.getLinkageFromPoint}
               removePointFromLinkage={props.removePointFromLinkage}
+              updatePointPosition={props.updatePointPosition}
             />
           ) : entityType === "ExternalForceEntity" ? (
             <ForceSetting
