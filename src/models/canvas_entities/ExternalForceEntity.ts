@@ -90,4 +90,21 @@ export class ExternalForceEntity implements CanvasEntity {
   get point() {
     return this._point;
   }
+
+  public setForceComponents(F_x: number, F_y: number) {
+    this._externalForce.F_x = F_x;
+    this._externalForce.F_y = F_y;
+
+    this._rotateIcon(F_x, F_y);
+  }
+
+  private _rotateIcon(F_x: number, F_y: number) {
+    this._icon.set(
+      "angle",
+      Math.atan2(F_x, F_y) * RADIAN_TO_DEGREE_MULTIPLIER -
+        ARROW_ANGLE_ADJUSTMENT
+    );
+    this._icon.setCoords();
+    this._icon.dirty = true;
+  }
 }

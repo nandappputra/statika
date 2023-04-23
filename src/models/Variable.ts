@@ -5,8 +5,8 @@ export class Variable {
 
   constructor(name: string, value: number | undefined = undefined) {
     this._symbol = name;
-    this._known = value ? true : false;
-    this._value = value ? value : 0;
+    this._known = typeof value === "number" ? true : false;
+    this._value = typeof value === "number" ? value : 0;
   }
 
   get symbol(): string {

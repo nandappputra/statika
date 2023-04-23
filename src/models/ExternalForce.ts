@@ -24,4 +24,12 @@ export class ExternalForce {
   get name(): string {
     return this._name;
   }
+
+  set F_x(F_x: number) {
+    this._F_x = new Variable(`F_${this._name}x`, F_x);
+  }
+
+  set F_y(F_y: number) {
+    this._F_y = new Variable(`F_${this._name}y`, F_y);
+  }
 }

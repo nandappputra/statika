@@ -137,30 +137,37 @@ function PointSetting(props: Props) {
           onChange={handlePositionChangeY}
         />
       </Container>
-      <List
-        sx={{
-          borderTop: "3px black solid",
-          borderBottom: "3px black solid",
-          maxHeight: 150,
-          padding: 0,
-          overflow: "auto",
-          scrollbarWidth: "none",
-        }}
-      >
-        {forces?.map((force) => (
-          <ListItem key={`${props.pointName}-${force}`}>
-            <ListItemText>{force.name}</ListItemText>
-            <IconButton
-              onClick={() => {
-                props.removeExternalForceFromPoint(force.name, props.pointName);
-                updatePoint();
-              }}
-            >
-              <HighlightOffIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
+      {forces && forces.length > 0 ? (
+        <List
+          sx={{
+            borderTop: "3px black solid",
+            borderBottom: "3px black solid",
+            maxHeight: 150,
+            padding: 0,
+            overflow: "auto",
+            scrollbarWidth: "none",
+          }}
+        >
+          {forces?.map((force) => (
+            <ListItem key={`${props.pointName}-${force}`}>
+              <ListItemText>{force.name}</ListItemText>
+              <IconButton
+                onClick={() => {
+                  props.removeExternalForceFromPoint(
+                    force.name,
+                    props.pointName
+                  );
+                  updatePoint();
+                }}
+              >
+                <HighlightOffIcon />
+              </IconButton>
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <></>
+      )}
       <Container
         disableGutters
         sx={{

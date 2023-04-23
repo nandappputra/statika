@@ -494,4 +494,14 @@ export class Painter implements EventMediator {
   public getCanvasCenter() {
     return this._canvas.getCenter();
   }
+
+  public updateForce(externalForce: ExternalForce, F_x: number, F_y: number) {
+    const externalForceEntity = this._entityNameToEntity.get(
+      externalForce.name
+    );
+    if (externalForceEntity instanceof ExternalForceEntity) {
+      externalForceEntity.setForceComponents(F_x, F_y);
+      this._canvas.renderAll();
+    }
+  }
 }

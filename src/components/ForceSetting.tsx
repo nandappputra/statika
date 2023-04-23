@@ -2,7 +2,6 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
-import { ExternalForce } from "../models/ExternalForce";
 import { ExternalForceEntity } from "../models/canvas_entities/ExternalForceEntity";
 import { Point } from "../models/Point";
 
@@ -13,11 +12,13 @@ type Props = {
     externalForce: string,
     pointName: string
   ) => void;
+  setForceComponents: (forceName: string, F_x: number, F_y: number) => void;
 };
 
 function ForceSetting(props: Props) {
-  const [force, setForce] = useState<ExternalForce | undefined>(undefined);
   const [point, setPoint] = useState<Point | undefined>(undefined);
+  const [fX, setFX] = useState<number>(0);
+  const [fY, setFY] = useState<number>(0);
 
   useEffect(() => {
     updateForce();
@@ -27,9 +28,31 @@ function ForceSetting(props: Props) {
     const entity = props.getEntity(props.forceName);
 
     if (entity instanceof ExternalForceEntity) {
-      setForce(entity.getElement());
+      setFX(parseFloat(entity.getElement().symbolF_x));
+      setFY(parseFloat(entity.getElement().symbolF_y));
       setPoint(entity.point);
     }
+  };
+
+  const setForceComponents = () => {
+    let F_x = (
+      document.getElementById(`${props.forceName}-X`) as HTMLInputElement
+    )?.valueAsNumber;
+    let F_y = (
+      document.getElementById(`${props.forceName}-Y`) as HTMLInputElement
+    )?.valueAsNumber;
+
+    if (Number.isNaN(F_x)) {
+      F_x = 0;
+    }
+
+    if (Number.isNaN(F_y)) {
+      F_y = 0;
+    }
+
+    props.setForceComponents(props.forceName, F_x, F_y);
+    setFX(F_x);
+    setFY(F_y);
   };
 
   return (
@@ -58,20 +81,24 @@ function ForceSetting(props: Props) {
           id={`${props.forceName}-X`}
           label="Fx"
           variant="outlined"
-          value={force ? force.symbolF_x : "0"}
+          value={fX}
           sx={{
-            maxWidth: "25%",
+            maxWidth: "30%",
             margin: "0 0.5em",
           }}
+          type="number"
+          onChange={setForceComponents}
         />
         <TextField
           id={`${props.forceName}-Y`}
           label="Fy"
           variant="outlined"
-          value={force ? force.symbolF_y : "0"}
+          value={fY}
           sx={{
-            maxWidth: "25%",
+            maxWidth: "30%",
           }}
+          type="number"
+          onChange={setForceComponents}
         />
       </Container>
       <Container

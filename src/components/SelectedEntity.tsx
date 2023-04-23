@@ -25,6 +25,7 @@ type Props = {
   getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
   addExternalForceToPoint: (pointName: string) => void;
   updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
+  setForceComponents: (forceName: string, F_x: number, F_y: number) => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -115,6 +116,7 @@ function SelectedEntity(props: Props) {
               forceName={props.name}
               getEntity={props.getEntity}
               removeExternalForceFromPoint={props.removeExternalForceFromPoint}
+              setForceComponents={props.setForceComponents}
             />
           ) : (
             <></>
