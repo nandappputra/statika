@@ -97,6 +97,7 @@ function SelectedEntity(props: Props) {
               connectionName={props.name}
               removeEntity={props.removeEntity}
               removePointFromConnection={props.removePointFromConnection}
+              updatePointPosition={props.updatePointPosition}
               getEntity={props.getEntity}
             />
           ) : entityType === "PointEntity" ? (

@@ -15,6 +15,7 @@ import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
 import { Point } from "../models/Point";
+import { Coordinate } from "../models/Coordinate";
 
 type Props = {
   connectionName: string;
@@ -24,6 +25,7 @@ type Props = {
     pointName: string,
     selectedConnection: string
   ) => void;
+  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
 };
 
 function ConnectionSetting(props: Props) {
@@ -39,6 +41,25 @@ function ConnectionSetting(props: Props) {
     if (entity instanceof ConnectionEntity) {
       setPoints(entity.getAllPoints());
     }
+  };
+
+  const moveConnection = () => {
+    const valueX = (
+      document.getElementById(`${props.connectionName}-X`) as HTMLInputElement
+    )?.valueAsNumber;
+    const valueY = (
+      document.getElementById(`${props.connectionName}-Y`) as HTMLInputElement
+    )?.valueAsNumber;
+
+    if (Number.isNaN(valueX) || Number.isNaN(valueY)) {
+      return;
+    }
+
+    const newState = [...points];
+    newState[0].x = valueX;
+    newState[0].y = valueY;
+    props.updatePointPosition(points[0].name, { x: valueX, y: valueY });
+    setPoints(newState);
   };
 
   return (
@@ -61,6 +82,8 @@ function ConnectionSetting(props: Props) {
             maxWidth: "25%",
             margin: "0 0.5em",
           }}
+          onChange={moveConnection}
+          type="number"
         />
         <TextField
           id={`${props.connectionName}-Y`}
@@ -70,6 +93,8 @@ function ConnectionSetting(props: Props) {
           sx={{
             maxWidth: "25%",
           }}
+          onChange={moveConnection}
+          type="number"
         />
       </Container>
 
