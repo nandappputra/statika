@@ -480,6 +480,10 @@ export class Painter implements EventMediator {
     );
   }
 
+  public getLinkageFromPoint(point: Point) {
+    return this._pointNameToLinkageEntity.get(point.name);
+  }
+
   public getCanvasCenter() {
     return this._canvas.getCenter();
   }

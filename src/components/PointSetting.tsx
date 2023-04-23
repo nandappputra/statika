@@ -15,11 +15,17 @@ import { useEffect, useState } from "react";
 import { PointEntity } from "../models/canvas_entities/PointEntity";
 import { Point } from "../models/Point";
 import { ExternalForce } from "../models/ExternalForce";
+import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 
 type Props = {
   pointName: string;
   getEntity: (entityName: string) => CanvasEntity | undefined;
   removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
+  removeExternalForceFromPoint: (
+    externalForce: string,
+    pointName: string
+  ) => void;
+  getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
 };
 
 function PointSetting(props: Props) {
@@ -36,6 +42,13 @@ function PointSetting(props: Props) {
     if (entity instanceof PointEntity) {
       setPoint(entity.getElement());
       setForces(entity.getElement().externalForces);
+    }
+  };
+
+  const removePoint = (pointName: string) => {
+    const linkage = props.getLinkageFromPoint(pointName);
+    if (linkage) {
+      props.removePointFromLinkage(pointName, linkage.name);
     }
   };
 
@@ -86,7 +99,7 @@ function PointSetting(props: Props) {
             <ListItemText>{force.name}</ListItemText>
             <IconButton
               onClick={() => {
-                point?.removeExternalForce(force);
+                props.removeExternalForceFromPoint(force.name, props.pointName);
                 updatePoint();
               }}
             >
@@ -123,7 +136,7 @@ function PointSetting(props: Props) {
           Add force
         </Button>
         <Button
-          // onClick={() => props.removePointFromLinkage(props.pointName)}
+          onClick={() => removePoint(props.pointName)}
           startIcon={<RemoveCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",
