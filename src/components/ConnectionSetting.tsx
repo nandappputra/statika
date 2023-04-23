@@ -33,11 +33,10 @@ function ConnectionSetting(props: Props) {
 
   useEffect(() => {
     updatePoints();
-  }, []);
+  }, [props.connectionName]);
 
   const updatePoints = () => {
     const entity = props.getEntity(props.connectionName);
-
     if (entity instanceof ConnectionEntity) {
       setPoints(entity.getAllPoints());
     }

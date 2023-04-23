@@ -30,11 +30,10 @@ function LinkageSetting(props: Props) {
 
   useEffect(() => {
     updatePoints();
-  }, []);
+  }, [props.linkageName]);
 
   const updatePoints = () => {
     const entity = props.getEntity(props.linkageName);
-
     if (entity instanceof LinkageEntity) {
       setPoints(entity.getAllPoints());
     }

@@ -22,11 +22,10 @@ function ForceSetting(props: Props) {
 
   useEffect(() => {
     updateForce();
-  }, []);
+  }, [props.forceName]);
 
   const updateForce = () => {
     const entity = props.getEntity(props.forceName);
-
     if (entity instanceof ExternalForceEntity) {
       setFX(parseFloat(entity.getElement().symbolF_x));
       setFY(parseFloat(entity.getElement().symbolF_y));

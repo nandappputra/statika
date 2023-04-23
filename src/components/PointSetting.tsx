@@ -40,18 +40,23 @@ function PointSetting(props: Props) {
 
   useEffect(() => {
     updatePoint();
-  }, []);
+  }, [props.pointName]);
 
   const updatePoint = () => {
     const entity = props.getEntity(props.pointName);
-    const parentLinkage = props.getLinkageFromPoint(props.pointName);
-
-    if (entity instanceof PointEntity && parentLinkage) {
-      setForces(entity.getElement().externalForces);
-      setLinkage(parentLinkage.getElement());
-      setX(entity.getElement().x);
-      setY(entity.getElement().y);
+    if (!(entity instanceof PointEntity)) {
+      return;
     }
+
+    const parentLinkage = props.getLinkageFromPoint(props.pointName);
+    if (!parentLinkage) {
+      return;
+    }
+
+    setForces(entity.getElement().externalForces);
+    setLinkage(parentLinkage.getElement());
+    setX(entity.getElement().x);
+    setY(entity.getElement().y);
   };
 
   const removePoint = (pointName: string) => {
