@@ -101,7 +101,7 @@ export class ExternalForceEntity implements CanvasEntity {
   private _rotateIcon(F_x: number, F_y: number) {
     this._icon.set(
       "angle",
-      Math.atan2(F_x, F_y) * RADIAN_TO_DEGREE_MULTIPLIER -
+      Math.atan2(F_y, F_x) * RADIAN_TO_DEGREE_MULTIPLIER -
         ARROW_ANGLE_ADJUSTMENT
     );
     this._icon.setCoords();
