@@ -6,6 +6,7 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  Typography,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
@@ -16,6 +17,7 @@ import { PointEntity } from "../models/canvas_entities/PointEntity";
 import { Point } from "../models/Point";
 import { ExternalForce } from "../models/ExternalForce";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
+import { Linkage } from "../models/diagram_elements/Linkage";
 
 type Props = {
   pointName: string;
@@ -32,6 +34,7 @@ type Props = {
 function PointSetting(props: Props) {
   const [point, setPoint] = useState<Point | undefined>(undefined);
   const [forces, setForces] = useState<ExternalForce[] | undefined>(undefined);
+  const [linkage, setLinkage] = useState<Linkage | undefined>(undefined);
 
   useEffect(() => {
     updatePoint();
@@ -39,15 +42,16 @@ function PointSetting(props: Props) {
 
   const updatePoint = () => {
     const entity = props.getEntity(props.pointName);
+    const parentLinkage = props.getLinkageFromPoint(props.pointName);
 
-    if (entity instanceof PointEntity) {
+    if (entity instanceof PointEntity && parentLinkage) {
       setPoint(entity.getElement());
       setForces(entity.getElement().externalForces);
+      setLinkage(parentLinkage.getElement());
     }
   };
 
   const removePoint = (pointName: string) => {
-    const linkage = props.getLinkageFromPoint(pointName);
     if (linkage) {
       props.removePointFromLinkage(pointName, linkage.name);
     }
@@ -60,6 +64,17 @@ function PointSetting(props: Props) {
 
   return (
     <div>
+      <Typography
+        noWrap
+        sx={{
+          display: "flex",
+          textDecoration: "none",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        Point in {linkage?.name}
+      </Typography>
       <Container
         disableGutters
         sx={{
@@ -89,7 +104,6 @@ function PointSetting(props: Props) {
           }}
         />
       </Container>
-
       <List
         sx={{
           borderTop: "3px black solid",

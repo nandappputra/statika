@@ -1,4 +1,4 @@
-import { Button, Container, TextField } from "@mui/material";
+import { Button, Container, TextField, Typography } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
@@ -34,6 +34,17 @@ function ForceSetting(props: Props) {
 
   return (
     <div>
+      <Typography
+        noWrap
+        sx={{
+          display: "flex",
+          textDecoration: "none",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        Force at {point?.name}
+      </Typography>
       <Container
         disableGutters
         sx={{

@@ -441,6 +441,11 @@ export class Painter implements EventMediator {
       this.removePointFromConnection(point, affectedConnection.getElement());
     }
 
+    const affectedForce = this._pointNameToExternalForceEntity.get(point.name);
+    affectedForce?.forEach((force) =>
+      this.removeExternalLoad(point, force.getElement())
+    );
+
     this._painterFeatures.forEach((feature) =>
       feature.handlePointRemoval(this, linkage, point)
     );
