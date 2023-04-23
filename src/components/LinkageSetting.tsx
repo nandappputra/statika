@@ -14,6 +14,7 @@ import { Point } from "../models/Point";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
+import { Coordinate } from "../models/Coordinate";
 
 type Props = {
   linkageName: string;
@@ -21,6 +22,7 @@ type Props = {
   removeEntity: (entityName: string) => void;
   addPointToLinkage: (selectedLinkage: string) => void;
   removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
+  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
 };
 
 function LinkageSetting(props: Props) {
@@ -38,6 +40,25 @@ function LinkageSetting(props: Props) {
     }
   };
 
+  const movePoint = (pointName: string, index: number) => {
+    const valueX = (
+      document.getElementById(`${pointName}-X`) as HTMLInputElement
+    )?.valueAsNumber;
+    const valueY = (
+      document.getElementById(`${pointName}-Y`) as HTMLInputElement
+    )?.valueAsNumber;
+
+    if (Number.isNaN(valueX) || Number.isNaN(valueY)) {
+      return;
+    }
+
+    const newState = [...points];
+    newState[index].x = valueX;
+    newState[index].y = valueY;
+    props.updatePointPosition(pointName, { x: valueX, y: valueY });
+    setPoints(newState);
+  };
+
   return (
     <div>
       <List
@@ -50,7 +71,7 @@ function LinkageSetting(props: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {points.map((point) => (
+        {points.map((point, index) => (
           <ListItem key={point.name}>
             <ListItemText>{point.name}</ListItemText>
 
@@ -60,9 +81,11 @@ function LinkageSetting(props: Props) {
               variant="outlined"
               value={point.x}
               sx={{
-                maxWidth: "25%",
+                maxWidth: "30%",
                 margin: "0 0.5em",
               }}
+              type="number"
+              onChange={() => movePoint(point.name, index)}
             />
             <TextField
               id={`${point.name}-Y`}
@@ -70,8 +93,10 @@ function LinkageSetting(props: Props) {
               variant="outlined"
               value={point.y}
               sx={{
-                maxWidth: "25%",
+                maxWidth: "30%",
               }}
+              type="number"
+              onChange={() => movePoint(point.name, index)}
             />
             <IconButton
               onClick={() => {

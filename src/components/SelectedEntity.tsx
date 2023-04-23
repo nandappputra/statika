@@ -90,6 +90,7 @@ function SelectedEntity(props: Props) {
               addPointToLinkage={props.addPointToLinkage}
               removePointFromLinkage={props.removePointFromLinkage}
               getEntity={props.getEntity}
+              updatePointPosition={props.updatePointPosition}
             />
           ) : entityType === "ConnectionEntity" ? (
             <ConnectionSetting
