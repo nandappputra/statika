@@ -26,6 +26,7 @@ type Props = {
     pointName: string
   ) => void;
   getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
+  addExternalForceToPoint: (pointName: string) => void;
 };
 
 function PointSetting(props: Props) {
@@ -50,6 +51,11 @@ function PointSetting(props: Props) {
     if (linkage) {
       props.removePointFromLinkage(pointName, linkage.name);
     }
+  };
+
+  const addExternalForceToPoint = (pointName: string) => {
+    props.addExternalForceToPoint(pointName);
+    updatePoint();
   };
 
   return (
@@ -118,7 +124,7 @@ function PointSetting(props: Props) {
         }}
       >
         <Button
-          // onClick={() => props.addPointToLinkage(props.linkageName)}
+          onClick={() => addExternalForceToPoint(props.pointName)}
           startIcon={<AddCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

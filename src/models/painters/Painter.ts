@@ -245,6 +245,8 @@ export class Painter implements EventMediator {
         affectedForces.add(externalForce);
       }
 
+      location.addExternalForce(externalLoad);
+
       this._canvas.add(...externalForce.getObjectsToDraw());
     }
   }
