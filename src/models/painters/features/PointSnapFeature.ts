@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { ElementFactory } from "../../../factories/ElementFactory";
 import { ConnectionType } from "../../../utils/Constants";
 import { Coordinate } from "../../Coordinate";
 import { MovePointEvent, objectDropEvent } from "../../Event";
+import { ExternalForce } from "../../ExternalForce";
 import { Point } from "../../Point";
 import { ConnectionEntity } from "../../canvas_entities/ConnectionEntity";
 import { PointEntity } from "../../canvas_entities/PointEntity";
@@ -198,6 +200,18 @@ export class PointSnapFeature implements Feature {
   ): void {
     this._freePoints.add(point.name);
   }
+
+  handleForceAddition(
+    _painter: Painter,
+    _point: Point,
+    _externalForce: ExternalForce
+  ): void {}
+
+  handleForceRemoval(
+    _painter: Painter,
+    _point: Point,
+    _externalForce: ExternalForce
+  ): void {}
 
   private distance(coordinate1: Coordinate, coordinate2: Coordinate) {
     return (

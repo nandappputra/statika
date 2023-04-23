@@ -4,6 +4,7 @@ import { MovePointEvent, objectDropEvent } from "../../Event";
 import { Point } from "../../Point";
 import { Linkage } from "../../diagram_elements/Linkage";
 import { Connection } from "../../diagram_elements/connections/Connection";
+import { ExternalForce } from "../../ExternalForce";
 
 export interface Feature {
   handleElementAddition(painter: Painter, element: DiagramElement): void;
@@ -16,5 +17,15 @@ export interface Feature {
     painter: Painter,
     connection: Connection,
     point: Point
+  ): void;
+  handleForceAddition(
+    painter: Painter,
+    point: Point,
+    externalForce: ExternalForce
+  ): void;
+  handleForceRemoval(
+    painter: Painter,
+    point: Point,
+    externalForce: ExternalForce
   ): void;
 }

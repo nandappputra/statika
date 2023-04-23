@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MovePointEvent } from "../../Event";
+import { ExternalForce } from "../../ExternalForce";
 import { Point } from "../../Point";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { Linkage } from "../../diagram_elements/Linkage";
@@ -43,4 +44,20 @@ export class EntityListFeature implements Feature {
     _connection: Connection,
     _point: Point
   ): void {}
+
+  handleForceAddition(
+    painter: Painter,
+    _point: Point,
+    _externalForce: ExternalForce
+  ): void {
+    this._setElementList(painter.getAllEntityName());
+  }
+
+  handleForceRemoval(
+    painter: Painter,
+    _point: Point,
+    _externalForce: ExternalForce
+  ): void {
+    this._setElementList(painter.getAllEntityName());
+  }
 }

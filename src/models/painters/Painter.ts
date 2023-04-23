@@ -248,6 +248,10 @@ export class Painter implements EventMediator {
       location.addExternalForce(externalLoad);
 
       this._canvas.add(...externalForce.getObjectsToDraw());
+
+      this._painterFeatures.forEach((feature) =>
+        feature.handleForceAddition(this, location, externalLoad)
+      );
     }
   }
 
@@ -270,6 +274,10 @@ export class Painter implements EventMediator {
         ?.delete(entity as ExternalForceEntity);
       this._canvas.remove(...entity.getObjectsToDraw());
       location.removeExternalForce(externalLoad);
+
+      this._painterFeatures.forEach((feature) =>
+        feature.handleForceRemoval(this, location, externalLoad)
+      );
     }
 
     this._canvas.renderAll();
