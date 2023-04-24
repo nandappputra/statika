@@ -53,7 +53,7 @@ export class LinkageEntity implements CanvasEntity {
       typeof pointIndex === "undefined" ||
       typeof this._polygon.points === "undefined"
     ) {
-      throw new Error("missing point");
+      throw new Error("failed to update linkage: missing point");
     }
 
     this._polygon.points[pointIndex].x = movePointEvent.coordinate.x;

@@ -6,6 +6,7 @@ import { LinkageEntity } from "./LinkageEntity";
 import { setMockProperty } from "../../utils/TestUtils";
 import { ElementType } from "../../utils/Constants";
 import { Point } from "../Point";
+import { MovePointEvent } from "../Event";
 
 describe("LinkageEntity", () => {
   let linkage: MockedObject<Linkage>;
@@ -33,6 +34,47 @@ describe("LinkageEntity", () => {
 
       expect(actualObjects.length).toBe(1);
       expect(actualObjects[0].data).toStrictEqual(expectedObject);
+    });
+  });
+
+  describe("updatePosition", () => {
+    test("Should update the position of the icon", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      setMockProperty(linkage, "name", "L1");
+      setMockProperty(linkage, "points", [p1, p2]);
+      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P1",
+        source: "user",
+        coordinate: { x: 20, y: 10 },
+      };
+
+      linkageEntity.updatePosition(movePointEvent);
+
+      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+
+      expect(actualIcon.points?.[0].x).toBe(20);
+      expect(actualIcon.points?.[0].y).toBe(10);
+    });
+
+    test("Should throw error when the point is not found within the linkage", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      setMockProperty(linkage, "name", "L1");
+      setMockProperty(linkage, "points", [p1, p2]);
+      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P3",
+        source: "user",
+        coordinate: { x: 20, y: 10 },
+      };
+
+      expect(() => linkageEntity.updatePosition(movePointEvent)).toThrow(
+        "failed to update linkage: missing point"
+      );
     });
   });
 });
