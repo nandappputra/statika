@@ -6,6 +6,7 @@ import { Point } from "../Point";
 import { Painter } from "../painters/Painter";
 import { ElementType } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
+import { MovePointEvent } from "../Event";
 
 describe("ExternalForceEntity", () => {
   let point: MockedObject<Point>;
@@ -38,6 +39,30 @@ describe("ExternalForceEntity", () => {
 
       expect(actualObjects.length).toBe(1);
       expect(actualObjects[0].data).toStrictEqual(expectedObject);
+    });
+  });
+
+  describe("updatePosition", () => {
+    test("Should update the position of the icon", () => {
+      setMockProperty(externalForce, "name", "F1");
+      externalForceEntity = new ExternalForceEntity(
+        externalForce,
+        point,
+        eventMediator
+      );
+
+      const movePointEvent: MovePointEvent = {
+        name: "P1",
+        source: "user",
+        coordinate: { x: 20, y: 10 },
+      };
+
+      externalForceEntity.updatePosition(movePointEvent);
+
+      const actualIcon = externalForceEntity.getObjectsToDraw();
+
+      expect(actualIcon?.[0].top).toBe(10);
+      expect(actualIcon?.[0].left).toBe(20);
     });
   });
 });
