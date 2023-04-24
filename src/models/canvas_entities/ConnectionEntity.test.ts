@@ -101,4 +101,22 @@ describe("ExternalForceEntity", () => {
       expect(updatePosition).toBeCalledWith(expectedPropagatedEvent2);
     });
   });
+
+  describe("addPoint", () => {
+    test("Should add point to the element", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      const p3 = new Point("P3", 3, 3);
+      const addPoint = jest.fn<(point: Point) => void>();
+      connection.addPoint = addPoint;
+      setMockProperty(connection, "points", [p1, p2]);
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      connectionEntity.addPoint(p3);
+
+      expect(addPoint).toBeCalledTimes(1);
+      expect(addPoint).toBeCalledWith(p3);
+    });
+  });
 });
