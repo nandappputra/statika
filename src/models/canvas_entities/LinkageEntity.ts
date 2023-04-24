@@ -15,7 +15,6 @@ export class LinkageEntity implements CanvasEntity {
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
-  private _nameToIconMap: Map<string, (fabric.Group | fabric.Object)[]>;
   private _polygon: fabric.Polygon;
   private _eventMediator: EventMediator;
   private _linkage: Linkage;
@@ -29,7 +28,6 @@ export class LinkageEntity implements CanvasEntity {
     this._linkage = linkage;
     this._nameToIndexMap = new Map<string, number>();
     this._indexToNameMap = new Map<number, string>();
-    this._nameToIconMap = new Map<string, (fabric.Group | fabric.Object)[]>();
     const coordinates: fabric.Point[] = [];
 
     const points = linkage.points;
@@ -95,7 +93,7 @@ export class LinkageEntity implements CanvasEntity {
   public deletePoint(point: Point) {
     const index = this._nameToIndexMap.get(point.name);
     if (index === undefined || !this._polygon.points) {
-      throw new Error("point not found in polygon");
+      throw new Error("failed to delete point: point not found in polygon");
     }
 
     this._linkage.removePoint(point);
