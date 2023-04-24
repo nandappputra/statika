@@ -31,7 +31,7 @@ describe("ElementFactory", () => {
   });
 
   describe("buildLinkage", () => {
-    test("Should return a Point with a name starting with L", () => {
+    test("Should return a Linkage with a name starting with L", () => {
       const point1 = factory.buildPoint({ x: 10, y: 10 });
       const point2 = factory.buildPoint({ x: 10, y: 10 });
 
@@ -47,6 +47,20 @@ describe("ElementFactory", () => {
       const linkage = factory.buildLinkage(point1, point2);
 
       expect(linkage.name.charAt(1)).toEqual("2");
+    });
+  });
+
+  describe("buildExternalForce", () => {
+    test("Should return an ExternalForce with a name starting with F", () => {
+      const force = factory.buildExternalForce(30, 30);
+
+      expect(force.name.charAt(0)).toEqual("F");
+    });
+
+    test("Should return an ExternalForce with a name in increasing order", () => {
+      const force = factory.buildExternalForce(30, 30);
+
+      expect(force.name.charAt(1)).toEqual("2");
     });
   });
 });
