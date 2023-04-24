@@ -119,4 +119,38 @@ describe("ExternalForceEntity", () => {
       expect(addPoint).toBeCalledWith(p3);
     });
   });
+
+  describe("deletePoint", () => {
+    test("Should remove point from the element", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      const removePoint = jest.fn<(point: Point) => void>();
+      connection.removePoint = removePoint;
+      setMockProperty(connection, "points", [p1, p2]);
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      connectionEntity.deletePoint(p2);
+
+      expect(removePoint).toBeCalledTimes(1);
+      expect(removePoint).toBeCalledWith(p2);
+    });
+
+    test("Should replace the pointName in the metadata with the first point in the element", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      const p3 = new Point("P3", 3, 3);
+      const removePoint = jest.fn<(point: Point) => void>();
+      connection.removePoint = removePoint;
+      setMockProperty(connection, "points", [p2, p3]);
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      connectionEntity.deletePoint(p1);
+
+      const actualObjects = connectionEntity.getObjectsToDraw();
+
+      expect(actualObjects[0].data?.pointName).toBe("P2");
+    });
+  });
 });
