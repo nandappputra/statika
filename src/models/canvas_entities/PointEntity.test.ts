@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { jest, describe, expect, test } from "@jest/globals";
 import { PointEntity } from "./PointEntity";
 import { Point } from "../Point";
@@ -56,8 +55,8 @@ describe("PointEntity", () => {
 
     test("Should update the position of the element", () => {
       setMockProperty(point, "name", "p1");
-      const [_getX, setX] = setMockProperty(point, "x", 1);
-      const [_getY, setY] = setMockProperty(point, "y", 2);
+      const [, setX] = setMockProperty(point, "x", 1);
+      const [, setY] = setMockProperty(point, "y", 2);
       pointEntity = new PointEntity(point, eventMediator);
 
       const movePointEvent: MovePointEvent = {

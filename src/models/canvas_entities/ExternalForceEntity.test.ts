@@ -65,4 +65,41 @@ describe("ExternalForceEntity", () => {
       expect(actualIcon?.[0].left).toBe(20);
     });
   });
+
+  describe("setForceComponents", () => {
+    test("Should update the rotation of the icon to appropriate value", () => {
+      setMockProperty(externalForce, "name", "F1");
+      externalForceEntity = new ExternalForceEntity(
+        externalForce,
+        point,
+        eventMediator
+      );
+
+      externalForceEntity.setForceComponents(100, 0);
+
+      const actualIcon = externalForceEntity.getObjectsToDraw();
+
+      expect(actualIcon?.[0].angle).toBe(-90);
+    });
+
+    test("Should update the values of the element", () => {
+      setMockProperty(externalForce, "name", "F1");
+      const [, setFx] = setMockProperty(externalForce, "F_x", 10);
+      const [, setFy] = setMockProperty(externalForce, "F_y", 20);
+
+      externalForceEntity = new ExternalForceEntity(
+        externalForce,
+        point,
+        eventMediator
+      );
+
+      externalForceEntity.setForceComponents(100, 0);
+
+      expect(setFx).toBeCalledTimes(1);
+      expect(setFx).toBeCalledWith(100);
+
+      expect(setFy).toBeCalledTimes(1);
+      expect(setFy).toBeCalledWith(0);
+    });
+  });
 });

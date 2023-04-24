@@ -5,8 +5,8 @@ export function setMockProperty<T>(
   property: string,
   value: T
 ) {
-  const getter = jest.fn(() => value);
-  const setter = jest.fn();
+  const getter = jest.fn<T, [], MockedObject<object>>(() => value);
+  const setter = jest.fn<void, [T], MockedObject<object>>();
   Object.defineProperty(mockObject, property, {
     get: getter,
     set: setter,
