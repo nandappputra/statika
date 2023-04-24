@@ -29,4 +29,24 @@ describe("ElementFactory", () => {
       expect(point2.name.charAt(1)).toEqual("2");
     });
   });
+
+  describe("buildLinkage", () => {
+    test("Should return a Point with a name starting with L", () => {
+      const point1 = factory.buildPoint({ x: 10, y: 10 });
+      const point2 = factory.buildPoint({ x: 10, y: 10 });
+
+      const linkage = factory.buildLinkage(point1, point2);
+
+      expect(linkage.name.charAt(0)).toEqual("L");
+    });
+
+    test("Should return a Linkage with a name in increasing order", () => {
+      const point1 = factory.buildPoint({ x: 10, y: 10 });
+      const point2 = factory.buildPoint({ x: 10, y: 10 });
+
+      const linkage = factory.buildLinkage(point1, point2);
+
+      expect(linkage.name.charAt(1)).toEqual("2");
+    });
+  });
 });
