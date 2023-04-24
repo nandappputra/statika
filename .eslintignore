@@ -2,3 +2,4 @@ node_modules
 build
 
 vite.config.ts
+jest.config.js
