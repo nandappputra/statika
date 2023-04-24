@@ -77,4 +77,55 @@ describe("LinkageEntity", () => {
       );
     });
   });
+
+  describe("addPoint", () => {
+    test("Should should increase the number of points in polygon", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      setMockProperty(linkage, "name", "L1");
+      setMockProperty(linkage, "points", [p1, p2]);
+      linkage.addPoint = jest.fn();
+      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+
+      const p3 = new Point("P3", 3, 3);
+      linkageEntity.addPoint(p3);
+
+      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+
+      expect(actualIcon.points?.length).toBe(3);
+    });
+
+    test("Should ensure point movement is applied to the correct point", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      setMockProperty(linkage, "name", "L1");
+      setMockProperty(linkage, "points", [p1, p2]);
+      linkage.addPoint = jest.fn();
+      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+
+      const p3 = new Point("P3", 3, 3);
+      linkageEntity.addPoint(p3);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P3",
+        source: "user",
+        coordinate: { x: 20, y: 10 },
+      };
+
+      linkageEntity.updatePosition(movePointEvent);
+
+      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+
+      expect(actualIcon.points?.length).toBe(3);
+
+      expect(actualIcon.points?.[0].x).toBe(1);
+      expect(actualIcon.points?.[0].y).toBe(1);
+
+      expect(actualIcon.points?.[1].x).toBe(2);
+      expect(actualIcon.points?.[1].y).toBe(2);
+
+      expect(actualIcon.points?.[2].x).toBe(20);
+      expect(actualIcon.points?.[2].y).toBe(10);
+    });
+  });
 });
