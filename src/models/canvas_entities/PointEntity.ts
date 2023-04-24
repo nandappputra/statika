@@ -22,6 +22,9 @@ export class PointEntity implements CanvasEntity {
     this._icon.left = movePointEvent.coordinate.x;
     this._icon.top = movePointEvent.coordinate.y;
     this._icon.setCoords();
+
+    this._point.x = movePointEvent.coordinate.x;
+    this._point.y = movePointEvent.coordinate.y;
   }
 
   public getObjectsToDraw(): (fabric.Object | fabric.Group)[] {

@@ -1,13 +1,16 @@
 import { MockedObject } from "jest-mock";
 
-export function setMockProperty(
+export function setMockProperty<T>(
   mockObject: MockedObject<object>,
   property: string,
-  value: unknown
+  value: T
 ) {
+  const getter = jest.fn(() => value);
+  const setter = jest.fn();
   Object.defineProperty(mockObject, property, {
-    get() {
-      return value;
-    },
+    get: getter,
+    set: setter,
   });
+
+  return [getter, setter];
 }
