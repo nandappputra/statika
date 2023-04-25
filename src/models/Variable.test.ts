@@ -28,4 +28,18 @@ describe("Variable", () => {
       );
     });
   });
+
+  describe("getValueOrSymbol", () => {
+    test("Should return the value of the known variable in string format", () => {
+      const variable = new Variable("P1", 3);
+
+      expect(variable.getValueOrSymbol()).toBe("3");
+    });
+
+    test("Should return the symbol of the variable if not known", () => {
+      const variable = new Variable("P1");
+
+      expect(variable.getValueOrSymbol()).toBe("P1");
+    });
+  });
 });
