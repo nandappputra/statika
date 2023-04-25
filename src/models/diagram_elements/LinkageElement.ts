@@ -43,10 +43,10 @@ export class LinkageElement implements DiagramElement {
       const diffY = point.y - reference.y;
 
       const m1 = formatMomentForSolver(diffY, point.symbolF_x);
-      const m2 = formatMomentForSolver(diffX, point.symbolF_y);
+      const m2 = formatMomentForSolver(diffX, point.symbolF_y, true);
       const m3 = formatMomentForSolver(1, point.symbolM_z);
 
-      const equation = `${m1}+-${m2}+${m3}`;
+      const equation = `${m1}+${m2}+${m3}`;
       sigmaM_z.push(equation);
     });
 

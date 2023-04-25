@@ -68,10 +68,32 @@ export function expressEquationsInMatrixMultiplication(
   };
 }
 
-export function formatMomentForSolver(signedDistance: number, value: string) {
+export function formatMomentForSolver(
+  signedDistance: number,
+  value: string,
+  invertSign = false
+) {
   const valueInNumber = parseFloat(value);
   if (Number.isNaN(valueInNumber)) {
-    return `${signedDistance}*${value}`;
+    const result: string[] = [];
+    const adjustedDistance = invertSign ? -1 * signedDistance : signedDistance;
+
+    const operands = value.split("+");
+    operands.forEach((operand) => {
+      const operandInNumber = parseFloat(operand);
+
+      if (Number.isNaN(operandInNumber)) {
+        result.push(`${adjustedDistance}*${operand}`);
+      } else {
+        result.push(`${adjustedDistance * operandInNumber}`);
+      }
+
+      result.push("+");
+    });
+
+    const finalResult = result.join("");
+
+    return finalResult.substring(0, finalResult.length - 1);
   }
 
   return `${signedDistance * valueInNumber}`;
@@ -79,7 +101,22 @@ export function formatMomentForSolver(signedDistance: number, value: string) {
 
 export function formatForceForSolver(force: string) {
   if (Number.isNaN(parseFloat(force))) {
-    return `1*${force}`;
+    const result: string[] = [];
+
+    const operands = force.split("+");
+    operands.forEach((operand) => {
+      if (Number.isNaN(parseFloat(operand))) {
+        result.push(`1*${operand}`);
+      } else {
+        result.push(operand);
+      }
+
+      result.push("+");
+    });
+
+    const finalResult = result.join("");
+
+    return finalResult.substring(0, finalResult.length - 1);
   }
 
   return force;

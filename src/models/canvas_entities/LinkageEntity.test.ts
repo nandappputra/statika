@@ -15,7 +15,7 @@ describe("LinkageEntity", () => {
 
   beforeEach(() => {
     linkage = jest.createMockFromModule<LinkageElement>(
-      "../diagram_elements/Linkage"
+      "../diagram_elements/LinkageElement"
     );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
   });
