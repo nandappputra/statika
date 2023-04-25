@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
-import { Linkage } from "../diagram_elements/Linkage";
+import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
 import { ElementType } from "../../utils/Constants";
@@ -17,10 +17,10 @@ export class LinkageEntity implements CanvasEntity {
   private _indexToNameMap: Map<number, string>;
   private _polygon: fabric.Polygon;
   private _eventMediator: EventMediator;
-  private _linkage: Linkage;
+  private _linkage: LinkageElement;
 
   constructor(
-    linkage: Linkage,
+    linkage: LinkageElement,
     eventMediator: EventMediator,
     options: fabric.IPolylineOptions | undefined
   ) {

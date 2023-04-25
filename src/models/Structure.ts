@@ -1,11 +1,11 @@
 import { Connection } from "./diagram_elements/connections/Connection";
-import { Linkage } from "./diagram_elements/Linkage";
+import { LinkageElement } from "./diagram_elements/LinkageElement";
 
 export class Structure {
-  private _linkages: Linkage[];
+  private _linkages: LinkageElement[];
   private _connections: Connection[];
 
-  constructor(linkages: Linkage[], connections: Connection[]) {
+  constructor(linkages: LinkageElement[], connections: Connection[]) {
     this._linkages = linkages;
     this._connections = connections;
   }

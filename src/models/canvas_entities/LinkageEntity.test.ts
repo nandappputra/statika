@@ -1,6 +1,6 @@
 import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
-import { Linkage } from "../diagram_elements/Linkage";
+import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { Painter } from "../painters/Painter";
 import { LinkageEntity } from "./LinkageEntity";
 import { setMockProperty } from "../../utils/TestUtils";
@@ -9,12 +9,14 @@ import { Point } from "../Point";
 import { MovePointEvent } from "../Event";
 
 describe("LinkageEntity", () => {
-  let linkage: MockedObject<Linkage>;
+  let linkage: MockedObject<LinkageElement>;
   let eventMediator: MockedObject<Painter>;
   let linkageEntity: LinkageEntity;
 
   beforeEach(() => {
-    linkage = jest.createMockFromModule<Linkage>("../diagram_elements/Linkage");
+    linkage = jest.createMockFromModule<LinkageElement>(
+      "../diagram_elements/Linkage"
+    );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
   });
 

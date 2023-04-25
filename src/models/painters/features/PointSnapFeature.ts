@@ -8,7 +8,7 @@ import { Point } from "../../Point";
 import { ConnectionEntity } from "../../canvas_entities/ConnectionEntity";
 import { PointEntity } from "../../canvas_entities/PointEntity";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
-import { Linkage } from "../../diagram_elements/Linkage";
+import { LinkageElement } from "../../diagram_elements/LinkageElement";
 import { Connection } from "../../diagram_elements/connections/Connection";
 import { Painter } from "../Painter";
 import { Feature } from "./Feature";
@@ -25,7 +25,7 @@ export class PointSnapFeature implements Feature {
   }
 
   handleElementAddition(painter: Painter, element: DiagramElement): void {
-    if (element instanceof Linkage) {
+    if (element instanceof LinkageElement) {
       element.points.forEach((point) => {
         this._freePoints.add(point.name);
       });
@@ -185,11 +185,19 @@ export class PointSnapFeature implements Feature {
     toRemove.forEach((point) => this._freePoints.delete(point));
   }
 
-  handlePointAddition(painter: Painter, linkage: Linkage, point: Point): void {
+  handlePointAddition(
+    painter: Painter,
+    linkage: LinkageElement,
+    point: Point
+  ): void {
     this._freePoints.add(point.name);
   }
 
-  handlePointRemoval(painter: Painter, linkage: Linkage, point: Point): void {
+  handlePointRemoval(
+    painter: Painter,
+    linkage: LinkageElement,
+    point: Point
+  ): void {
     this._freePoints.delete(point.name);
   }
 

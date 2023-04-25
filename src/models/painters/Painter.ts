@@ -1,4 +1,4 @@
-import { Linkage } from "../diagram_elements/Linkage";
+import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { LinkageEntity } from "../canvas_entities/LinkageEntity";
 import { MovePointEvent } from "../Event";
 import { Connection } from "../diagram_elements/connections/Connection";
@@ -316,7 +316,7 @@ export class Painter implements EventMediator {
   public addElement(diagramElement: DiagramElement) {
     let entity: CanvasEntity;
 
-    if (diagramElement instanceof Linkage) {
+    if (diagramElement instanceof LinkageElement) {
       entity = new LinkageEntity(
         diagramElement,
         this,
@@ -407,7 +407,7 @@ export class Painter implements EventMediator {
     return this._pointNameToPoint.get(pointName);
   }
 
-  public addPointToLinkage(point: Point, linkage: Linkage) {
+  public addPointToLinkage(point: Point, linkage: LinkageElement) {
     const entity = this._entityNameToEntity.get(linkage.name);
     if (!entity || !(entity instanceof LinkageEntity)) {
       throw new Error("missing or invalid entity found");
@@ -427,7 +427,7 @@ export class Painter implements EventMediator {
     );
   }
 
-  public removePointFromLinkage(point: Point, linkage: Linkage) {
+  public removePointFromLinkage(point: Point, linkage: LinkageElement) {
     const affectedPoint = this._pointNameToPointEntity.get(point.name);
     if (!affectedPoint) {
       throw new Error("unrecognized point");

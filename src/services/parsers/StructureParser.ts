@@ -5,7 +5,7 @@ import { FixedConnection } from "../../models/diagram_elements/connections/Fixed
 import { HorizontalRollerConnection } from "../../models/diagram_elements/connections/HorizontalRollerConnection";
 import { FreeConnection } from "../../models/diagram_elements/connections/FreeConnection";
 import { ExternalForce } from "../../models/ExternalForce";
-import { Linkage } from "../../models/diagram_elements/Linkage";
+import { LinkageElement } from "../../models/diagram_elements/LinkageElement";
 import { Structure } from "../../models/Structure";
 import { ConnectionType } from "../../utils/Constants";
 
@@ -48,7 +48,7 @@ export function buildStructure(structureJson: StructureJson) {
     structureJson.connections
   );
   const forces: ExternalForce[] = buildForces(structureJson.forces);
-  const linkages: Linkage[] = buildLinkages(
+  const linkages: LinkageElement[] = buildLinkages(
     points,
     forces,
     structureJson.linkages
@@ -107,8 +107,8 @@ function buildLinkages(
   points: Point[],
   forces: ExternalForce[],
   linkageJsons: LinkageJson[]
-): Linkage[] {
-  const linkages: Linkage[] = [];
+): LinkageElement[] {
+  const linkages: LinkageElement[] = [];
   linkageJsons.forEach((linkageJson) => {
     const appliedForces = forces.filter((force) =>
       linkageJson.forces.includes(force.name)
@@ -118,7 +118,7 @@ function buildLinkages(
       linkageJson.points.includes(point.name)
     );
 
-    const newLinkage = new Linkage(
+    const newLinkage = new LinkageElement(
       linkageJson.name,
       connectedPoints[0],
       connectedPoints[1]

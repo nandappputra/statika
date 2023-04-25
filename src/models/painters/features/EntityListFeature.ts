@@ -3,7 +3,7 @@ import { MovePointEvent } from "../../Event";
 import { ExternalForce } from "../../ExternalForce";
 import { Point } from "../../Point";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
-import { Linkage } from "../../diagram_elements/Linkage";
+import { LinkageElement } from "../../diagram_elements/LinkageElement";
 import { Connection } from "../../diagram_elements/connections/Connection";
 import { Painter } from "../Painter";
 import { Feature } from "./Feature";
@@ -25,13 +25,17 @@ export class EntityListFeature implements Feature {
 
   handlePointAddition(
     painter: Painter,
-    _linkage: Linkage,
+    _linkage: LinkageElement,
     _point: Point
   ): void {
     this._setElementList(painter.getAllEntityName());
   }
 
-  handlePointRemoval(painter: Painter, _linkage: Linkage, _point: Point): void {
+  handlePointRemoval(
+    painter: Painter,
+    _linkage: LinkageElement,
+    _point: Point
+  ): void {
     this._setElementList(painter.getAllEntityName());
   }
 

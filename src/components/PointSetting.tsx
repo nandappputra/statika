@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { PointEntity } from "../models/canvas_entities/PointEntity";
 import { ExternalForce } from "../models/ExternalForce";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
-import { Linkage } from "../models/diagram_elements/Linkage";
+import { LinkageElement } from "../models/diagram_elements/LinkageElement";
 import { Coordinate } from "../models/Coordinate";
 
 type Props = {
@@ -36,7 +36,7 @@ function PointSetting(props: Props) {
   const [x, setX] = useState<number>(0);
   const [y, setY] = useState<number>(0);
   const [forces, setForces] = useState<ExternalForce[] | undefined>(undefined);
-  const [linkage, setLinkage] = useState<Linkage | undefined>(undefined);
+  const [linkage, setLinkage] = useState<LinkageElement | undefined>(undefined);
 
   useEffect(() => {
     updatePoint();

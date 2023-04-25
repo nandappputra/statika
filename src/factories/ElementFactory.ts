@@ -1,7 +1,7 @@
 import { Coordinate } from "../models/Coordinate";
 import { ExternalForce } from "../models/ExternalForce";
 import { Point } from "../models/Point";
-import { Linkage } from "../models/diagram_elements/Linkage";
+import { LinkageElement } from "../models/diagram_elements/LinkageElement";
 import { Connection } from "../models/diagram_elements/connections/Connection";
 import { FixedConnection } from "../models/diagram_elements/connections/FixedConnection";
 import { FreeConnection } from "../models/diagram_elements/connections/FreeConnection";
@@ -39,7 +39,7 @@ export class ElementFactory {
     const name = `${ElementType.LINKAGE}${this._linkageCounter}`;
     this._linkageCounter++;
 
-    return new Linkage(name, point1, point2);
+    return new LinkageElement(name, point1, point2);
   }
 
   public buildConnection(

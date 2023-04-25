@@ -5,7 +5,7 @@ import {
 import { Point } from "../Point";
 import { DiagramElement } from "./DiagramElement";
 
-export class Linkage implements DiagramElement {
+export class LinkageElement implements DiagramElement {
   private _name: string;
   private _points: Point[];
 
