@@ -9,8 +9,8 @@ export class ExternalForce {
   constructor(name: string, F_x: number, F_y: number) {
     this._name = name;
 
-    this._F_x = new Variable(`F_${name}x`, F_x);
-    this._F_y = new Variable(`F_${name}y`, F_y);
+    this._F_x = new Variable(`${name}x`, F_x);
+    this._F_y = new Variable(`${name}y`, F_y);
   }
 
   get symbolF_x(): string {
@@ -26,10 +26,10 @@ export class ExternalForce {
   }
 
   set F_x(F_x: number) {
-    this._F_x = new Variable(`F_${this._name}x`, F_x);
+    this._F_x = new Variable(`${this._name}x`, F_x);
   }
 
   set F_y(F_y: number) {
-    this._F_y = new Variable(`F_${this._name}y`, F_y);
+    this._F_y = new Variable(`${this._name}y`, F_y);
   }
 }
