@@ -17,4 +17,15 @@ describe("Variable", () => {
       );
     });
   });
+
+  describe("clear", () => {
+    test("Should delete the variable value and set the variable to unknown", () => {
+      const variable = new Variable("P1", 3);
+      variable.clear();
+
+      expect(() => variable.value).toThrow(
+        "failed to get P1 value: value not set"
+      );
+    });
+  });
 });
