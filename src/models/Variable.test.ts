@@ -16,6 +16,14 @@ describe("Variable", () => {
         "failed to get P1 value: value not set"
       );
     });
+
+    test("Should set the variable to known when supplied with value", () => {
+      const variable = new Variable("P1");
+
+      variable.value = 3;
+
+      expect(variable.value).toBe(3);
+    });
   });
 
   describe("clear", () => {
