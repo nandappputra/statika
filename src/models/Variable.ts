@@ -23,7 +23,7 @@ export class Variable {
       return this._value;
     }
 
-    throw new Error("Value not set");
+    throw new Error(`failed to get ${this._symbol} value: value not set`);
   }
 
   get isKnown(): boolean {
