@@ -25,4 +25,20 @@ describe("LinkageEntity", () => {
       expect(linkageElement.points[2]).toStrictEqual(point3);
     });
   });
+
+  describe("removePoint", () => {
+    test("Should remove the correct point from the linkage", () => {
+      linkageElement = new LinkageElement("L1", point1, point2);
+
+      const point3 = new Point("P3", 1, 2);
+      const point4 = new Point("P4", 3, 5);
+
+      linkageElement.addPoint(point3);
+      linkageElement.addPoint(point4);
+      linkageElement.removePoint(point3);
+
+      expect(linkageElement.points.length).toBe(3);
+      expect(linkageElement.points[2]).toStrictEqual(point4);
+    });
+  });
 });
