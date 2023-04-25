@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { Connection } from "../diagram_elements/connections/Connection";
+import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
@@ -8,18 +8,18 @@ import { ElementType } from "../../utils/Constants";
 
 export class ConnectionEntity implements CanvasEntity {
   private _name: string;
-  private _connection: Connection;
+  private _connection: ConnectionElement;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
 
-  constructor(connection: Connection, eventMediator: EventMediator) {
+  constructor(connection: ConnectionElement, eventMediator: EventMediator) {
     this._name = connection.name;
     this._connection = connection;
     this._eventMediator = eventMediator;
     this._icon = this.buildConnectionIcon(connection);
   }
 
-  private buildConnectionIcon(connection: Connection) {
+  private buildConnectionIcon(connection: ConnectionElement) {
     return new fabric.Circle({
       fill: "white",
       stroke: "black",

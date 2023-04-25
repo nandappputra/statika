@@ -3,7 +3,7 @@ import { Painter } from "../Painter";
 import { MovePointEvent, objectDropEvent } from "../../Event";
 import { Point } from "../../Point";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
-import { Connection } from "../../diagram_elements/connections/Connection";
+import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
 import { ExternalForce } from "../../ExternalForce";
 
 export interface Feature {
@@ -23,7 +23,7 @@ export interface Feature {
   ): void;
   handlePointDisconnection(
     painter: Painter,
-    connection: Connection,
+    connection: ConnectionElement,
     point: Point
   ): void;
   handleForceAddition(

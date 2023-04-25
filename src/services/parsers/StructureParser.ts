@@ -1,5 +1,5 @@
 import { Point } from "../../models/Point";
-import { Connection } from "../../models/diagram_elements/connections/Connection";
+import { ConnectionElement } from "../../models/diagram_elements/ConnectionElement";
 import { PinConnection } from "../../models/diagram_elements/connections/PinConnection";
 import { FixedConnection } from "../../models/diagram_elements/connections/FixedConnection";
 import { HorizontalRollerConnection } from "../../models/diagram_elements/connections/HorizontalRollerConnection";
@@ -43,7 +43,7 @@ export interface StructureJson {
 
 export function buildStructure(structureJson: StructureJson) {
   const points: Point[] = buildPoints(structureJson.points);
-  const connections: Connection[] = buildConnections(
+  const connections: ConnectionElement[] = buildConnections(
     points,
     structureJson.connections
   );
@@ -64,8 +64,8 @@ function buildPoints(pointJsons: PointJson[]): Point[] {
 function buildConnections(
   points: Point[],
   connectionJsons: ConnectionJson[]
-): Connection[] {
-  const connections: Connection[] = [];
+): ConnectionElement[] {
+  const connections: ConnectionElement[] = [];
   connectionJsons.forEach((connectionJson) => {
     const pointsToConnect = points.filter((point) =>
       connectionJson.points.includes(point.name)

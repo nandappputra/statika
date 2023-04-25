@@ -4,17 +4,17 @@ import { Point } from "../Point";
 import { Painter } from "../painters/Painter";
 import { ElementType } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
-import { Connection } from "../diagram_elements/connections/Connection";
+import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "./ConnectionEntity";
 import { MovePointEvent } from "../Event";
 
 describe("ExternalForceEntity", () => {
-  let connection: MockedObject<Connection>;
+  let connection: MockedObject<ConnectionElement>;
   let eventMediator: MockedObject<Painter>;
   let connectionEntity: ConnectionEntity;
 
   beforeEach(() => {
-    connection = jest.createMockFromModule<Connection>(
+    connection = jest.createMockFromModule<ConnectionElement>(
       "../diagram_elements/connections/Connection"
     );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");

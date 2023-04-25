@@ -2,11 +2,7 @@ import { Coordinate } from "../models/Coordinate";
 import { ExternalForce } from "../models/ExternalForce";
 import { Point } from "../models/Point";
 import { LinkageElement } from "../models/diagram_elements/LinkageElement";
-import { Connection } from "../models/diagram_elements/connections/Connection";
-import { FixedConnection } from "../models/diagram_elements/connections/FixedConnection";
-import { FreeConnection } from "../models/diagram_elements/connections/FreeConnection";
-import { HorizontalRollerConnection } from "../models/diagram_elements/connections/HorizontalRollerConnection";
-import { PinConnection } from "../models/diagram_elements/connections/PinConnection";
+import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
 import { ConnectionType, ElementType } from "../utils/Constants";
 
 export class ElementFactory {
@@ -45,23 +41,10 @@ export class ElementFactory {
   public buildConnection(
     points: Point[],
     connectionType: ConnectionType
-  ): Connection {
+  ): ConnectionElement {
     const name = `${ElementType.CONNECTION}${this._connectionCounter}`;
     this._connectionCounter++;
-    switch (connectionType) {
-      case ConnectionType.FIXED: {
-        return new FixedConnection(name, points);
-      }
-      case ConnectionType.PIN: {
-        return new PinConnection(name, points);
-      }
-      case ConnectionType.HORIZONTAL_ROLLER: {
-        return new HorizontalRollerConnection(name, points);
-      }
-      default: {
-        return new FreeConnection(name, points);
-      }
-    }
+    return new ConnectionElement(name, points, connectionType);
   }
 
   public buildExternalForce(F_x: number, F_y: number) {

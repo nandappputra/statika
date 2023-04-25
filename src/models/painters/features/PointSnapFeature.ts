@@ -9,7 +9,7 @@ import { ConnectionEntity } from "../../canvas_entities/ConnectionEntity";
 import { PointEntity } from "../../canvas_entities/PointEntity";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
-import { Connection } from "../../diagram_elements/connections/Connection";
+import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
 import { Painter } from "../Painter";
 import { Feature } from "./Feature";
 
@@ -29,7 +29,7 @@ export class PointSnapFeature implements Feature {
       element.points.forEach((point) => {
         this._freePoints.add(point.name);
       });
-    } else if (element instanceof Connection) {
+    } else if (element instanceof ConnectionElement) {
       element.points.forEach((point) => {
         this._freePoints.delete(point.name);
       });
@@ -38,7 +38,7 @@ export class PointSnapFeature implements Feature {
   }
 
   handleElementRemoval(painter: Painter, element: DiagramElement): void {
-    if (element instanceof Connection) {
+    if (element instanceof ConnectionElement) {
       element.points.forEach((point) => {
         this._freePoints.add(point.name);
       });
@@ -203,7 +203,7 @@ export class PointSnapFeature implements Feature {
 
   handlePointDisconnection(
     _painter: Painter,
-    _connection: Connection,
+    _connection: ConnectionElement,
     point: Point
   ): void {
     this._freePoints.add(point.name);

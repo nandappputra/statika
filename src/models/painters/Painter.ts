@@ -1,7 +1,7 @@
 import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { LinkageEntity } from "../canvas_entities/LinkageEntity";
 import { MovePointEvent } from "../Event";
-import { Connection } from "../diagram_elements/connections/Connection";
+import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
 import { ElementType, USER } from "../../utils/Constants";
@@ -222,7 +222,7 @@ export class Painter implements EventMediator {
   }
 
   public addExternalLoad(
-    location: Point | Connection,
+    location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
     if (location instanceof Point) {
@@ -256,7 +256,7 @@ export class Painter implements EventMediator {
   }
 
   public removeExternalLoad(
-    location: Point | Connection,
+    location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
     if (location instanceof Point) {
@@ -322,7 +322,7 @@ export class Painter implements EventMediator {
         this,
         this._entityConfig.linkageConfig
       );
-    } else if (diagramElement instanceof Connection) {
+    } else if (diagramElement instanceof ConnectionElement) {
       entity = new ConnectionEntity(diagramElement, this);
     } else {
       throw new Error("unknown type of element");
@@ -463,7 +463,7 @@ export class Painter implements EventMediator {
     }
   }
 
-  public addPointToConnection(point: Point, connection: Connection) {
+  public addPointToConnection(point: Point, connection: ConnectionElement) {
     const affectedConnection = this.getCanvasEntity(connection);
     if (
       !affectedConnection ||
@@ -476,7 +476,10 @@ export class Painter implements EventMediator {
     affectedConnection.addPoint(point);
   }
 
-  public removePointFromConnection(point: Point, connection: Connection) {
+  public removePointFromConnection(
+    point: Point,
+    connection: ConnectionElement
+  ) {
     const affectedConnection = this.getCanvasEntity(connection);
     if (
       !affectedConnection ||

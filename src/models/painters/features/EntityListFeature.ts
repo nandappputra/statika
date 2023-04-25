@@ -4,7 +4,7 @@ import { ExternalForce } from "../../ExternalForce";
 import { Point } from "../../Point";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
-import { Connection } from "../../diagram_elements/connections/Connection";
+import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
 import { Painter } from "../Painter";
 import { Feature } from "./Feature";
 
@@ -45,7 +45,7 @@ export class EntityListFeature implements Feature {
 
   handlePointDisconnection(
     _painter: Painter,
-    _connection: Connection,
+    _connection: ConnectionElement,
     _point: Point
   ): void {}
 
