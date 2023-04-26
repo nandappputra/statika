@@ -46,4 +46,38 @@ describe("LinkageEntity", () => {
       expect(actualPoint.symbolM_z).toBe("0");
     });
   });
+
+  describe("removePoint", () => {
+    test("Should delete the specified point from the Connection points", () => {
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+
+      const point3 = new Point("P3", 1, 2);
+      const point4 = new Point("P4", 3, 5);
+      connectionElement.addPoint(point3);
+      connectionElement.addPoint(point4);
+
+      connectionElement.removePoint(point3);
+
+      expect(connectionElement.points.length).toBe(3);
+      expect(connectionElement.points[2]).toStrictEqual(point4);
+    });
+
+    test("Should remove the applied the boundary condition from the deleted point", () => {
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+      const removeCondition = jest.fn();
+      point1.removeConditions = removeCondition;
+
+      connectionElement.removePoint(point1);
+
+      expect(removeCondition).toBeCalledTimes(1);
+    });
+  });
 });
