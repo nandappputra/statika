@@ -9,6 +9,7 @@ import { fabric } from "fabric";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionType } from "../../utils/Constants";
+import { ExternalForce } from "../ExternalForce";
 
 describe("Painter", () => {
   let canvas: MockedObject<fabric.Canvas>;
@@ -115,6 +116,59 @@ describe("Painter", () => {
       painter.removeElement(linkage);
 
       expect(handleElementRemoval).toBeCalledTimes(1);
+    });
+  });
+
+  describe("addExternalLoad", () => {
+    test("Should add the force to the point and the canvas", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      const handleForceAddition =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceAddition = handleForceAddition;
+      painter.addElement(linkage);
+
+      const force = new ExternalForce("F1", 20, 30);
+
+      painter.addExternalLoad(point1, force);
+
+      expect(addToCanvas).toBeCalledTimes(4);
+      expect(painter.getAllEntityName().length).toBe(4);
+      expect(point1.externalForces.length).toBe(1);
+      expect(point1.externalForces[0]).toStrictEqual(force);
+    });
+
+    test("Should notify the features about the force addition", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      const handleForceAddition =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceAddition = handleForceAddition;
+      painter.addElement(linkage);
+
+      const force = new ExternalForce("F1", 20, 30);
+
+      painter.addExternalLoad(point1, force);
+
+      expect(handleForceAddition).toBeCalledTimes(1);
     });
   });
 });
