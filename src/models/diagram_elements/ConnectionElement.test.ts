@@ -3,6 +3,7 @@ import { MockedObject } from "jest-mock";
 import { Point } from "../Point";
 import { ConnectionElement } from "./ConnectionElement";
 import { ConnectionType } from "../../utils/Constants";
+import { setMockProperty } from "../../utils/TestUtils";
 
 describe("LinkageEntity", () => {
   let point1: MockedObject<Point>;
@@ -78,6 +79,32 @@ describe("LinkageEntity", () => {
       connectionElement.removePoint(point1);
 
       expect(removeCondition).toBeCalledTimes(1);
+    });
+  });
+
+  describe("generateEquilibirum", () => {
+    test("Should generate the correct equilibrium equation formatted for the solver", () => {
+      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
+      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
+      setMockProperty(point1, "symbolM_z", "M_P1z");
+
+      setMockProperty(point2, "symbolF_x", "F_P2x+0+-5");
+      setMockProperty(point2, "symbolF_y", "F_P2y+0+-1");
+      setMockProperty(point2, "symbolM_z", "0");
+      
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN
+      );
+
+      const actualEquations = connectionElement.generateEquilibrium();
+      const expectedEquations = [
+        "1*F_P1x+10+2+3+1*F_P2x+0+-5",
+        "1*F_P1y+0+1+1*F_P2y+0+-1",
+      ];
+
+      expect(actualEquations).toStrictEqual(expectedEquations);
     });
   });
 });

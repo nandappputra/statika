@@ -44,7 +44,7 @@ describe("LinkageEntity", () => {
   });
 
   describe("generateEquilibrium", () => {
-    test("Should generate the correct equilibrium equation formatted for the server", () => {
+    test("Should generate the correct equilibrium equation formatted for the solver", () => {
       setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
       setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
       setMockProperty(point1, "symbolM_z", "M_P1z");
