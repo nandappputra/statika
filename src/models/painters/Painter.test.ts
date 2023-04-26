@@ -171,4 +171,120 @@ describe("Painter", () => {
       expect(handleForceAddition).toBeCalledTimes(1);
     });
   });
+
+  describe("removeExternalLoad", () => {
+    test("Should remove the force from the point and the canvas", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const removeFromCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.remove = removeFromCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      const handleElementRemoval =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementRemoval = handleElementRemoval;
+      const handleForceAddition =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceAddition = handleForceAddition;
+      const handleForceRemoval =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceRemoval = handleForceRemoval;
+      painter.addElement(linkage);
+
+      const force = new ExternalForce("F1", 20, 30);
+
+      painter.addExternalLoad(point1, force);
+
+      painter.removeExternalLoad(point1, force);
+
+      expect(removeFromCanvas).toBeCalledTimes(1);
+      expect(painter.getAllEntityName().length).toBe(3);
+      expect(point1.externalForces.length).toBe(0);
+    });
+
+    test("Should notify the features about the force removal", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const removeFromCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.remove = removeFromCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      const handleElementRemoval =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementRemoval = handleElementRemoval;
+      const handleForceAddition =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceAddition = handleForceAddition;
+      const handleForceRemoval =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceRemoval = handleForceRemoval;
+      painter.addElement(linkage);
+
+      const force = new ExternalForce("F1", 20, 30);
+
+      painter.addExternalLoad(point1, force);
+
+      painter.removeExternalLoad(point1, force);
+
+      expect(handleForceRemoval).toBeCalledTimes(1);
+    });
+
+    test("Should throw error when the force is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const removeFromCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.remove = removeFromCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      const handleElementRemoval =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementRemoval = handleElementRemoval;
+      const handleForceAddition =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceAddition = handleForceAddition;
+      const handleForceRemoval =
+        jest.fn<
+          (painter: Painter, point: Point, externalForce: ExternalForce) => void
+        >();
+      feature.handleForceRemoval = handleForceRemoval;
+      painter.addElement(linkage);
+
+      const force1 = new ExternalForce("F1", 20, 30);
+      const force2 = new ExternalForce("F2", 20, 30);
+
+      painter.addExternalLoad(point1, force1);
+
+      expect(() => painter.removeExternalLoad(point1, force2)).toThrow(
+        "failed to remove force: unrecognized force or location"
+      );
+    });
+  });
 });

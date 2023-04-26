@@ -265,7 +265,9 @@ export class Painter implements EventMediator {
         location.name
       );
       if (!affectedForce || !entity) {
-        throw new Error("unrecognized force");
+        throw new Error(
+          "failed to remove force: unrecognized force or location"
+        );
       }
 
       this._entityNameToEntity.delete(externalLoad.name);
