@@ -412,7 +412,7 @@ export class Painter implements EventMediator {
   public addPointToLinkage(point: Point, linkage: LinkageElement) {
     const entity = this._entityNameToEntity.get(linkage.name);
     if (!entity || !(entity instanceof LinkageEntity)) {
-      throw new Error("missing or invalid entity found");
+      throw new Error("failed to add point to linkage: missing or invalid entity found");
     }
 
     this._pointNameToPoint.set(point.name, point);

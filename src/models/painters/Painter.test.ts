@@ -406,4 +406,58 @@ describe("Painter", () => {
       expect(painter.getAllEntityName.length).toBe(0);
     });
   });
+
+  describe("addPointToLinkage", () => {
+    test("Should add the specified point to the linkage element and canvas", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      feature.handleElementAddition = jest.fn();
+      feature.handlePointAddition = jest.fn();
+      painter.addElement(linkage);
+      const point3 = new Point("P3", 5, 6);
+
+      painter.addPointToLinkage(point3, linkage);
+
+      expect(linkage.points.length).toBe(3);
+      expect(addToCanvas).toBeCalledTimes(4);
+      expect(painter.getAllEntityName().length).toBe(4);
+    });
+
+    test("Should notify the features about the point addition", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      feature.handleElementAddition = jest.fn();
+      const handlePointAddition =
+        jest.fn<
+          (painter: Painter, _linkage: LinkageElement, _point: Point) => void
+        >();
+      feature.handlePointAddition = handlePointAddition;
+      painter.addElement(linkage);
+      const point3 = new Point("P3", 5, 6);
+
+      painter.addPointToLinkage(point3, linkage);
+
+      expect(handlePointAddition).toBeCalledTimes(1);
+      expect(handlePointAddition).toBeCalledWith(painter, linkage, point3);
+    });
+
+    test("Should throw error when the linkage is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      const point3 = new Point("P3", 5, 6);
+
+      expect(() => painter.addPointToLinkage(point3, linkage)).toThrow(
+        "failed to add point to linkage: missing or invalid entity found"
+      );
+    });
+  });
 });
