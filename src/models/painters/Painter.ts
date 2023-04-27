@@ -432,7 +432,7 @@ export class Painter implements EventMediator {
   public removePointFromLinkage(point: Point, linkage: LinkageElement) {
     const affectedPoint = this._pointNameToPointEntity.get(point.name);
     if (!affectedPoint) {
-      throw new Error("unrecognized point");
+      throw new Error("failed to remove point from linkage: unrecognized point");
     }
 
     this._entityNameToEntity.delete(point.name);

@@ -460,4 +460,148 @@ describe("Painter", () => {
       );
     });
   });
+
+  describe("removePointFromLinkage", () => {
+    test("Should throw error when the point is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      feature.handleElementAddition = jest.fn();
+      painter.addElement(linkage);
+      const point3 = new Point("P3", 5, 6);
+
+      expect(() => painter.removePointFromLinkage(point3, linkage)).toThrow(
+        "failed to remove point from linkage: unrecognized point"
+      );
+    });
+
+    test("Should remove the point from the linkage and canvas", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      const remove =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.remove = remove;
+      feature.handleElementAddition = jest.fn();
+      feature.handlePointAddition = jest.fn();
+      feature.handlePointRemoval = jest.fn();
+      painter.addElement(linkage);
+
+      const point3 = new Point("P3", 5, 6);
+      painter.addPointToLinkage(point3, linkage);
+
+      painter.removePointFromLinkage(point2, linkage);
+
+      expect(linkage.points.length).toBe(2);
+      expect(painter.getAllEntityName().length).toBe(3);
+      expect(remove).toBeCalledTimes(1);
+    });
+
+    test("Should notify the feature about the point removal", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      const remove =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.remove = remove;
+      feature.handleElementAddition = jest.fn();
+      feature.handlePointAddition = jest.fn();
+      const handlePointRemoval =
+        jest.fn<
+          (painter: Painter, _linkage: LinkageElement, _point: Point) => void
+        >();
+      feature.handlePointRemoval = handlePointRemoval;
+      painter.addElement(linkage);
+
+      const point3 = new Point("P3", 5, 6);
+      painter.addPointToLinkage(point3, linkage);
+
+      painter.removePointFromLinkage(point2, linkage);
+
+      expect(handlePointRemoval).toBeCalledTimes(1);
+    });
+  });
+
+  test("Should remove the point from the connection if the point is a member of connection", () => {
+    const point1 = new Point("P1", 1, 2);
+    const point2 = new Point("P2", 3, 4);
+    const linkage = new LinkageElement("L1", point1, point2);
+
+    const remove =
+      jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+    canvas.remove = remove;
+    feature.handleElementAddition = jest.fn();
+    feature.handlePointAddition = jest.fn();
+    feature.handlePointDisconnection = jest.fn();
+    const handlePointRemoval =
+      jest.fn<
+        (painter: Painter, _linkage: LinkageElement, _point: Point) => void
+      >();
+    feature.handlePointRemoval = handlePointRemoval;
+    painter.addElement(linkage);
+
+    const point3 = new Point("P3", 5, 6);
+    const point4 = new Point("P4", 7, 8);
+    const connection = new ConnectionElement(
+      "C1",
+      [point3, point4],
+      ConnectionType.HORIZONTAL_ROLLER
+    );
+    painter.addPointToLinkage(point3, linkage);
+    painter.addElement(connection);
+
+    painter.removePointFromLinkage(point3, linkage);
+
+    expect(connection.points.length).toBe(1);
+  });
+
+  test("Should remove force that is attached to the point", () => {
+    const point1 = new Point("P1", 1, 2);
+    const point2 = new Point("P2", 3, 4);
+    const linkage = new LinkageElement("L1", point1, point2);
+
+    const remove =
+      jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+    canvas.remove = remove;
+    feature.handleElementAddition = jest.fn();
+    feature.handlePointAddition = jest.fn();
+    feature.handlePointDisconnection = jest.fn();
+    feature.handleForceAddition = jest.fn();
+    feature.handleForceRemoval = jest.fn();
+    const handlePointRemoval =
+      jest.fn<
+        (painter: Painter, _linkage: LinkageElement, _point: Point) => void
+      >();
+    feature.handlePointRemoval = handlePointRemoval;
+    painter.addElement(linkage);
+
+    const point3 = new Point("P3", 4, 5);
+    painter.addPointToLinkage(point3, linkage);
+
+    const force = new ExternalForce("F1", 100, 100);
+    painter.addExternalLoad(point2, force);
+
+    painter.removePointFromLinkage(point2, linkage);
+
+    expect(painter.getAllEntityName().length).toBe(3);
+  });
+
+  test("Should remove the linkage if there is only 1 point left", () => {
+    const point1 = new Point("P1", 1, 2);
+    const point2 = new Point("P2", 3, 4);
+    const linkage = new LinkageElement("L1", point1, point2);
+
+    canvas.remove = jest.fn();
+    feature.handleElementAddition = jest.fn();
+    feature.handleElementRemoval = jest.fn();
+    feature.handlePointRemoval = jest.fn();
+    painter.addElement(linkage);
+
+    painter.removePointFromLinkage(point2, linkage);
+
+    expect(painter.getAllEntityName().length).toBe(0);
+  });
 });
