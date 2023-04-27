@@ -287,4 +287,39 @@ describe("Painter", () => {
       );
     });
   });
+
+  describe("addPointToConnection", () => {
+    test("Should add the specified point to the connection element", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+
+      feature.handleElementAddition = jest.fn();
+      painter.addElement(connection);
+      const point3 = new Point("P3", 5, 6);
+
+      painter.addPointToConnection(point3, connection);
+
+      expect(connection.points.length).toBe(3);
+    });
+
+    test("Should throw error when the connection is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      const point3 = new Point("P3", 5, 6);
+
+      expect(() => painter.addPointToConnection(point3, connection)).toThrow(
+        "failed to add point to connection: missing or invalid entity"
+      );
+    });
+  });
 });
