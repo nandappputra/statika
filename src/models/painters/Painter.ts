@@ -202,7 +202,7 @@ export class Painter implements EventMediator {
   public updatePointPosition(movePointEvent: MovePointEvent) {
     const pointToUpdate = this._pointNameToPoint.get(movePointEvent.name);
     if (!pointToUpdate) {
-      throw new Error("missing point");
+      throw new Error("failed to update point position: missing point");
     }
 
     pointToUpdate.x = movePointEvent.coordinate.x;

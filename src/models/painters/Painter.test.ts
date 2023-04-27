@@ -10,6 +10,7 @@ import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionType } from "../../utils/Constants";
 import { ExternalForce } from "../ExternalForce";
+import { MovePointEvent } from "../Event";
 
 describe("Painter", () => {
   let canvas: MockedObject<fabric.Canvas>;
@@ -603,5 +604,97 @@ describe("Painter", () => {
     painter.removePointFromLinkage(point2, linkage);
 
     expect(painter.getAllEntityName().length).toBe(0);
+  });
+
+  describe("updatePointPosition", () => {
+    test("Should throw error when the point is not found", () => {
+      feature.handleElementAddition = jest.fn();
+
+      const movePointEvent: MovePointEvent = {
+        name: "P4",
+        source: "user",
+        coordinate: { x: 10, y: 10 },
+      };
+
+      expect(() => painter.updatePointPosition(movePointEvent)).toThrow(
+        "failed to update point position: missing point"
+      );
+    });
+
+    test("Should update the position of the point", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      eventSubscriber.notifyMovePointEvent = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      feature.handlePointUpdate = jest.fn();
+      painter.addElement(linkage);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P1",
+        source: "user",
+        coordinate: { x: 10, y: 20 },
+      };
+
+      painter.updatePointPosition(movePointEvent);
+
+      expect(point1.x).toBe(10);
+      expect(point1.y).toBe(20);
+    });
+
+    test("Should update the position of the force within that point", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      eventSubscriber.notifyMovePointEvent = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      feature.handlePointUpdate = jest.fn();
+      feature.handleForceAddition = jest.fn();
+      painter.addElement(linkage);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P1",
+        source: "user",
+        coordinate: { x: 10, y: 20 },
+      };
+
+      const force = new ExternalForce("F1", 20, 30);
+      painter.addExternalLoad(point1, force);
+
+      painter.updatePointPosition(movePointEvent);
+
+      expect(painter.getEntityByName("F1")?.getObjectsToDraw()[0].left).toBe(
+        10
+      );
+      expect(painter.getEntityByName("F1")?.getObjectsToDraw()[0].top).toBe(20);
+    });
+
+    test("Should notify the subscriber and the feature about the update", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+
+      const notifyMovePointEvent =
+        jest.fn<(movePointEvent: MovePointEvent) => void>();
+      eventSubscriber.notifyMovePointEvent = notifyMovePointEvent;
+      feature.handleElementAddition = jest.fn();
+      const handlePointUpdate =
+        jest.fn<(_painter: Painter, _movePointEvent: MovePointEvent) => void>();
+      feature.handlePointUpdate = handlePointUpdate;
+      painter.addElement(linkage);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P1",
+        source: "user",
+        coordinate: { x: 10, y: 20 },
+      };
+
+      painter.updatePointPosition(movePointEvent);
+
+      expect(notifyMovePointEvent).toBeCalledTimes(1);
+      expect(handlePointUpdate).toBeCalledTimes(1);
+    });
   });
 });
