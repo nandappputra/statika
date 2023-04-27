@@ -487,7 +487,7 @@ export class Painter implements EventMediator {
       !affectedConnection ||
       !(affectedConnection instanceof ConnectionEntity)
     ) {
-      throw new Error("missing or invalid entity");
+      throw new Error("failed to add point to connection: missing or invalid entity");
     }
 
     this._pointNameToConnectionEntity.delete(point.name);

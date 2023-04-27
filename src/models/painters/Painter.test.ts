@@ -322,4 +322,88 @@ describe("Painter", () => {
       );
     });
   });
+
+  describe("removePointFromConnection", () => {
+    test("Should remove the specified point from the connection element", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      feature.handleElementAddition = jest.fn();
+      feature.handlePointDisconnection = jest.fn();
+      painter.addElement(connection);
+
+      painter.removePointFromConnection(point2, connection);
+
+      expect(connection.points.length).toBe(1);
+    });
+
+    test("Should throw error when the connection is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      const point3 = new Point("P3", 5, 6);
+
+      expect(() =>
+        painter.removePointFromConnection(point3, connection)
+      ).toThrow("failed to add point to connection: missing or invalid entity");
+    });
+
+    test("Should notify the features about the point disconnection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      feature.handleElementAddition = jest.fn();
+      const handlePointDisconnection =
+        jest.fn<
+          (
+            _painter: Painter,
+            _connection: ConnectionElement,
+            _point: Point
+          ) => void
+        >();
+      feature.handlePointDisconnection = handlePointDisconnection;
+      painter.addElement(connection);
+
+      painter.removePointFromConnection(point2, connection);
+
+      expect(handlePointDisconnection).toBeCalledTimes(1);
+    });
+
+    test("Should trigger connection deletion when there is no point left", () => {
+      const point1 = new Point("P1", 1, 2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn();
+      const handlePointDisconnection =
+        jest.fn<
+          (
+            _painter: Painter,
+            _connection: ConnectionElement,
+            _point: Point
+          ) => void
+        >();
+      feature.handlePointDisconnection = handlePointDisconnection;
+      painter.addElement(connection);
+
+      painter.removePointFromConnection(point1, connection);
+
+      expect(painter.getAllEntityName.length).toBe(0);
+    });
+  });
 });
