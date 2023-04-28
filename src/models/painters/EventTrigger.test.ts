@@ -48,4 +48,17 @@ describe("EventTrigger", () => {
       expect(objectSelectionEventCallback).toBeCalledWith(objectSelectionEvent);
     });
   });
+
+  describe("notifyObjectSelectionClearEvent", () => {
+    test("Should call the objectSelectionClearEventCallback", () => {
+      const objectSelectionClearEventCallback = jest.fn();
+      eventTrigger.setObjectSelectionClearEventHandler(
+        objectSelectionClearEventCallback
+      );
+
+      eventTrigger.notifyObjectSelectionClearEvent();
+
+      expect(objectSelectionClearEventCallback).toBeCalledTimes(1);
+    });
+  });
 });
