@@ -3,6 +3,7 @@ import { EntityListFeature } from "./EntityListFeature";
 import { Painter } from "../Painter";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
 import { Point } from "../../Point";
+import { ExternalForce } from "../../ExternalForce";
 
 describe("EntityListFeature", () => {
   let entityListFeature: EntityListFeature;
@@ -62,6 +63,19 @@ describe("EntityListFeature", () => {
       const point = jest.createMockFromModule<Point>("../../Point");
 
       entityListFeature.handlePointRemoval(painter, element, point);
+
+      expect(setElementList).toBeCalled();
+    });
+  });
+
+  describe("handleForceAddition", () => {
+    test("Should call update the element list", () => {
+      const element = jest.createMockFromModule<ExternalForce>(
+        "../../ExternalForce"
+      );
+      const point = jest.createMockFromModule<Point>("../../Point");
+
+      entityListFeature.handleForceAddition(painter, point, element);
 
       expect(setElementList).toBeCalled();
     });
