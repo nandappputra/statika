@@ -27,4 +27,16 @@ describe("EntityListFeature", () => {
       expect(setElementList).toBeCalled();
     });
   });
+
+  describe("handleElementRemoval", () => {
+    test("Should call update the element list", () => {
+      const element = jest.createMockFromModule<LinkageElement>(
+        "../../diagram_elements/LinkageElement"
+      );
+
+      entityListFeature.handleElementRemoval(painter, element);
+
+      expect(setElementList).toBeCalled();
+    });
+  });
 });
