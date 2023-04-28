@@ -38,7 +38,11 @@ export class PointSnapFeature implements Feature {
   }
 
   handleElementRemoval(painter: Painter, element: DiagramElement): void {
-    if (element instanceof ConnectionElement) {
+    if (element instanceof LinkageElement) {
+      element.points.forEach((point) => {
+        this._freePoints.delete(point.name);
+      });
+    } else if (element instanceof ConnectionElement) {
       element.points.forEach((point) => {
         this._freePoints.add(point.name);
       });
@@ -46,40 +50,7 @@ export class PointSnapFeature implements Feature {
     }
   }
 
-  handlePointUpdate(painter: Painter, movePointEvent: MovePointEvent): void {
-    if (!this._freePoints.has(movePointEvent.name)) {
-      return;
-    }
-
-    let added = false;
-    this._freePoints.forEach((point) => {
-      if (!added) {
-        const referencePoint = painter.getPoint(point);
-
-        if (!referencePoint) {
-          throw new Error("mising reference point");
-        }
-
-        if (
-          movePointEvent.name != point &&
-          this.distance(movePointEvent.coordinate, {
-            x: referencePoint.x,
-            y: referencePoint.y,
-          }) < 20
-        ) {
-          const p1 = painter.getPoint(movePointEvent.name);
-          const p2 = referencePoint;
-
-          if (!p1) {
-            throw new Error("mising reference point");
-          }
-
-          console.log("ABLE TO COMBINE:", p1.name, p2.name);
-          added = true;
-        }
-      }
-    });
-  }
+  handlePointUpdate(_painter: Painter, _movePointEvent: MovePointEvent): void {}
 
   handleObjectDrop(painter: Painter, movePointEvent: objectDropEvent): void {
     const entity = movePointEvent.entity;
@@ -163,12 +134,8 @@ export class PointSnapFeature implements Feature {
           }
         ) < 20
       ) {
-        const point = painter.getPoint(movePointEvent.name);
+        const point = entity.getElement();
         const p2 = connectionEntity;
-
-        if (!point) {
-          throw new Error("mising reference point");
-        }
 
         painter.addPointToConnection(point, connectionEntity.getElement());
         added = true;
