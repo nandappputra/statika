@@ -697,4 +697,36 @@ describe("Painter", () => {
       expect(handlePointUpdate).toBeCalledTimes(1);
     });
   });
+
+  describe("setFocus", () => {
+    test("Should set the active object of the canvas", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      canvas.add = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      const setActiveObject =
+        jest.fn<
+          (object: fabric.Object, e?: Event | undefined) => fabric.Canvas
+        >();
+      canvas.setActiveObject = setActiveObject;
+      const renderAll = jest.fn<() => fabric.Canvas>();
+      canvas.renderAll = renderAll;
+
+      painter.addElement(linkage);
+
+      painter.setFocus(linkage.name);
+
+      expect(setActiveObject).toBeCalledTimes(1);
+      expect(renderAll).toBeCalledTimes(1);
+    });
+
+    test("Should throw error when the object is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+
+      expect(() => painter.setFocus(point1.name)).toThrow(
+        "failed to set focus: object not found"
+      );
+    });
+  });
 });
