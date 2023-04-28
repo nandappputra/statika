@@ -520,9 +520,11 @@ export class Painter implements EventMediator {
     const externalForceEntity = this._entityNameToEntity.get(
       externalForce.name
     );
-    if (externalForceEntity instanceof ExternalForceEntity) {
-      externalForceEntity.setForceComponents(F_x, F_y);
-      this._canvas.renderAll();
+    if (!(externalForceEntity instanceof ExternalForceEntity)) {
+      throw new Error("failed to update force: missing or invalid force");
     }
+
+    externalForceEntity.setForceComponents(F_x, F_y);
+    this._canvas.renderAll();
   }
 }

@@ -729,4 +729,31 @@ describe("Painter", () => {
       );
     });
   });
+
+  describe("updateForce", () => {
+    test("Should throw error when the force is not found", () => {
+      const externalForce = new ExternalForce("F1", 100, 200);
+
+      expect(() => painter.updateForce(externalForce, 20, 20)).toThrow(
+        "failed to update force: missing or invalid force"
+      );
+    });
+
+    test("Should update the components of the force", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      canvas.add = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      feature.handleForceAddition = jest.fn();
+      painter.addElement(linkage);
+      const force = new ExternalForce("F1", 20, 30);
+      painter.addExternalLoad(point1, force);
+
+      painter.updateForce(force, 1, 2);
+
+      expect(force.symbolF_x).toBe("1");
+      expect(force.symbolF_y).toBe("2");
+    });
+  });
 });
