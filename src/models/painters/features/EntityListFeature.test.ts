@@ -80,4 +80,17 @@ describe("EntityListFeature", () => {
       expect(setElementList).toBeCalled();
     });
   });
+
+  describe("handleForceRemoval", () => {
+    test("Should call update the element list", () => {
+      const element = jest.createMockFromModule<ExternalForce>(
+        "../../ExternalForce"
+      );
+      const point = jest.createMockFromModule<Point>("../../Point");
+
+      entityListFeature.handleForceRemoval(painter, point, element);
+
+      expect(setElementList).toBeCalled();
+    });
+  });
 });
