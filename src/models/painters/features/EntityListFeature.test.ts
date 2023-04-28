@@ -2,6 +2,7 @@ import { jest, describe, expect, test } from "@jest/globals";
 import { EntityListFeature } from "./EntityListFeature";
 import { Painter } from "../Painter";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
+import { Point } from "../../Point";
 
 describe("EntityListFeature", () => {
   let entityListFeature: EntityListFeature;
@@ -35,6 +36,19 @@ describe("EntityListFeature", () => {
       );
 
       entityListFeature.handleElementRemoval(painter, element);
+
+      expect(setElementList).toBeCalled();
+    });
+  });
+
+  describe("handlePointAddition", () => {
+    test("Should call update the element list", () => {
+      const element = jest.createMockFromModule<LinkageElement>(
+        "../../diagram_elements/LinkageElement"
+      );
+      const point = jest.createMockFromModule<Point>("../../Point");
+
+      entityListFeature.handlePointAddition(painter, element, point);
 
       expect(setElementList).toBeCalled();
     });
