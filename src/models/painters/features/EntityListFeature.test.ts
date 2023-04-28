@@ -53,4 +53,17 @@ describe("EntityListFeature", () => {
       expect(setElementList).toBeCalled();
     });
   });
+
+  describe("handlePointRemoval", () => {
+    test("Should call update the element list", () => {
+      const element = jest.createMockFromModule<LinkageElement>(
+        "../../diagram_elements/LinkageElement"
+      );
+      const point = jest.createMockFromModule<Point>("../../Point");
+
+      entityListFeature.handlePointRemoval(painter, element, point);
+
+      expect(setElementList).toBeCalled();
+    });
+  });
 });
