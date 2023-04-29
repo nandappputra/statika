@@ -665,10 +665,10 @@ describe("Painter", () => {
 
       painter.updatePointPosition(movePointEvent);
 
-      expect(painter.getEntityByName("F1")?.getObjectsToDraw()[0].left).toBe(
+      expect(painter.getEntityByName("F1")?.getObjectsToDraw().left).toBe(
         10
       );
-      expect(painter.getEntityByName("F1")?.getObjectsToDraw()[0].top).toBe(20);
+      expect(painter.getEntityByName("F1")?.getObjectsToDraw().top).toBe(20);
     });
 
     test("Should notify the subscriber and the feature about the update", () => {

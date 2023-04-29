@@ -27,11 +27,7 @@ export class PointEntity implements CanvasEntity {
     this._point.y = movePointEvent.coordinate.y;
   }
 
-  public getObjectsToDraw(): (fabric.Object | fabric.Group)[] {
-    return [this._icon];
-  }
-
-  public getFocusableObject(): fabric.Object {
+  public getObjectsToDraw() {
     return this._icon;
   }
 

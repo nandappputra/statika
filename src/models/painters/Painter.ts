@@ -155,7 +155,7 @@ export class Painter implements EventMediator {
       throw new Error("failed to set focus: object not found");
     }
 
-    this._canvas.setActiveObject(entity.getFocusableObject());
+    this._canvas.setActiveObject(entity.getObjectsToDraw());
     this._canvas.renderAll();
   }
 
@@ -247,7 +247,7 @@ export class Painter implements EventMediator {
 
       location.addExternalForce(externalLoad);
 
-      this._canvas.add(...externalForce.getObjectsToDraw());
+      this._canvas.add(externalForce.getObjectsToDraw());
 
       this._painterFeatures.forEach((feature) =>
         feature.handleForceAddition(this, location, externalLoad)
@@ -274,7 +274,7 @@ export class Painter implements EventMediator {
       this._pointNameToExternalForceEntity
         .get(location.name)
         ?.delete(entity as ExternalForceEntity);
-      this._canvas.remove(...entity.getObjectsToDraw());
+      this._canvas.remove(entity.getObjectsToDraw());
       location.removeExternalForce(externalLoad);
 
       this._painterFeatures.forEach((feature) =>
@@ -331,7 +331,7 @@ export class Painter implements EventMediator {
     }
 
     this._entityNameToEntity.set(diagramElement.name, entity);
-    this._canvas.add(...entity.getObjectsToDraw());
+    this._canvas.add(entity.getObjectsToDraw());
 
     diagramElement.points.forEach((point) => {
       this._addCanvasEntityToMap(point.name, entity);
@@ -341,7 +341,7 @@ export class Painter implements EventMediator {
         const newPoint = new PointEntity(point, this);
         this._pointNameToPointEntity.set(point.name, newPoint);
         this._entityNameToEntity.set(point.name, newPoint);
-        this._canvas.add(...newPoint.getObjectsToDraw());
+        this._canvas.add(newPoint.getObjectsToDraw());
       }
     });
 
@@ -358,7 +358,7 @@ export class Painter implements EventMediator {
       throw new Error("no such entity");
     }
 
-    this._canvas.remove(...entity.getObjectsToDraw());
+    this._canvas.remove(entity.getObjectsToDraw());
     this._entityNameToEntity.delete(diagramElement.name);
 
     diagramElement.points.forEach((point) => {
@@ -370,7 +370,7 @@ export class Painter implements EventMediator {
           return;
         }
 
-        this._canvas.remove(...pointEntity.getObjectsToDraw());
+        this._canvas.remove(pointEntity.getObjectsToDraw());
 
         this._pointNameToLinkageEntity.delete(point.name);
         this._entityNameToEntity.delete(point.name);
@@ -422,7 +422,7 @@ export class Painter implements EventMediator {
     entity.addPoint(point);
 
     const pointEntity = new PointEntity(point, this);
-    this._canvas.add(...pointEntity.getObjectsToDraw());
+    this._canvas.add(pointEntity.getObjectsToDraw());
     this._pointNameToPointEntity.set(point.name, pointEntity);
     this._entityNameToEntity.set(point.name, pointEntity);
 
@@ -441,7 +441,7 @@ export class Painter implements EventMediator {
 
     this._entityNameToEntity.delete(point.name);
     this._pointNameToPointEntity.delete(point.name);
-    this._canvas.remove(...affectedPoint.getObjectsToDraw());
+    this._canvas.remove(affectedPoint.getObjectsToDraw());
 
     this._pointNameToPoint.delete(point.name);
 

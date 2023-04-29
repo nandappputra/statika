@@ -37,8 +37,7 @@ describe("ExternalForceEntity", () => {
         type: ElementType.FORCE,
       };
 
-      expect(actualObjects.length).toBe(1);
-      expect(actualObjects[0].data).toStrictEqual(expectedObject);
+      expect(actualObjects.data).toStrictEqual(expectedObject);
     });
   });
 
@@ -61,8 +60,8 @@ describe("ExternalForceEntity", () => {
 
       const actualIcon = externalForceEntity.getObjectsToDraw();
 
-      expect(actualIcon?.[0].top).toBe(10);
-      expect(actualIcon?.[0].left).toBe(20);
+      expect(actualIcon?.top).toBe(10);
+      expect(actualIcon?.left).toBe(20);
     });
   });
 
@@ -79,7 +78,7 @@ describe("ExternalForceEntity", () => {
 
       const actualIcon = externalForceEntity.getObjectsToDraw();
 
-      expect(actualIcon?.[0].angle).toBe(-90);
+      expect(actualIcon?.angle).toBe(-90);
     });
 
     test("Should update the values of the element", () => {

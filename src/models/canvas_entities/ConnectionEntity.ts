@@ -47,7 +47,7 @@ export class ConnectionEntity implements CanvasEntity {
   }
 
   public getObjectsToDraw() {
-    return [this._icon];
+    return this._icon;
   }
 
   private propagateEvent(movePointEvent: MovePointEvent) {

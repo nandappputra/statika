@@ -67,7 +67,7 @@ export class LinkageEntity implements CanvasEntity {
   }
 
   public getObjectsToDraw() {
-    return [this._polygon];
+    return this._polygon;
   }
 
   get name() {
@@ -131,10 +131,6 @@ export class LinkageEntity implements CanvasEntity {
 
     this._nameToIndexMap = newNameToIndexMap;
     this._indexToNameMap = newIndexToNameMap;
-  }
-
-  public getFocusableObject(): fabric.Object {
-    return this._polygon;
   }
 
   public getAllPoints(): Point[] {

@@ -34,8 +34,7 @@ describe("LinkageEntity", () => {
         type: ElementType.LINKAGE,
       };
 
-      expect(actualObjects.length).toBe(1);
-      expect(actualObjects[0].data).toStrictEqual(expectedObject);
+      expect(actualObjects.data).toStrictEqual(expectedObject);
     });
   });
 
@@ -55,7 +54,7 @@ describe("LinkageEntity", () => {
 
       linkageEntity.updatePosition(movePointEvent);
 
-      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+      const actualIcon = linkageEntity.getObjectsToDraw();
 
       expect(actualIcon.points?.[0].x).toBe(20);
       expect(actualIcon.points?.[0].y).toBe(10);
@@ -92,7 +91,7 @@ describe("LinkageEntity", () => {
       const p3 = new Point("P3", 3, 3);
       linkageEntity.addPoint(p3);
 
-      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+      const actualIcon = linkageEntity.getObjectsToDraw();
 
       expect(actualIcon.points?.length).toBe(3);
     });
@@ -133,7 +132,7 @@ describe("LinkageEntity", () => {
 
       linkageEntity.updatePosition(movePointEvent);
 
-      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+      const actualIcon = linkageEntity.getObjectsToDraw();
 
       expect(actualIcon.points?.length).toBe(3);
 
@@ -160,7 +159,7 @@ describe("LinkageEntity", () => {
 
       linkageEntity.deletePoint(p3);
 
-      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+      const actualIcon = linkageEntity.getObjectsToDraw();
 
       expect(actualIcon.points?.length).toBe(2);
     });
@@ -200,7 +199,7 @@ describe("LinkageEntity", () => {
 
       linkageEntity.updatePosition(movePointEvent);
 
-      const actualIcon = linkageEntity.getObjectsToDraw()[0];
+      const actualIcon = linkageEntity.getObjectsToDraw();
 
       expect(actualIcon.points?.length).toBe(2);
 

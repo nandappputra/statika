@@ -29,8 +29,7 @@ describe("PointEntity", () => {
         type: ElementType.POINT,
       };
 
-      expect(actualObjects.length).toBe(1);
-      expect(actualObjects[0].data).toStrictEqual(expectedObject);
+      expect(actualObjects.data).toStrictEqual(expectedObject);
     });
   });
 
@@ -47,7 +46,7 @@ describe("PointEntity", () => {
 
       pointEntity.updatePosition(movePointEvent);
 
-      const actualIcon = pointEntity.getObjectsToDraw()[0];
+      const actualIcon = pointEntity.getObjectsToDraw();
 
       expect(actualIcon.top).toBe(10);
       expect(actualIcon.left).toBe(20);

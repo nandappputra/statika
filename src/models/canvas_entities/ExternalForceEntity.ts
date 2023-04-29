@@ -37,11 +37,7 @@ export class ExternalForceEntity implements CanvasEntity {
     this._icon.setCoords();
   }
 
-  public getObjectsToDraw(): (fabric.Object | fabric.Group)[] {
-    return [this._icon];
-  }
-
-  public getFocusableObject(): fabric.Object {
+  public getObjectsToDraw() {
     return this._icon;
   }
 

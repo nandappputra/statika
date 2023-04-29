@@ -36,8 +36,7 @@ describe("ExternalForceEntity", () => {
         type: ElementType.CONNECTION,
       };
 
-      expect(actualObjects.length).toBe(1);
-      expect(actualObjects[0].data).toStrictEqual(expectedObject);
+      expect(actualObjects.data).toStrictEqual(expectedObject);
     });
   });
 
@@ -61,9 +60,8 @@ describe("ExternalForceEntity", () => {
 
       const actualObjects = connectionEntity.getObjectsToDraw();
 
-      expect(actualObjects.length).toBe(1);
-      expect(actualObjects[0].left).toBe(20);
-      expect(actualObjects[0].top).toBe(10);
+      expect(actualObjects.left).toBe(20);
+      expect(actualObjects.top).toBe(10);
     });
 
     test("Should propagate the event to all points in the connection", () => {
@@ -150,7 +148,7 @@ describe("ExternalForceEntity", () => {
 
       const actualObjects = connectionEntity.getObjectsToDraw();
 
-      expect(actualObjects[0].data?.pointName).toBe("P2");
+      expect(actualObjects.data?.pointName).toBe("P2");
     });
   });
 });
