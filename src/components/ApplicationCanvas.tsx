@@ -16,7 +16,10 @@ function ApplicationCanvas(props: Props): JSX.Element {
         zIndex: -1,
       }}
     >
-      <canvas id={props.canvasId} style={{ width: "100%" }}></canvas>
+      <canvas
+        id={props.canvasId}
+        style={{ width: "100%", height: "100%" }}
+      ></canvas>
     </Box>
   );
 }
