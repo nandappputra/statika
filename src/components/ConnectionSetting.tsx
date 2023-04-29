@@ -20,6 +20,8 @@ import { Coordinate } from "../models/Coordinate";
 import { ConnectionType } from "../utils/Constants";
 
 type Props = {
+  selectedX: number;
+  selectedY: number;
   connectionName: string;
   getEntity: (entityName: string) => CanvasEntity | undefined;
   removeEntity: (entityName: string) => void;
@@ -42,7 +44,7 @@ function ConnectionSetting(props: Props) {
 
   useEffect(() => {
     updatePoints();
-  }, [props.connectionName]);
+  }, [props.connectionName, props.selectedX, props.selectedY]);
 
   const updatePoints = () => {
     const entity = props.getEntity(props.connectionName);

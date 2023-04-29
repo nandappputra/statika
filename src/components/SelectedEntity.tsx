@@ -11,6 +11,8 @@ import { ConnectionType } from "../utils/Constants";
 
 type Props = {
   name: string;
+  selectedX: number;
+  selectedY: number;
   getEntity: (entityName: string) => CanvasEntity | undefined;
   removeEntity: (entityName: string) => void;
   addPointToLinkage: (selectedLinkage: string) => void;
@@ -101,6 +103,8 @@ function SelectedEntity(props: Props) {
             />
           ) : entityType === "ConnectionEntity" ? (
             <ConnectionSetting
+              selectedX={props.selectedX}
+              selectedY={props.selectedY}
               connectionName={props.name}
               removeEntity={props.removeEntity}
               removePointFromConnection={props.removePointFromConnection}
@@ -110,6 +114,8 @@ function SelectedEntity(props: Props) {
             />
           ) : entityType === "PointEntity" ? (
             <PointSetting
+              selectedX={props.selectedX}
+              selectedY={props.selectedY}
               pointName={props.name}
               getEntity={props.getEntity}
               addExternalForceToPoint={props.addExternalForceToPoint}

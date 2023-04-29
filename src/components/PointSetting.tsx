@@ -22,6 +22,8 @@ import { LinkageElement } from "../models/diagram_elements/LinkageElement";
 import { Coordinate } from "../models/Coordinate";
 
 type Props = {
+  selectedX: number;
+  selectedY: number;
   pointName: string;
   getEntity: (entityName: string) => CanvasEntity | undefined;
   removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
@@ -43,7 +45,7 @@ function PointSetting(props: Props) {
 
   useEffect(() => {
     updatePoint();
-  }, [props.pointName]);
+  }, [props.pointName, props.selectedX, props.selectedY]);
 
   const updatePoint = () => {
     const entity = props.getEntity(props.pointName);
