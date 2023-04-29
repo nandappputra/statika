@@ -72,6 +72,10 @@ export class ConnectionEntity implements CanvasEntity {
     return this._connection;
   }
 
+  public getConnectionType() {
+    return this._connection.type;
+  }
+
   public changeConnectionType(connectionType: ConnectionType) {
     this._connection.changeConnectionType(connectionType);
     this._icon = this.buildIcon(this._connection, connectionType);
@@ -101,14 +105,16 @@ export class ConnectionEntity implements CanvasEntity {
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
 
     const line1 = new fabric.Line(
-      [reference.x - 12, reference.y, reference.x - 8, reference.y - 10],
+      [reference.x - 8, reference.y, reference.x - 3, reference.y - 10],
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
     const line2 = new fabric.Line(
@@ -116,19 +122,21 @@ export class ConnectionEntity implements CanvasEntity {
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
     const line3 = new fabric.Line(
-      [reference.x + 8, reference.y, reference.x + 12, reference.y - 10],
+      [reference.x + 8, reference.y, reference.x + 13, reference.y - 10],
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
 
     const icon = new fabric.Group([baseLine, line1, line2, line3], {
       originX: "center",
-      originY: "top",
+      originY: "bottom",
       left: reference.x,
       top: reference.y,
       hasControls: false,
@@ -150,6 +158,7 @@ export class ConnectionEntity implements CanvasEntity {
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
     const line2 = new fabric.Line(
@@ -157,6 +166,7 @@ export class ConnectionEntity implements CanvasEntity {
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
 
@@ -189,6 +199,7 @@ export class ConnectionEntity implements CanvasEntity {
       {
         stroke: "black",
         strokeWidth: 3,
+        strokeLineCap: "round",
       }
     );
 
@@ -197,8 +208,8 @@ export class ConnectionEntity implements CanvasEntity {
       stroke: "black",
       strokeWidth: 3,
       radius: 5,
-      left: connection.points[0].x,
-      top: connection.points[0].y,
+      left: reference.x - 3,
+      top: reference.y,
       hasControls: false,
     });
 

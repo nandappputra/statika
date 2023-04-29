@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  SelectChangeEvent,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
@@ -16,6 +17,7 @@ import { useEffect, useState } from "react";
 import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
 import { Point } from "../models/Point";
 import { Coordinate } from "../models/Coordinate";
+import { ConnectionType } from "../utils/Constants";
 
 type Props = {
   connectionName: string;
@@ -26,10 +28,17 @@ type Props = {
     selectedConnection: string
   ) => void;
   updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
+  changeConnectionType: (
+    connectionName: string,
+    connectionType: ConnectionType
+  ) => void;
 };
 
 function ConnectionSetting(props: Props) {
   const [points, setPoints] = useState<Point[]>([]);
+  const [connectionType, setConnectionType] = useState<ConnectionType>(
+    ConnectionType.FIXED
+  );
 
   useEffect(() => {
     updatePoints();
@@ -38,6 +47,7 @@ function ConnectionSetting(props: Props) {
   const updatePoints = () => {
     const entity = props.getEntity(props.connectionName);
     if (entity instanceof ConnectionEntity) {
+      setConnectionType(entity.getConnectionType());
       setPoints(entity.getAllPoints());
     }
   };
@@ -59,6 +69,12 @@ function ConnectionSetting(props: Props) {
     newState[0].y = valueY;
     props.updatePointPosition(points[0].name, { x: valueX, y: valueY });
     setPoints(newState);
+  };
+
+  const changeConnectionType = (event: SelectChangeEvent<ConnectionType>) => {
+    const selectedType = event.target.value as ConnectionType;
+    setConnectionType(selectedType);
+    props.changeConnectionType(props.connectionName, selectedType);
   };
 
   return (
@@ -108,7 +124,7 @@ function ConnectionSetting(props: Props) {
       >
         <Select
           id="demo-simple-select"
-          value={10}
+          value={connectionType}
           label="Type"
           sx={{
             width: "80%",
@@ -116,10 +132,11 @@ function ConnectionSetting(props: Props) {
           MenuProps={{
             disableScrollLock: true,
           }}
+          onChange={changeConnectionType}
         >
-          <MenuItem value={10}>Test1</MenuItem>
-          <MenuItem value={10}>Test2</MenuItem>
-          <MenuItem value={10}>Test3</MenuItem>
+          {Object.values(ConnectionType).map((connection) => (
+            <MenuItem value={connection}>{connection}</MenuItem>
+          ))}
         </Select>
       </Container>
       <List

@@ -7,6 +7,7 @@ import PointSetting from "./PointSetting";
 import ForceSetting from "./ForceSetting";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import { Coordinate } from "../models/Coordinate";
+import { ConnectionType } from "../utils/Constants";
 
 type Props = {
   name: string;
@@ -26,6 +27,10 @@ type Props = {
   addExternalForceToPoint: (pointName: string) => void;
   updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
   setForceComponents: (forceName: string, F_x: number, F_y: number) => void;
+  changeConnectionType: (
+    connectionName: string,
+    connectionType: ConnectionType
+  ) => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -100,6 +105,7 @@ function SelectedEntity(props: Props) {
               removePointFromConnection={props.removePointFromConnection}
               updatePointPosition={props.updatePointPosition}
               getEntity={props.getEntity}
+              changeConnectionType={props.changeConnectionType}
             />
           ) : entityType === "PointEntity" ? (
             <PointSetting
