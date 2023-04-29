@@ -168,12 +168,10 @@ describe("ConnectionEntity", () => {
       connectionEntity = new ConnectionEntity(connection, eventMediator);
 
       const initialIcon = connectionEntity.getObjectsToDraw();
-      console.log(initialIcon);
 
       connectionEntity.changeConnectionType(ConnectionType.FREE);
 
       const finalIcon = connectionEntity.getObjectsToDraw();
-      console.log(finalIcon);
 
       expect(finalIcon).not.toEqual(initialIcon);
     });

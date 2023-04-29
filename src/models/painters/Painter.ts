@@ -445,6 +445,13 @@ export class Painter implements EventMediator {
       );
     }
 
+    const affectedConnection = this._pointNameToConnectionEntity.get(
+      point.name
+    );
+    if (affectedConnection) {
+      this.removePointFromConnection(point, affectedConnection.getElement());
+    }
+
     this._entityNameToEntity.delete(point.name);
     this._pointNameToPointEntity.delete(point.name);
     this._canvas.remove(affectedPoint.getObjectsToDraw());
@@ -453,13 +460,6 @@ export class Painter implements EventMediator {
 
     const targetLinkage = this._pointNameToLinkageEntity.get(point.name);
     targetLinkage?.deletePoint(point);
-
-    const affectedConnection = this._pointNameToConnectionEntity.get(
-      point.name
-    );
-    if (affectedConnection) {
-      this.removePointFromConnection(point, affectedConnection.getElement());
-    }
 
     const affectedForce = this._pointNameToExternalForceEntity.get(point.name);
     affectedForce?.forEach((force) =>
@@ -498,15 +498,18 @@ export class Painter implements EventMediator {
     point: Point,
     connection: ConnectionElement
   ) {
+    const affectedPoint = this.getEntityByName(point.name);
     const affectedConnection = this.getCanvasEntity(connection);
     if (
-      !affectedConnection ||
-      !(affectedConnection instanceof ConnectionEntity)
+      !(affectedConnection instanceof ConnectionEntity) ||
+      !(affectedPoint instanceof PointEntity)
     ) {
       throw new Error(
         "failed to add point to connection: missing or invalid entity"
       );
     }
+
+    affectedPoint.setVisible(true);
 
     this._pointNameToConnectionEntity.delete(point.name);
     affectedConnection.deletePoint(point);
