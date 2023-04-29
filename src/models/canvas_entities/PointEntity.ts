@@ -39,6 +39,10 @@ export class PointEntity implements CanvasEntity {
     return this._point;
   }
 
+  public setVisible(isVisible: boolean) {
+    this._icon.visible = isVisible;
+  }
+
   private _buildIcon(point: Point) {
     return new fabric.Circle({
       radius: 4,

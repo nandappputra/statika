@@ -298,17 +298,20 @@ describe("Painter", () => {
         [point1, point2],
         ConnectionType.HORIZONTAL_ROLLER
       );
+      const point3 = new Point("P3", 5, 6);
+      const point4 = new Point("P4", 7, 8);
+      const linkage = new LinkageElement("L1", point3, point4);
 
       feature.handleElementAddition = jest.fn();
       painter.addElement(connection);
-      const point3 = new Point("P3", 5, 6);
+      painter.addElement(linkage);
 
       painter.addPointToConnection(point3, connection);
 
       expect(connection.points.length).toBe(3);
     });
 
-    test("Should throw error when the connection is not found", () => {
+    test("Should throw error when the connection or point is not found", () => {
       const point1 = new Point("P1", 1, 2);
       const point2 = new Point("P2", 3, 4);
       const connection = new ConnectionElement(
@@ -320,6 +323,29 @@ describe("Painter", () => {
 
       expect(() => painter.addPointToConnection(point3, connection)).toThrow(
         "failed to add point to connection: missing or invalid entity"
+      );
+    });
+
+    test("Should mark the pointEntity as invisible", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      const point3 = new Point("P3", 5, 6);
+      const point4 = new Point("P4", 7, 8);
+      const linkage = new LinkageElement("L1", point3, point4);
+
+      feature.handleElementAddition = jest.fn();
+      painter.addElement(connection);
+      painter.addElement(linkage);
+
+      painter.addPointToConnection(point3, connection);
+
+      expect(painter.getEntityByName("P3")?.getObjectsToDraw().visible).toBe(
+        false
       );
     });
   });

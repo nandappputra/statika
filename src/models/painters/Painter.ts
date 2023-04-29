@@ -470,18 +470,22 @@ export class Painter implements EventMediator {
   }
 
   public addPointToConnection(point: Point, connection: ConnectionElement) {
+    const affectedPoint = this.getEntityByName(point.name);
     const affectedConnection = this.getCanvasEntity(connection);
     if (
-      !affectedConnection ||
-      !(affectedConnection instanceof ConnectionEntity)
+      !(affectedConnection instanceof ConnectionEntity) ||
+      !(affectedPoint instanceof PointEntity)
     ) {
       throw new Error(
         "failed to add point to connection: missing or invalid entity"
       );
     }
 
+    affectedPoint.setVisible(false);
     this._pointNameToConnectionEntity.set(point.name, affectedConnection);
     affectedConnection.addPoint(point);
+
+    this._canvas.renderAll();
   }
 
   public removePointFromConnection(
