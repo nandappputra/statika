@@ -142,6 +142,30 @@ describe("Painter", () => {
 
       expect(handleElementRemoval).toBeCalledTimes(1);
     });
+
+    test("Should make the pointEntity visible when removing a connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN
+      );
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn();
+
+      painter.addElement(linkage);
+      painter.addElement(connection);
+      painter.removeElement(connection);
+
+      expect(painter.getEntityByName("P1")?.getObjectsToDraw().visible).toBe(
+        true
+      );
+    });
   });
 
   describe("addExternalLoad", () => {

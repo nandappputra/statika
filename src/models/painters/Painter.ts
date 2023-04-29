@@ -367,13 +367,13 @@ export class Painter implements EventMediator {
     this._entityNameToEntity.delete(diagramElement.name);
 
     diagramElement.points.forEach((point) => {
+      const pointEntity = this._pointNameToPointEntity.get(point.name);
+      if (!pointEntity) {
+        return;
+      }
+
       if (entity instanceof LinkageEntity) {
         this._pointNameToLinkageEntity.delete(point.name);
-
-        const pointEntity = this._pointNameToPointEntity.get(point.name);
-        if (!pointEntity) {
-          return;
-        }
 
         this._canvas.remove(pointEntity.getObjectsToDraw());
 
@@ -398,6 +398,7 @@ export class Painter implements EventMediator {
         );
       } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnectionEntity.delete(point.name);
+        pointEntity.setVisible(true);
       }
     });
 
