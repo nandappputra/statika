@@ -241,15 +241,6 @@ function PointSetting(props: Props) {
           </Button>
         </Grid>
       </Grid>
-      <Container
-        disableGutters
-        sx={{
-          padding: "0.5em 0.5em",
-          display: "flex",
-          justifyContent: "center",
-          gap: "0.5em",
-        }}
-      ></Container>
     </div>
   );
 }
