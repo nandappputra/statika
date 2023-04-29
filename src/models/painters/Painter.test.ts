@@ -428,7 +428,9 @@ describe("Painter", () => {
 
       expect(() =>
         painter.removePointFromConnection(point3, connection)
-      ).toThrow("failed to add point to connection: missing or invalid entity");
+      ).toThrow(
+        "failed to remove point to connection: missing or invalid entity"
+      );
     });
 
     test("Should notify the features about the point disconnection", () => {
@@ -696,6 +698,29 @@ describe("Painter", () => {
       feature.handleElementRemoval = jest.fn();
       feature.handlePointRemoval = jest.fn();
       painter.addElement(linkage);
+
+      painter.removePointFromLinkage(point2, linkage);
+
+      expect(painter.getAllEntityName().length).toBe(0);
+    });
+
+    test("Should be capable of deleting a connection that is connected to the linkage", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.FIXED
+      );
+
+      canvas.remove = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn();
+      feature.handlePointDisconnection = jest.fn();
+      feature.handlePointRemoval = jest.fn();
+      painter.addElement(linkage);
+      painter.addElement(connection);
 
       painter.removePointFromLinkage(point2, linkage);
 
