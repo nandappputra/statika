@@ -67,6 +67,30 @@ describe("Painter", () => {
 
       expect(handleElementAddition).toBeCalledTimes(1);
     });
+
+    test("Should make the pointEntity invisible when adding a connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN
+      );
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+
+      painter.addElement(linkage);
+      painter.addElement(connection);
+
+      expect(painter.getEntityByName("P1")?.getObjectsToDraw().visible).toBe(
+        false
+      );
+    });
   });
 
   describe("removeElement", () => {

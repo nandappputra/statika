@@ -341,7 +341,12 @@ export class Painter implements EventMediator {
         const newPoint = new PointEntity(point, this);
         this._pointNameToPointEntity.set(point.name, newPoint);
         this._entityNameToEntity.set(point.name, newPoint);
+
         this._canvas.add(newPoint.getObjectsToDraw());
+      }
+
+      if (diagramElement instanceof ConnectionElement) {
+        this._pointNameToPointEntity.get(point.name)?.setVisible(false);
       }
     });
 
