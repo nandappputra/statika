@@ -80,4 +80,12 @@ export class ConnectionElement implements DiagramElement {
       (point) => point.name !== deletedPoint.name
     );
   }
+
+  public changeConnectionType(connectionType: ConnectionType) {
+    this._points.forEach((point) => point.removeConditions());
+    this._connection = this.retrieveConnectionInstance(connectionType);
+    this._points.forEach((point) =>
+      this._connection.applyBoundaryCondition(point)
+    );
+  }
 }

@@ -91,7 +91,7 @@ describe("LinkageEntity", () => {
       setMockProperty(point2, "symbolF_x", "F_P2x+0+-5");
       setMockProperty(point2, "symbolF_y", "F_P2y+0+-1");
       setMockProperty(point2, "symbolM_z", "0");
-      
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
@@ -105,6 +105,29 @@ describe("LinkageEntity", () => {
       ];
 
       expect(actualEquations).toStrictEqual(expectedEquations);
+    });
+  });
+
+  describe("addPoint", () => {
+    test("Should reapply the boundary condition of the connection type the point", () => {
+      point1.removeConditions = jest.fn();
+      point2.removeConditions = jest.fn();
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+
+      const point3 = new Point("P3", 1, 2);
+      connectionElement.addPoint(point3);
+
+      const actualPoint = connectionElement.points[2];
+
+      connectionElement.changeConnectionType(ConnectionType.FIXED);
+
+      expect(actualPoint.symbolF_x).toBe("F_P3x");
+      expect(actualPoint.symbolF_y).toBe("F_P3y");
+      expect(actualPoint.symbolM_z).toBe("M_P3z");
     });
   });
 });
