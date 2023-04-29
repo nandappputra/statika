@@ -108,7 +108,7 @@ describe("LinkageEntity", () => {
     });
   });
 
-  describe("addPoint", () => {
+  describe("changeConnectionType", () => {
     test("Should reapply the boundary condition of the connection type the point", () => {
       point1.removeConditions = jest.fn();
       point2.removeConditions = jest.fn();
@@ -128,6 +128,20 @@ describe("LinkageEntity", () => {
       expect(actualPoint.symbolF_x).toBe("F_P3x");
       expect(actualPoint.symbolF_y).toBe("F_P3y");
       expect(actualPoint.symbolM_z).toBe("M_P3z");
+    });
+
+    test("Should change the type of connection", () => {
+      point1.removeConditions = jest.fn();
+      point2.removeConditions = jest.fn();
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+
+      connectionElement.changeConnectionType(ConnectionType.FIXED);
+
+      expect(connectionElement.type).toBe(ConnectionType.FIXED);
     });
   });
 });

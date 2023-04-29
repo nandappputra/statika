@@ -68,10 +68,6 @@ export class ConnectionEntity implements CanvasEntity {
     this._connection.removePoint(point);
   }
 
-  public getFocusableObject(): fabric.Object {
-    return this._icon;
-  }
-
   public getElement() {
     return this._connection;
   }

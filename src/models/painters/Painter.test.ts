@@ -665,9 +665,7 @@ describe("Painter", () => {
 
       painter.updatePointPosition(movePointEvent);
 
-      expect(painter.getEntityByName("F1")?.getObjectsToDraw().left).toBe(
-        10
-      );
+      expect(painter.getEntityByName("F1")?.getObjectsToDraw().left).toBe(10);
       expect(painter.getEntityByName("F1")?.getObjectsToDraw().top).toBe(20);
     });
 
@@ -754,6 +752,75 @@ describe("Painter", () => {
 
       expect(force.symbolF_x).toBe("1");
       expect(force.symbolF_y).toBe("2");
+    });
+  });
+
+  describe("changeConnectionType", () => {
+    test("Should throw error when the connection is not found", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FIXED
+      );
+
+      expect(() =>
+        painter.changeConnectionType(connection, ConnectionType.FREE)
+      ).toThrow(
+        "failed to add change connection type: missing or invalid entity found"
+      );
+    });
+
+    test("Should change the type of the connection element", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN
+      );
+      feature.handleElementAddition = jest.fn();
+
+      painter.addElement(connection);
+
+      painter.changeConnectionType(
+        connection,
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+
+      expect(connection.type).toBe(ConnectionType.HORIZONTAL_ROLLER);
+    });
+
+    test("Should replace the icon of the connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN
+      );
+      const add =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = add;
+      const remove =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.remove = remove;
+      feature.handleElementAddition = jest.fn();
+
+      painter.addElement(connection);
+
+      const before = painter.getEntityByName("C1")?.getObjectsToDraw();
+
+      painter.changeConnectionType(
+        connection,
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+
+      const after = painter.getEntityByName("C1")?.getObjectsToDraw();
+
+      expect(remove).toBeCalledWith(before);
+      expect(add).toBeCalledWith(after);
     });
   });
 });

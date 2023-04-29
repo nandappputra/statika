@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
-import { ElementType, USER } from "../../utils/Constants";
+import { ConnectionType, ElementType, USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
@@ -525,6 +525,26 @@ export class Painter implements EventMediator {
     }
 
     externalForceEntity.setForceComponents(F_x, F_y);
+    this._canvas.renderAll();
+  }
+
+  public changeConnectionType(
+    connection: ConnectionElement,
+    connectionType: ConnectionType
+  ) {
+    const connectionEntity = this._entityNameToEntity.get(connection.name);
+    if (!connectionEntity || !(connectionEntity instanceof ConnectionEntity)) {
+      throw new Error(
+        "failed to add change connection type: missing or invalid entity found"
+      );
+    }
+
+    this._canvas.remove(connectionEntity.getObjectsToDraw());
+
+    connectionEntity.changeConnectionType(connectionType);
+
+    this._canvas.add(connectionEntity.getObjectsToDraw());
+
     this._canvas.renderAll();
   }
 }

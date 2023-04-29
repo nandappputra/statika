@@ -89,6 +89,7 @@ export class ConnectionElement implements DiagramElement {
     this._points.forEach((point) =>
       this._connection.applyBoundaryCondition(point)
     );
+    this._type = connectionType;
   }
 
   get type() {
