@@ -135,7 +135,9 @@ function ConnectionSetting(props: Props) {
           onChange={changeConnectionType}
         >
           {Object.values(ConnectionType).map((connection) => (
-            <MenuItem value={connection}>{connection}</MenuItem>
+            <MenuItem value={connection} key={connection}>
+              {connection}
+            </MenuItem>
           ))}
         </Select>
       </Container>

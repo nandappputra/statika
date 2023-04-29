@@ -7,9 +7,11 @@ import {
   ListItemText,
   IconButton,
   Typography,
+  Grid,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import AddLinkIcon from "@mui/icons-material/AddLink";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import React, { useEffect, useState } from "react";
@@ -30,6 +32,7 @@ type Props = {
   getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
   addExternalForceToPoint: (pointName: string) => void;
   updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
+  buildConnection: (pointName: string) => void;
 };
 
 function PointSetting(props: Props) {
@@ -173,6 +176,71 @@ function PointSetting(props: Props) {
       ) : (
         <></>
       )}
+      <Grid container columnSpacing={1} rowSpacing={1} padding={1}>
+        <Grid item xs={6}>
+          <Button
+            onClick={() => addExternalForceToPoint(props.pointName)}
+            startIcon={<AddCircleOutlineIcon />}
+            sx={{
+              backgroundColor: "white",
+              boxShadow: "none",
+              borderRadius: "0.5em",
+              borderWidth: "3px",
+              borderStyle: "solid",
+              borderColor: "black",
+              textTransform: "none",
+              fontFamily: "sans-serif",
+              fontWeight: 700,
+              color: "black",
+              width: "100%",
+            }}
+          >
+            Add force
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button
+            onClick={() => removePoint(props.pointName)}
+            startIcon={<RemoveCircleOutlineIcon />}
+            sx={{
+              backgroundColor: "white",
+              boxShadow: "none",
+              borderRadius: "0.5em",
+              borderWidth: "3px",
+              borderStyle: "solid",
+              borderColor: "black",
+              textTransform: "none",
+              fontFamily: "sans-serif",
+              fontWeight: 700,
+              color: "black",
+              width: "100%",
+            }}
+          >
+            Remove
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            onClick={() => props.buildConnection(props.pointName)}
+            startIcon={<AddLinkIcon />}
+            sx={{
+              backgroundColor: "white",
+              boxShadow: "none",
+              borderRadius: "0.5em",
+              borderWidth: "3px",
+              borderStyle: "solid",
+              borderColor: "black",
+              textTransform: "none",
+              fontFamily: "sans-serif",
+              fontWeight: 700,
+              color: "black",
+              width: "100%",
+            }}
+          >
+            Add connection
+          </Button>
+        </Grid>
+      </Grid>
       <Container
         disableGutters
         sx={{
@@ -181,44 +249,7 @@ function PointSetting(props: Props) {
           justifyContent: "center",
           gap: "0.5em",
         }}
-      >
-        <Button
-          onClick={() => addExternalForceToPoint(props.pointName)}
-          startIcon={<AddCircleOutlineIcon />}
-          sx={{
-            backgroundColor: "white",
-            boxShadow: "none",
-            borderRadius: "0.5em",
-            borderWidth: "3px",
-            borderStyle: "solid",
-            borderColor: "black",
-            textTransform: "none",
-            fontFamily: "sans-serif",
-            fontWeight: 700,
-            color: "black",
-          }}
-        >
-          Add force
-        </Button>
-        <Button
-          onClick={() => removePoint(props.pointName)}
-          startIcon={<RemoveCircleOutlineIcon />}
-          sx={{
-            backgroundColor: "white",
-            boxShadow: "none",
-            borderRadius: "0.5em",
-            borderWidth: "3px",
-            borderStyle: "solid",
-            borderColor: "black",
-            textTransform: "none",
-            fontFamily: "sans-serif",
-            fontWeight: 700,
-            color: "black",
-          }}
-        >
-          Remove
-        </Button>
-      </Container>
+      ></Container>
     </div>
   );
 }

@@ -31,6 +31,7 @@ type Props = {
     connectionName: string,
     connectionType: ConnectionType
   ) => void;
+  buildConnection: (pointName: string) => void;
 };
 
 function SelectedEntity(props: Props) {
@@ -116,6 +117,7 @@ function SelectedEntity(props: Props) {
               getLinkageFromPoint={props.getLinkageFromPoint}
               removePointFromLinkage={props.removePointFromLinkage}
               updatePointPosition={props.updatePointPosition}
+              buildConnection={props.buildConnection}
             />
           ) : entityType === "ExternalForceEntity" ? (
             <ForceSetting

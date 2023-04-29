@@ -82,15 +82,18 @@ function EntityList(props: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {[...props.entityList].reverse().map((entity) => {
-          return (
-            <ListItem key={entity} disablePadding>
-              <ListItemButton onClick={() => props.onClick(entity)}>
-                <ListItemText primary={entity} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
+        {[...props.entityList]
+          .reverse()
+          .filter((entity) => entity.charAt(0) !== "P")
+          .map((entity) => {
+            return (
+              <ListItem key={entity} disablePadding>
+                <ListItemButton onClick={() => props.onClick(entity)}>
+                  <ListItemText primary={entity} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
       </List>
     </Container>
   );
