@@ -14,10 +14,12 @@ export class ConnectionElement implements DiagramElement {
   private _points: Point[];
   private _connection: Connection;
   private _externalForces: ExternalForce[];
+  private _type: ConnectionType;
 
   constructor(name: string, points: Point[], connectionType: ConnectionType) {
     this._name = name;
     this._points = points;
+    this._type = connectionType;
     this._connection = this.retrieveConnectionInstance(connectionType);
     this._points.forEach((point) =>
       this._connection.applyBoundaryCondition(point)
@@ -87,5 +89,9 @@ export class ConnectionElement implements DiagramElement {
     this._points.forEach((point) =>
       this._connection.applyBoundaryCondition(point)
     );
+  }
+
+  get type() {
+    return this._type;
   }
 }
