@@ -30,11 +30,11 @@ function EntityList(props: Props) {
         borderColor: "black",
         maxWidth: "200px",
         position: "fixed",
-        left: "1vw",
+        left: "0.5em",
         top: "7vh",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        bottom: "0.5em",
       }}
     >
       <Button
@@ -75,7 +75,6 @@ function EntityList(props: Props) {
       <List
         sx={{
           borderTop: "3px black solid",
-          maxHeight: "70vh",
           margin: "5px 0",
           padding: 0,
           overflow: "auto",
