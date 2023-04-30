@@ -37,6 +37,7 @@ export class Point {
   get symbolF_x(): string {
     let result: string = this._F_x.getValueOrSymbol();
     this._externalForces.forEach((force) => {
+      result += "+";
       result += force.symbolF_x;
     });
 
@@ -46,6 +47,7 @@ export class Point {
   get symbolF_y(): string {
     let result: string = this._F_y.getValueOrSymbol();
     this._externalForces.forEach((force) => {
+      result += "+";
       result += force.symbolF_y;
     });
 

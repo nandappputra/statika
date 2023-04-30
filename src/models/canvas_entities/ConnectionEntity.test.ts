@@ -187,13 +187,11 @@ describe("ConnectionEntity", () => {
       connection.changeConnectionType = changeConnectionType;
       connectionEntity = new ConnectionEntity(connection, eventMediator);
 
-      const initialIcon = connectionEntity.getObjectsToDraw();
-      console.log(initialIcon);
+      connectionEntity.getObjectsToDraw();
 
       connectionEntity.changeConnectionType(ConnectionType.FIXED);
 
-      const finalIcon = connectionEntity.getObjectsToDraw();
-      console.log(finalIcon);
+      connectionEntity.getObjectsToDraw();
 
       expect(changeConnectionType).toBeCalledWith(ConnectionType.FIXED);
     });
