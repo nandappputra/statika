@@ -96,6 +96,10 @@ export class Point {
     this._externalForces = this.externalForces.filter(
       (force) => force.name !== externalForce.name
     );
+
+    if (this._externalForces.length === 0) {
+      this.removeConditions();
+    }
   }
 
   hasExternalForce(): boolean {

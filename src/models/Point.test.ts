@@ -40,6 +40,19 @@ describe("Point", () => {
       expect(point.externalForces.length).toBe(1);
       expect(point.externalForces[0]).toBe(force2);
     });
+
+    test("Should set the variables to unknown after removing the last force", () => {
+      const point = new Point("P1", 1, 2);
+      const force1 = new ExternalForce("F1", 30, 40);
+
+      point.addExternalForce(force1);
+
+      point.removeExternalForce(force1);
+
+      expect(point.symbolF_x).toBe("F_P1x");
+      expect(point.symbolF_y).toBe("F_P1y");
+      expect(point.symbolM_z).toBe("M_P1z");
+    });
   });
 
   describe("symbolF_x", () => {
