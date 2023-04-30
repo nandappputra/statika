@@ -11,6 +11,7 @@ import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionType } from "../../utils/Constants";
 import { ExternalForce } from "../ExternalForce";
 import { MovePointEvent } from "../Event";
+import { Structure } from "../Structure";
 
 describe("Painter", () => {
   let canvas: MockedObject<fabric.Canvas>;
@@ -943,6 +944,28 @@ describe("Painter", () => {
 
       expect(remove).toBeCalledWith(before);
       expect(add).toBeCalledWith(after);
+    });
+  });
+
+  describe("buildStructure", () => {
+    test("Should build a structure with all the linkages and connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.FIXED
+      );
+
+      feature.handleElementAddition = jest.fn();
+      painter.addElement(linkage);
+      painter.addElement(connection);
+
+      const actualStructure = painter.buildStructure();
+      const expectedStructure = new Structure([linkage], [connection]);
+
+      expect(actualStructure).toStrictEqual(expectedStructure);
     });
   });
 });

@@ -16,6 +16,7 @@ import { ExternalForce } from "../ExternalForce";
 import { EventSubscriber } from "./EventTrigger";
 import { ExternalForceEntity } from "../canvas_entities/ExternalForceEntity";
 import { PointEntity } from "../canvas_entities/PointEntity";
+import { Structure } from "../Structure";
 
 interface NamedObject {
   name: string;
@@ -572,5 +573,20 @@ export class Painter implements EventMediator {
     this._canvas.add(connectionEntity.getObjectsToDraw());
 
     this._canvas.renderAll();
+  }
+
+  public buildStructure() {
+    const linkages: LinkageElement[] = [];
+    const connections: ConnectionElement[] = [];
+
+    this._entityNameToEntity.forEach((entity) => {
+      if (entity instanceof LinkageEntity) {
+        linkages.push(entity.getElement());
+      } else if (entity instanceof ConnectionEntity) {
+        connections.push(entity.getElement());
+      }
+    });
+
+    return new Structure(linkages, connections);
   }
 }
