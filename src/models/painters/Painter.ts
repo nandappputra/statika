@@ -79,6 +79,7 @@ export class Painter implements EventMediator {
     this._canvas.on("selection:cleared", () =>
       this._handleObjectSelectionClearEvent()
     );
+    this._canvas.on("mouse:wheel", (event) => this._handleMouseScroll(event));
   }
 
   private _handleMouseUpEvent(_event: IEvent<MouseEvent>) {
@@ -139,6 +140,18 @@ export class Painter implements EventMediator {
     this._eventSubscribers.forEach((subscriber) => {
       subscriber.notifyObjectSelectionClearEvent();
     });
+  }
+
+  private _handleMouseScroll(event: IEvent<WheelEvent>) {
+    if (!this._canvas.viewportTransform) {
+      return;
+    }
+
+    const viewportTransform = this._canvas.viewportTransform.slice();
+    viewportTransform[4] -= event.e.deltaX;
+    viewportTransform[5] -= event.e.deltaY;
+
+    this._canvas.setViewportTransform(viewportTransform);
   }
 
   public getAllEntityName() {
