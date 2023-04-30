@@ -11,16 +11,23 @@ export class Structure {
   }
 
   generateAllEquilibirum(): string[] {
-    let equations: string[] = [];
+    let sigmaF_x = "";
+    let sigmaF_y = "";
+    let sigmaM_z = "";
 
     this._linkages.forEach((linkage) => {
-      equations = equations.concat(linkage.generateEquilibrium());
+      const equations = linkage.generateEquilibrium();
+      sigmaF_x += `+${equations[0]}`;
+      sigmaF_y += `+${equations[1]}`;
+      sigmaM_z += `+${equations[2]}`;
     });
 
     this._connections.forEach((connection) => {
-      equations = equations.concat(connection.generateEquilibrium());
+      const equations = connection.generateEquilibrium();
+      sigmaF_x += `+${equations[0]}`;
+      sigmaF_y += `+${equations[1]}`;
     });
 
-    return equations;
+    return [sigmaF_x, sigmaF_y, sigmaM_z];
   }
 }

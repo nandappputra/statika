@@ -61,11 +61,57 @@ export function expressEquationsInMatrixMultiplication(
     coefficientOnly.push(coefficients);
   });
 
+  const [filteredCoefficients, filteredConstants] = removeRedundancy(
+    coefficientOnly,
+    constants
+  );
+
   return {
-    coefficients: coefficientOnly,
+    coefficients: filteredCoefficients,
     variables: variableList,
-    constants,
+    constants: filteredConstants,
   };
+}
+
+function removeRedundancy(
+  coefficients: number[][],
+  constants: number[]
+): [number[][], number[]] {
+  const filteredCoefficients: number[][] = [];
+  const filteredConstants: number[] = [];
+
+  const allCoefficients: Set<number[]> = new Set<number[]>();
+
+  for (let i = 0; i < coefficients.length; i++) {
+    const magnitude = calculateVectorMagnitude(coefficients[i]);
+    if (magnitude === 0) {
+      console.log("ITS ZERO, SKIPPING");
+      continue;
+    }
+
+    const nomalized = normalizeVector(coefficients[i], magnitude);
+    console.log(allCoefficients);
+    if (allCoefficients.has(nomalized)) {
+      console.log("ALREADY EXIST");
+      continue;
+    }
+
+    allCoefficients.add(nomalized);
+    filteredCoefficients.push(coefficients[i]);
+    filteredConstants.push(constants[i]);
+  }
+
+  return [filteredCoefficients, filteredConstants];
+}
+
+function calculateVectorMagnitude(components: number[]): number {
+  return Math.sqrt(
+    components.reduce((prev, current) => prev + current * current)
+  );
+}
+
+function normalizeVector(components: number[], magnitude: number) {
+  return components.map((component) => component / magnitude);
 }
 
 export function formatMomentForSolver(
@@ -74,7 +120,7 @@ export function formatMomentForSolver(
   invertSign = false
 ) {
   const valueInNumber = parseFloat(value);
-  if (Number.isNaN(valueInNumber)) {
+  if (value.includes("+") || Number.isNaN(valueInNumber)) {
     const result: string[] = [];
     const adjustedDistance = invertSign ? -1 * signedDistance : signedDistance;
 
