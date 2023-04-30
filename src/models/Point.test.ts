@@ -13,6 +13,17 @@ describe("Point", () => {
       expect(point.externalForces.length).toBe(1);
       expect(point.externalForces[0]).toBe(force);
     });
+
+    test("Should set the internal forces and moment component to known and zero", () => {
+      const point = new Point("P1", 1, 2);
+      const force = new ExternalForce("F1", 30, 40);
+
+      point.addExternalForce(force);
+
+      expect(point.symbolF_x).toBe("0+30");
+      expect(point.symbolF_y).toBe("0+40");
+      expect(point.symbolM_z).toBe("0");
+    });
   });
 
   describe("removeExternalForce", () => {
@@ -40,7 +51,7 @@ describe("Point", () => {
       point.addExternalForce(force1);
       point.addExternalForce(force2);
 
-      expect(point.symbolF_x).toBe("F_P1x+30+50");
+      expect(point.symbolF_x).toBe("0+30+50");
     });
   });
 
@@ -53,7 +64,7 @@ describe("Point", () => {
       point.addExternalForce(force1);
       point.addExternalForce(force2);
 
-      expect(point.symbolF_y).toBe("F_P1y+40+60");
+      expect(point.symbolF_y).toBe("0+40+60");
     });
   });
 });

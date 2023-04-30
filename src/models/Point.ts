@@ -86,6 +86,10 @@ export class Point {
 
   addExternalForce(externalForce: ExternalForce) {
     this._externalForces.push(externalForce);
+
+    this.F_x = 0;
+    this.F_y = 0;
+    this.M_z = 0;
   }
 
   removeExternalForce(externalForce: ExternalForce) {
