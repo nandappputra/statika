@@ -412,6 +412,7 @@ export class Painter implements EventMediator {
         this._pointNameToPointEntity.delete(point.name);
       } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnectionEntity.delete(point.name);
+        entity.getElement().removePoint(point);
         pointEntity.setVisible(true);
       }
     });

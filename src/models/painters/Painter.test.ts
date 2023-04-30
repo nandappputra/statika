@@ -167,6 +167,28 @@ describe("Painter", () => {
         true
       );
     });
+
+    test("Should remove the boundary condition applied to the point when removing the a connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN
+      );
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn();
+
+      painter.addElement(linkage);
+      painter.addElement(connection);
+      painter.removeElement(connection);
+
+      expect(point1.symbolM_z).toBe("M_P1z");
+    });
   });
 
   describe("addExternalLoad", () => {
