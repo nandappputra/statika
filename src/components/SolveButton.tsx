@@ -1,10 +1,15 @@
 import { Button } from "@mui/material";
 import ModeIcon from "@mui/icons-material/Mode";
 
-export function SolveButton() {
+type Props = {
+  solveStructure: () => void;
+};
+
+export function SolveButton(props: Props) {
   return (
     <Button
       startIcon={<ModeIcon />}
+      onClick={props.solveStructure}
       sx={{
         position: "fixed",
         width: "300px",
