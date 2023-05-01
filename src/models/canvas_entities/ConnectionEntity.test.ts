@@ -7,6 +7,7 @@ import { setMockProperty } from "../../utils/TestUtils";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "./ConnectionEntity";
 import { MovePointEvent } from "../Event";
+import { ExternalForce } from "../ExternalForce";
 
 describe("ConnectionEntity", () => {
   let connection: MockedObject<ConnectionElement>;
@@ -154,6 +155,25 @@ describe("ConnectionEntity", () => {
       const actualObjects = connectionEntity.getObjectsToDraw();
 
       expect(actualObjects.data?.pointName).toBe("P2");
+    });
+  });
+
+  describe("addExternalForce", () => {
+    test("Should add external force to the element", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      const addExternalForce =
+        jest.fn<(externalForce: ExternalForce) => void>();
+      connection.addExternalForce = addExternalForce;
+      setMockProperty(connection, "points", [p1, p2]);
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      const force = new ExternalForce("F1", 1, 2);
+      connectionEntity.addExternalForce(force);
+
+      expect(addExternalForce).toBeCalledTimes(1);
+      expect(addExternalForce).toBeCalledWith(force);
     });
   });
 

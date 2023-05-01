@@ -5,6 +5,7 @@ import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
 import { ConnectionType, ElementType } from "../../utils/Constants";
+import { ExternalForce } from "../ExternalForce";
 
 export class ConnectionEntity implements CanvasEntity {
   private _name: string;
@@ -66,6 +67,10 @@ export class ConnectionEntity implements CanvasEntity {
     this._icon.data.pointName = this._connection.points[0].name;
 
     this._connection.removePoint(point);
+  }
+
+  public addExternalForce(externalForce: ExternalForce) {
+    this._connection.addExternalForce(externalForce);
   }
 
   public getElement() {
