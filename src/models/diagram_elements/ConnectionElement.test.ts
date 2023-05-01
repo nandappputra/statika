@@ -4,6 +4,7 @@ import { Point } from "../Point";
 import { ConnectionElement } from "./ConnectionElement";
 import { ConnectionType } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
+import { ExternalForce } from "../ExternalForce";
 
 describe("LinkageEntity", () => {
   let point1: MockedObject<Point>;
@@ -159,6 +160,23 @@ describe("LinkageEntity", () => {
       connectionElement.changeConnectionType(ConnectionType.FIXED);
 
       expect(connectionElement.type).toBe(ConnectionType.FIXED);
+    });
+  });
+
+  describe("addExternalForce", () => {
+    test("Should add a new force to the Connection externalForces", () => {
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+
+      const force = new ExternalForce("F1", 100, 100);
+
+      connectionElement.addExternalForce(force);
+
+      expect(connectionElement.externalForces.length).toBe(1);
+      expect(connectionElement.externalForces[0]).toStrictEqual(force);
     });
   });
 });

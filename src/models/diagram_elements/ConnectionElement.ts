@@ -50,6 +50,10 @@ export class ConnectionElement implements DiagramElement {
     return this._name;
   }
 
+  get externalForces() {
+    return this._externalForces;
+  }
+
   addExternalForce(externalForce: ExternalForce) {
     this._externalForces.push(externalForce);
   }
@@ -58,7 +62,7 @@ export class ConnectionElement implements DiagramElement {
     if (this._points.length == 1) {
       return [];
     }
-    
+
     const sigmaF_x: string[] = [];
     const sigmaF_y: string[] = [];
 
