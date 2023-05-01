@@ -179,4 +179,25 @@ describe("LinkageEntity", () => {
       expect(connectionElement.externalForces[0]).toStrictEqual(force);
     });
   });
+
+  describe("removeExternalForce", () => {
+    test("Should remove the correct force from the connection", () => {
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+
+      const force1 = new ExternalForce("F1", 100, 100);
+      const force2 = new ExternalForce("F2", 200, 200);
+
+      connectionElement.addExternalForce(force1);
+      connectionElement.addExternalForce(force2);
+
+      connectionElement.removeExternalForce(force1);
+
+      expect(connectionElement.externalForces.length).toBe(1);
+      expect(connectionElement.externalForces[0]).toStrictEqual(force2);
+    });
+  });
 });

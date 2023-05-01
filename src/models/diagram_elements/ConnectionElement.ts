@@ -58,6 +58,12 @@ export class ConnectionElement implements DiagramElement {
     this._externalForces.push(externalForce);
   }
 
+  removeExternalForce(externalForce: ExternalForce) {
+    this._externalForces = this._externalForces.filter(
+      (force) => force.name !== externalForce.name
+    );
+  }
+
   generateEquilibrium(): string[] {
     if (this._points.length == 1) {
       return [];
