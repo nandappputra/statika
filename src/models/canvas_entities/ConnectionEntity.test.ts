@@ -177,6 +177,46 @@ describe("ConnectionEntity", () => {
     });
   });
 
+  describe("addExternalForce", () => {
+    test("Should add external force to the element", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      const addExternalForce =
+        jest.fn<(externalForce: ExternalForce) => void>();
+      connection.addExternalForce = addExternalForce;
+      setMockProperty(connection, "points", [p1, p2]);
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      const force = new ExternalForce("F1", 1, 2);
+      connectionEntity.addExternalForce(force);
+
+      expect(addExternalForce).toBeCalledTimes(1);
+      expect(addExternalForce).toBeCalledWith(force);
+    });
+  });
+
+  describe("removeExternalForce", () => {
+    test("Should remove external force from the element", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      connection.addExternalForce = jest.fn();
+      const removeExternalForce =
+        jest.fn<(externalForce: ExternalForce) => void>();
+      connection.removeExternalForce = removeExternalForce;
+      setMockProperty(connection, "points", [p1, p2]);
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      const force = new ExternalForce("F1", 1, 2);
+      connectionEntity.addExternalForce(force);
+      connectionEntity.removeExternalForce(force);
+
+      expect(removeExternalForce).toBeCalledTimes(1);
+      expect(removeExternalForce).toBeCalledWith(force);
+    });
+  });
+
   describe("changeConnectionType", () => {
     test("Should change objects to be drawn", () => {
       const p1 = new Point("P1", 1, 1);

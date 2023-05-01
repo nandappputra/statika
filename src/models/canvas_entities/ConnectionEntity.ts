@@ -73,6 +73,10 @@ export class ConnectionEntity implements CanvasEntity {
     this._connection.addExternalForce(externalForce);
   }
 
+  public removeExternalForce(externalForce: ExternalForce) {
+    this._connection.removeExternalForce(externalForce);
+  }
+
   public getElement() {
     return this._connection;
   }
