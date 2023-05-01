@@ -120,7 +120,7 @@ describe("Painter", () => {
       expect(painter.getAllEntityName().length).toBe(0);
     });
 
-    test("Should notify the features about the element addition", () => {
+    test("Should notify the features about the element addition with all its points", () => {
       const point1 = new Point("P1", 1, 2);
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
@@ -140,8 +140,13 @@ describe("Painter", () => {
       painter.addElement(linkage);
 
       painter.removeElement(linkage);
+      const expectedLinkageArgument = new LinkageElement("L1", point1, point2);
 
       expect(handleElementRemoval).toBeCalledTimes(1);
+      expect(handleElementRemoval).toBeCalledWith(
+        painter,
+        expectedLinkageArgument,
+      );
     });
 
     test("Should make the pointEntity visible when removing a connection", () => {

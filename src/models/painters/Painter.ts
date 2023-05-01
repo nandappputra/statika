@@ -372,6 +372,10 @@ export class Painter implements EventMediator {
   }
 
   public removeElement(diagramElement: DiagramElement) {
+    this._painterFeatures.forEach((feature) => {
+      feature.handleElementRemoval(this, diagramElement);
+    });
+
     const entity = this._entityNameToEntity.get(diagramElement.name);
     if (!entity) {
       throw new Error("no such entity");
@@ -415,10 +419,6 @@ export class Painter implements EventMediator {
         entity.getElement().removePoint(point);
         pointEntity.setVisible(true);
       }
-    });
-
-    this._painterFeatures.forEach((feature) => {
-      feature.handleElementRemoval(this, diagramElement);
     });
   }
 
