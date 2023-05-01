@@ -145,7 +145,7 @@ describe("Painter", () => {
       expect(handleElementRemoval).toBeCalledTimes(1);
       expect(handleElementRemoval).toBeCalledWith(
         painter,
-        expectedLinkageArgument,
+        expectedLinkageArgument
       );
     });
 
@@ -423,6 +423,34 @@ describe("Painter", () => {
       expect(painter.getEntityByName("P3")?.getObjectsToDraw().visible).toBe(
         false
       );
+    });
+
+    test("Should move the forces in the point to the connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.HORIZONTAL_ROLLER
+      );
+      const point3 = new Point("P3", 5, 6);
+      const point4 = new Point("P4", 7, 8);
+      const linkage = new LinkageElement("L1", point3, point4);
+
+      const force = new ExternalForce("F1", 1, 2);
+
+      feature.handleForceRemoval = jest.fn();
+      feature.handleForceAddition = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      painter.addElement(connection);
+      painter.addElement(linkage);
+      painter.addExternalLoad(point3, force);
+
+      painter.addPointToConnection(point3, connection);
+
+      expect(point3.externalForces.length).toBe(0);
+      expect(connection.externalForces.length).toBe(1);
+      expect(connection.externalForces[0]).toBe(force);
     });
   });
 

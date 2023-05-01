@@ -239,58 +239,52 @@ export class Painter implements EventMediator {
     location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
-      const externalForce = new ExternalForceEntity(
-        externalLoad,
-        location,
-        this
-      );
+    const externalForce = new ExternalForceEntity(externalLoad, location, this);
 
-      this._entityNameToEntity.set(externalForce.name, externalForce);
+    this._entityNameToEntity.set(externalForce.name, externalForce);
 
-      const affectedForces = this._locationNameToExternalForceEntity.get(
-        location.name
-      );
-      if (!affectedForces || affectedForces.size == 0) {
-        const forceSet = new Set<ExternalForceEntity>();
-        forceSet.add(externalForce);
-        this._locationNameToExternalForceEntity.set(location.name, forceSet);
-      } else {
-        affectedForces.add(externalForce);
-      }
+    const affectedForces = this._locationNameToExternalForceEntity.get(
+      location.name
+    );
+    if (!affectedForces || affectedForces.size == 0) {
+      const forceSet = new Set<ExternalForceEntity>();
+      forceSet.add(externalForce);
+      this._locationNameToExternalForceEntity.set(location.name, forceSet);
+    } else {
+      affectedForces.add(externalForce);
+    }
 
-      location.addExternalForce(externalLoad);
+    location.addExternalForce(externalLoad);
 
-      this._canvas.add(externalForce.getObjectsToDraw());
+    this._canvas.add(externalForce.getObjectsToDraw());
 
-      this._painterFeatures.forEach((feature) =>
-        feature.handleForceAddition(this, location, externalLoad)
-      );
+    this._painterFeatures.forEach((feature) =>
+      feature.handleForceAddition(this, location, externalLoad)
+    );
   }
 
   public removeExternalLoad(
     location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
-      const entity = this._entityNameToEntity.get(externalLoad.name);
-      const affectedForce = this._locationNameToExternalForceEntity.get(
-        location.name
-      );
-      if (!affectedForce || !entity) {
-        throw new Error(
-          "failed to remove force: unrecognized force or location"
-        );
-      }
+    const entity = this._entityNameToEntity.get(externalLoad.name);
+    const affectedForce = this._locationNameToExternalForceEntity.get(
+      location.name
+    );
+    if (!affectedForce || !entity) {
+      throw new Error("failed to remove force: unrecognized force or location");
+    }
 
-      this._entityNameToEntity.delete(externalLoad.name);
-      this._locationNameToExternalForceEntity
-        .get(location.name)
-        ?.delete(entity as ExternalForceEntity);
-      this._canvas.remove(entity.getObjectsToDraw());
-      location.removeExternalForce(externalLoad);
+    this._entityNameToEntity.delete(externalLoad.name);
+    this._locationNameToExternalForceEntity
+      .get(location.name)
+      ?.delete(entity as ExternalForceEntity);
+    this._canvas.remove(entity.getObjectsToDraw());
+    location.removeExternalForce(externalLoad);
 
-      this._painterFeatures.forEach((feature) =>
-        feature.handleForceRemoval(this, location, externalLoad)
-      );
+    this._painterFeatures.forEach((feature) =>
+      feature.handleForceRemoval(this, location, externalLoad)
+    );
 
     this._canvas.renderAll();
   }
@@ -472,7 +466,9 @@ export class Painter implements EventMediator {
     const targetLinkage = this._pointNameToLinkageEntity.get(point.name);
     targetLinkage?.deletePoint(point);
 
-    const affectedForce = this._locationNameToExternalForceEntity.get(point.name);
+    const affectedForce = this._locationNameToExternalForceEntity.get(
+      point.name
+    );
     affectedForce?.forEach((force) =>
       this.removeExternalLoad(point, force.getElement())
     );
@@ -501,6 +497,12 @@ export class Painter implements EventMediator {
     affectedPoint.setVisible(false);
     this._pointNameToConnectionEntity.set(point.name, affectedConnection);
     affectedConnection.addPoint(point);
+
+    const forces = affectedPoint.getElement().externalForces;
+    forces.forEach((force) => {
+      this.removeExternalLoad(affectedPoint.getElement(), force);
+      this.addExternalLoad(affectedConnection.getElement(), force);
+    });
 
     this._canvas.renderAll();
   }
