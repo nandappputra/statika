@@ -4,19 +4,19 @@ import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { ExternalForceEntity } from "../models/canvas_entities/ExternalForceEntity";
 import { Point } from "../models/Point";
+import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
 
 type Props = {
   forceName: string;
   getEntity: (entityName: string) => CanvasEntity | undefined;
-  removeExternalForceFromPoint: (
-    externalForce: string,
-    pointName: string
-  ) => void;
+  removeExternalForce: (externalForce: string, location: string) => void;
   setForceComponents: (forceName: string, F_x: number, F_y: number) => void;
 };
 
 function ForceSetting(props: Props) {
-  const [point, setPoint] = useState<Point | undefined>(undefined);
+  const [location, setLocation] = useState<
+    Point | ConnectionElement | undefined
+  >(undefined);
   const [fX, setFX] = useState<number>(0);
   const [fY, setFY] = useState<number>(0);
 
@@ -29,7 +29,7 @@ function ForceSetting(props: Props) {
     if (entity instanceof ExternalForceEntity) {
       setFX(parseFloat(entity.getElement().symbolF_x));
       setFY(parseFloat(entity.getElement().symbolF_y));
-      setPoint(entity.point);
+      setLocation(entity.location);
     }
   };
 
@@ -65,7 +65,7 @@ function ForceSetting(props: Props) {
           width: "100%",
         }}
       >
-        Force at {point?.name}
+        Force at {location?.name}
       </Typography>
       <Container
         disableGutters
@@ -111,8 +111,8 @@ function ForceSetting(props: Props) {
       >
         <Button
           onClick={() => {
-            if (point) {
-              props.removeExternalForceFromPoint(props.forceName, point.name);
+            if (location) {
+              props.removeExternalForce(props.forceName, location.name);
             }
           }}
           startIcon={<RemoveCircleOutlineIcon />}

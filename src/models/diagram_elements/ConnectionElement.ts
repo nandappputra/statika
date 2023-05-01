@@ -54,6 +54,14 @@ export class ConnectionElement implements DiagramElement {
     return this._externalForces;
   }
 
+  get x() {
+    return this._points[0].x;
+  }
+
+  get y() {
+    return this._points[0].y;
+  }
+
   addExternalForce(externalForce: ExternalForce) {
     this._externalForces.push(externalForce);
   }

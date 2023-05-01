@@ -129,7 +129,7 @@ function SelectedEntity(props: Props) {
             <ForceSetting
               forceName={props.name}
               getEntity={props.getEntity}
-              removeExternalForceFromPoint={props.removeExternalForceFromPoint}
+              removeExternalForce={props.removeExternalForceFromPoint}
               setForceComponents={props.setForceComponents}
             />
           ) : (

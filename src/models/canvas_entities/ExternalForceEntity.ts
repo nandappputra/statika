@@ -8,6 +8,7 @@ import {
 import { Point } from "../Point";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";
+import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 
 const ARROW_ANGLE_ADJUSTMENT = 90;
 
@@ -16,18 +17,18 @@ export class ExternalForceEntity implements CanvasEntity {
   private _externalForce: ExternalForce;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
-  private _point: Point;
+  private _location: Point | ConnectionElement;
 
   constructor(
     externalForce: ExternalForce,
-    point: Point,
+    location: Point | ConnectionElement,
     eventMediator: EventMediator
   ) {
     this._name = externalForce.name;
     this._externalForce = externalForce;
     this._eventMediator = eventMediator;
-    this._icon = this._buildIcon(externalForce, point);
-    this._point = point;
+    this._icon = this._buildIcon(externalForce, location);
+    this._location = location;
   }
 
   public updatePosition(movePointEvent: MovePointEvent): void {
@@ -45,7 +46,10 @@ export class ExternalForceEntity implements CanvasEntity {
     return this._name;
   }
 
-  private _buildIcon(force: ExternalForce, point: Point) {
+  private _buildIcon(
+    force: ExternalForce,
+    location: Point | ConnectionElement
+  ) {
     const line = new fabric.Line([0, 0, 0, 50], {
       originY: "center",
       originX: "center",
@@ -68,8 +72,8 @@ export class ExternalForceEntity implements CanvasEntity {
         Math.atan2(parseFloat(force.symbolF_y), parseFloat(force.symbolF_x)) *
           RADIAN_TO_DEGREE_MULTIPLIER -
         ARROW_ANGLE_ADJUSTMENT,
-      left: point.x,
-      top: point.y,
+      left: location.x,
+      top: location.y,
       lockMovementX: true,
       lockMovementY: true,
       hasControls: false,
@@ -84,8 +88,8 @@ export class ExternalForceEntity implements CanvasEntity {
     return this._externalForce;
   }
 
-  get point() {
-    return this._point;
+  get location() {
+    return this._location;
   }
 
   public setForceComponents(F_x: number, F_y: number) {
