@@ -1,6 +1,6 @@
 import { Point } from "../../models/Point";
 import { ConnectionElement } from "../../models/diagram_elements/ConnectionElement";
-import { PinConnection } from "../../models/diagram_elements/connections/PinConnection";
+import { PinJointConnection } from "../../models/diagram_elements/connections/PinJointConnection";
 import { FixedConnection } from "../../models/diagram_elements/connections/FixedConnection";
 import { HorizontalRollerConnection } from "../../models/diagram_elements/connections/HorizontalRollerConnection";
 import { FreeConnection } from "../../models/diagram_elements/connections/FreeConnection";
@@ -72,8 +72,8 @@ function buildConnections(
     );
 
     switch (connectionJson.type) {
-      case ConnectionType.PIN:
-        connections.push(new PinConnection(pointsToConnect));
+      case ConnectionType.PIN_JOINT:
+        connections.push(new PinJointConnection(pointsToConnect));
         break;
       case ConnectionType.FIXED:
         connections.push(new FixedConnection(pointsToConnect));

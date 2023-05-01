@@ -151,16 +151,24 @@ export function formatMomentForSolver(
   return `${signedDistance * valueInNumber}`;
 }
 
-export function formatForceForSolver(force: string) {
+export function formatForceForSolver(force: string, invertSign = false) {
   if (Number.isNaN(parseFloat(force))) {
     const result: string[] = [];
 
     const operands = force.split("+");
     operands.forEach((operand) => {
       if (Number.isNaN(parseFloat(operand))) {
-        result.push(`1*${operand}`);
+        if (invertSign) {
+          result.push(`-1*${operand}`);
+        } else {
+          result.push(`1*${operand}`);
+        }
       } else {
-        result.push(operand);
+        if (invertSign) {
+          result.push(`-${operand}`);
+        } else {
+          result.push(`${operand}`);
+        }
       }
 
       result.push("+");
@@ -171,5 +179,5 @@ export function formatForceForSolver(force: string) {
     return finalResult.substring(0, finalResult.length - 1);
   }
 
-  return force;
+  return invertSign ? `-1*${force}` : force;
 }

@@ -77,7 +77,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -101,7 +101,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       const force = new ExternalForce("F1", 1, 2);
       connection.addExternalForce(force);
@@ -134,7 +134,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -213,7 +213,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -237,7 +237,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -999,7 +999,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       feature.handleElementAddition = jest.fn();
 
@@ -1019,7 +1019,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
       const add =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();

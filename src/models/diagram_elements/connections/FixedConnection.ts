@@ -17,4 +17,14 @@ export class FixedConnection implements Connection {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   applyBoundaryCondition(_point: Point) {}
+
+  getF_x(name: string): string {
+    return `1*F_${name}x_ground`;
+  }
+  getF_y(name: string): string {
+    return `1*F_${name}y_ground`;
+  }
+  getM_z(name: string): string {
+    return `1*M_${name}z_ground`;
+  }
 }

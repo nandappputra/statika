@@ -20,4 +20,14 @@ export class FreeConnection implements Connection {
     point.F_y = 0;
     point.M_z = 0;
   }
+
+  getF_x(_name: string): string {
+    return "0";
+  }
+  getF_y(_name: string): string {
+    return "0";
+  }
+  getM_z(_name: string): string {
+    return "0";
+  }
 }

@@ -104,6 +104,8 @@ export class ConnectionEntity implements CanvasEntity {
         return this.buildFreeIcon(connection);
       case ConnectionType.HORIZONTAL_ROLLER:
         return this.buildHorizontalRollerIcon(connection);
+      case ConnectionType.PIN_JOINT:
+        return this.buildPinJointIcon(connection);
       case ConnectionType.PIN:
         return this.buildPinIcon(connection);
     }
@@ -239,6 +241,25 @@ export class ConnectionEntity implements CanvasEntity {
     });
 
     return icon;
+  }
+
+  private buildPinJointIcon(connection: ConnectionElement) {
+    return new fabric.Circle({
+      fill: "white",
+      stroke: "black",
+      strokeWidth: 3,
+      radius: 5,
+      originX: "center",
+      originY: "center",
+      left: connection.points[0].x,
+      top: connection.points[0].y,
+      data: {
+        name: connection.name,
+        pointName: connection.points[0].name,
+        type: ElementType.CONNECTION,
+      },
+      hasControls: false,
+    });
   }
 
   private buildPinIcon(connection: ConnectionElement) {

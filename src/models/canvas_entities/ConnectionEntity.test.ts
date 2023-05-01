@@ -180,7 +180,7 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       const removePoint = jest.fn<(point: Point) => void>();
       connection.removePoint = removePoint;
-      setMockProperty(connection, "type", ConnectionType.PIN);
+      setMockProperty(connection, "type", ConnectionType.PIN_JOINT);
       setMockProperty(connection, "points", [p1, p2]);
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -197,7 +197,7 @@ describe("ConnectionEntity", () => {
       const p3 = new Point("P3", 3, 3);
       const removePoint = jest.fn<(point: Point) => void>();
       connection.removePoint = removePoint;
-      setMockProperty(connection, "type", ConnectionType.PIN);
+      setMockProperty(connection, "type", ConnectionType.PIN_JOINT);
       setMockProperty(connection, "points", [p2, p3]);
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -293,7 +293,7 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
-      setMockProperty(connection, "type", ConnectionType.PIN);
+      setMockProperty(connection, "type", ConnectionType.PIN_JOINT);
       const changeConnectionType =
         jest.fn<(connectionType: ConnectionType) => void>();
       connection.changeConnectionType = changeConnectionType;

@@ -16,7 +16,16 @@ export class HorizontalRollerConnection implements Connection {
   }
 
   applyBoundaryCondition(point: Point) {
-    point.F_x = 0;
     point.M_z = 0;
+  }
+
+  getF_x(_name: string): string {
+    return "0";
+  }
+  getF_y(name: string): string {
+    return `1*F_${name}y_ground`;
+  }
+  getM_z(_name: string): string {
+    return "0";
   }
 }

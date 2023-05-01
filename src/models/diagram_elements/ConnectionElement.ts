@@ -8,6 +8,7 @@ import { FixedConnection } from "./connections/FixedConnection";
 import { FreeConnection } from "./connections/FreeConnection";
 import { HorizontalRollerConnection } from "./connections/HorizontalRollerConnection";
 import { PinConnection } from "./connections/PinConnection";
+import { PinJointConnection } from "./connections/PinJointConnection";
 
 export class ConnectionElement implements DiagramElement {
   private _name: string;
@@ -41,14 +42,16 @@ export class ConnectionElement implements DiagramElement {
     connectionType: ConnectionType
   ): Connection {
     switch (connectionType) {
-      case ConnectionType.PIN:
-        return PinConnection.getInstance();
+      case ConnectionType.PIN_JOINT:
+        return PinJointConnection.getInstance();
       case ConnectionType.FIXED:
         return FixedConnection.getInstance();
       case ConnectionType.FREE:
         return FreeConnection.getInstance();
       case ConnectionType.HORIZONTAL_ROLLER:
         return HorizontalRollerConnection.getInstance();
+      case ConnectionType.PIN:
+        return PinConnection.getInstance();
     }
   }
 
@@ -91,14 +94,17 @@ export class ConnectionElement implements DiagramElement {
     const sigmaF_y: string[] = [];
 
     this._points.forEach((point) => {
-      sigmaF_x.push(formatForceForSolver(point.symbolF_x));
-      sigmaF_y.push(formatForceForSolver(point.symbolF_y));
+      sigmaF_x.push(formatForceForSolver(point.symbolF_x, true));
+      sigmaF_y.push(formatForceForSolver(point.symbolF_y, true));
     });
 
     this._externalForces.forEach((force) => {
       sigmaF_x.push(formatForceForSolver(force.symbolF_x));
       sigmaF_y.push(formatForceForSolver(force.symbolF_y));
     });
+
+    sigmaF_x.push(this._connection.getF_x(this._name));
+    sigmaF_y.push(this._connection.getF_y(this._name));
 
     return [sigmaF_x.join("+"), sigmaF_y.join("+")];
   }

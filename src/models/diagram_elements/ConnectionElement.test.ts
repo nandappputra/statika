@@ -117,7 +117,7 @@ describe("LinkageEntity", () => {
   });
 
   describe("generateEquilibirum", () => {
-    test("Should generate the correct equilibrium equation formatted for the solver", () => {
+    test("Should generate the correct equilibrium equation formatted for the solver and invert the sign", () => {
       setMockProperty(point1, "externalForces", []);
       setMockProperty(point2, "externalForces", []);
 
@@ -132,19 +132,99 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN
+        ConnectionType.PIN_JOINT
       );
 
       const actualEquations = connectionElement.generateEquilibrium();
       const expectedEquations = [
-        "1*F_P1x+10+2+3+1*F_P2x+0+-5",
-        "1*F_P1y+0+1+1*F_P2y+0+-1",
+        "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+0",
+        "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+0",
       ];
 
       expect(actualEquations).toStrictEqual(expectedEquations);
     });
 
-    test("Should take the external forces in the point into consideration", () => {
+    test("Should include external forces", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
+      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
+      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
+      setMockProperty(point1, "symbolM_z", "M_P1z");
+
+      setMockProperty(point2, "symbolF_x", "F_P2x+0+-5");
+      setMockProperty(point2, "symbolF_y", "F_P2y+0+-1");
+      setMockProperty(point2, "symbolM_z", "0");
+
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN_JOINT
+      );
+
+      const force = new ExternalForce("F1", 100, 20);
+      connectionElement.addExternalForce(force);
+
+      const actualEquations = connectionElement.generateEquilibrium();
+      const expectedEquations = [
+        "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+100+0",
+        "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+20+0",
+      ];
+
+      expect(actualEquations).toStrictEqual(expectedEquations);
+    });
+
+    test("Should return empty array if there is only 1 point", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
+      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
+      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
+      setMockProperty(point1, "symbolM_z", "M_P1z");
+
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN_JOINT
+      );
+
+      const actualEquations = connectionElement.generateEquilibrium();
+      const expectedEquations: string[] = [];
+
+      expect(actualEquations).toStrictEqual(expectedEquations);
+    });
+
+    test("Should include external forces", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
+      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
+      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
+      setMockProperty(point1, "symbolM_z", "M_P1z");
+
+      setMockProperty(point2, "symbolF_x", "F_P2x+0+-5");
+      setMockProperty(point2, "symbolF_y", "F_P2y+0+-1");
+      setMockProperty(point2, "symbolM_z", "0");
+
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN_JOINT
+      );
+
+      const force = new ExternalForce("F1", 100, 20);
+      connectionElement.addExternalForce(force);
+
+      const actualEquations = connectionElement.generateEquilibrium();
+      const expectedEquations = [
+        "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+100+0",
+        "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+20+0",
+      ];
+
+      expect(actualEquations).toStrictEqual(expectedEquations);
+    });
+
+    test("Should includes ground reaction for non floating connection", () => {
       setMockProperty(point1, "externalForces", []);
       setMockProperty(point2, "externalForces", []);
 
@@ -167,29 +247,9 @@ describe("LinkageEntity", () => {
 
       const actualEquations = connectionElement.generateEquilibrium();
       const expectedEquations = [
-        "1*F_P1x+10+2+3+1*F_P2x+0+-5+100",
-        "1*F_P1y+0+1+1*F_P2y+0+-1+20",
+        "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+100+1*F_C1x_ground",
+        "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+20+1*F_C1y_ground",
       ];
-
-      expect(actualEquations).toStrictEqual(expectedEquations);
-    });
-
-    test("Should return empty array if there is only 1 point", () => {
-      setMockProperty(point1, "externalForces", []);
-      setMockProperty(point2, "externalForces", []);
-
-      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
-      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
-      setMockProperty(point1, "symbolM_z", "M_P1z");
-
-      connectionElement = new ConnectionElement(
-        "C1",
-        [point1],
-        ConnectionType.PIN
-      );
-
-      const actualEquations = connectionElement.generateEquilibrium();
-      const expectedEquations: string[] = [];
 
       expect(actualEquations).toStrictEqual(expectedEquations);
     });

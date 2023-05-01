@@ -89,7 +89,7 @@ export class PointSnapFeature implements Feature {
 
           const newConnection = this._elementFactory.buildConnection(
             [p2, p1],
-            ConnectionType.PIN
+            ConnectionType.PIN_JOINT
           );
 
           painter.addElement(newConnection);
