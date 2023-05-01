@@ -12,6 +12,7 @@ import { ConnectionType } from "../../utils/Constants";
 import { ExternalForce } from "../ExternalForce";
 import { MovePointEvent } from "../Event";
 import { Structure } from "../Structure";
+import { ExternalForceEntity } from "../canvas_entities/ExternalForceEntity";
 
 describe("Painter", () => {
   let canvas: MockedObject<fabric.Canvas>;
@@ -91,6 +92,37 @@ describe("Painter", () => {
       expect(painter.getEntityByName("P1")?.getObjectsToDraw().visible).toBe(
         false
       );
+    });
+
+    test("Should add all the external forces when adding a connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN
+      );
+      const force = new ExternalForce("F1", 1, 2);
+      connection.addExternalForce(force);
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      feature.handleForceAddition = jest.fn();
+
+      painter.addElement(linkage);
+      painter.addElement(connection);
+
+      const expectedEntity = new ExternalForceEntity(
+        force,
+        connection,
+        painter
+      );
+
+      expect(painter.getEntityByName("F1")).toStrictEqual(expectedEntity);
     });
   });
 

@@ -354,6 +354,12 @@ export class Painter implements EventMediator {
       }
     });
 
+    if (diagramElement instanceof ConnectionElement) {
+      diagramElement.externalForces.forEach((force) => {
+        this.addExternalLoad(diagramElement, force);
+      });
+    }
+
     this._painterFeatures.forEach((feature) => {
       feature.handleElementAddition(this, diagramElement);
     });
