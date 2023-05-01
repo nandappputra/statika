@@ -38,7 +38,7 @@ export class Painter implements EventMediator {
 
   private _pointNameToLinkageEntity: Map<string, LinkageEntity>;
   private _pointNameToConnectionEntity: Map<string, ConnectionEntity>;
-  private _pointNameToExternalForceEntity: Map<
+  private _locationNameToExternalForceEntity: Map<
     string,
     Set<ExternalForceEntity>
   >;
@@ -61,7 +61,7 @@ export class Painter implements EventMediator {
 
     this._pointNameToLinkageEntity = new Map<string, LinkageEntity>();
     this._pointNameToConnectionEntity = new Map<string, ConnectionEntity>();
-    this._pointNameToExternalForceEntity = new Map<
+    this._locationNameToExternalForceEntity = new Map<
       string,
       Set<ExternalForceEntity>
     >();
@@ -239,7 +239,6 @@ export class Painter implements EventMediator {
     location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
-    if (location instanceof Point) {
       const externalForce = new ExternalForceEntity(
         externalLoad,
         location,
@@ -248,13 +247,13 @@ export class Painter implements EventMediator {
 
       this._entityNameToEntity.set(externalForce.name, externalForce);
 
-      const affectedForces = this._pointNameToExternalForceEntity.get(
+      const affectedForces = this._locationNameToExternalForceEntity.get(
         location.name
       );
       if (!affectedForces || affectedForces.size == 0) {
         const forceSet = new Set<ExternalForceEntity>();
         forceSet.add(externalForce);
-        this._pointNameToExternalForceEntity.set(location.name, forceSet);
+        this._locationNameToExternalForceEntity.set(location.name, forceSet);
       } else {
         affectedForces.add(externalForce);
       }
@@ -266,16 +265,14 @@ export class Painter implements EventMediator {
       this._painterFeatures.forEach((feature) =>
         feature.handleForceAddition(this, location, externalLoad)
       );
-    }
   }
 
   public removeExternalLoad(
     location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
-    if (location instanceof Point) {
       const entity = this._entityNameToEntity.get(externalLoad.name);
-      const affectedForce = this._pointNameToExternalForceEntity.get(
+      const affectedForce = this._locationNameToExternalForceEntity.get(
         location.name
       );
       if (!affectedForce || !entity) {
@@ -285,7 +282,7 @@ export class Painter implements EventMediator {
       }
 
       this._entityNameToEntity.delete(externalLoad.name);
-      this._pointNameToExternalForceEntity
+      this._locationNameToExternalForceEntity
         .get(location.name)
         ?.delete(entity as ExternalForceEntity);
       this._canvas.remove(entity.getObjectsToDraw());
@@ -294,7 +291,6 @@ export class Painter implements EventMediator {
       this._painterFeatures.forEach((feature) =>
         feature.handleForceRemoval(this, location, externalLoad)
       );
-    }
 
     this._canvas.renderAll();
   }
@@ -312,7 +308,7 @@ export class Painter implements EventMediator {
       pointEntity.updatePosition(movePointEvent);
     }
 
-    const forceEntitySet = this._pointNameToExternalForceEntity.get(
+    const forceEntitySet = this._locationNameToExternalForceEntity.get(
       movePointEvent.name
     );
     if (forceEntitySet) {
@@ -400,7 +396,7 @@ export class Painter implements EventMediator {
             affectedConnection.getElement()
           );
         }
-        const affectedForce = this._pointNameToExternalForceEntity.get(
+        const affectedForce = this._locationNameToExternalForceEntity.get(
           point.name
         );
         affectedForce?.forEach((force) =>
@@ -476,7 +472,7 @@ export class Painter implements EventMediator {
     const targetLinkage = this._pointNameToLinkageEntity.get(point.name);
     targetLinkage?.deletePoint(point);
 
-    const affectedForce = this._pointNameToExternalForceEntity.get(point.name);
+    const affectedForce = this._locationNameToExternalForceEntity.get(point.name);
     affectedForce?.forEach((force) =>
       this.removeExternalLoad(point, force.getElement())
     );

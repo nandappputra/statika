@@ -28,12 +28,12 @@ export interface Feature {
   ): void;
   handleForceAddition(
     painter: Painter,
-    point: Point,
+    location: Point | ConnectionElement,
     externalForce: ExternalForce
   ): void;
   handleForceRemoval(
     painter: Painter,
-    point: Point,
+    location: Point | ConnectionElement,
     externalForce: ExternalForce
   ): void;
 }
