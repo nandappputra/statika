@@ -49,6 +49,7 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
       setMockProperty(connection, "type", ConnectionType.HORIZONTAL_ROLLER);
+      setMockProperty(connection, "externalForces", []);
       eventMediator.updatePointPosition = jest.fn();
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -73,6 +74,7 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
       setMockProperty(connection, "type", ConnectionType.FIXED);
+      setMockProperty(connection, "externalForces", []);
       const updatePosition =
         jest.fn<(movePointEvent: MovePointEvent) => void>();
       eventMediator.updatePointPosition = updatePosition;
@@ -101,6 +103,50 @@ describe("ConnectionEntity", () => {
       expect(updatePosition).toBeCalledTimes(2);
       expect(updatePosition).toBeCalledWith(expectedPropagatedEvent1);
       expect(updatePosition).toBeCalledWith(expectedPropagatedEvent2);
+    });
+
+    test("Should propagate the event to all external forces in the connection", () => {
+      const p1 = new Point("P1", 1, 1);
+      const p2 = new Point("P2", 2, 2);
+      const f1 = new ExternalForce("F1", 3, 3);
+      setMockProperty(connection, "points", [p1, p2]);
+      setMockProperty(connection, "name", "C1");
+      setMockProperty(connection, "type", ConnectionType.FIXED);
+      setMockProperty(connection, "externalForces", [f1]);
+      const updatePosition =
+        jest.fn<(movePointEvent: MovePointEvent) => void>();
+      eventMediator.updatePointPosition = updatePosition;
+
+      connectionEntity = new ConnectionEntity(connection, eventMediator);
+
+      const movePointEvent: MovePointEvent = {
+        name: "P1",
+        source: "user",
+        coordinate: { x: 20, y: 10 },
+      };
+
+      connectionEntity.updatePosition(movePointEvent);
+
+      const expectedPropagatedEvent1: MovePointEvent = {
+        name: "P1",
+        source: "C1",
+        coordinate: { x: 20, y: 10 },
+      };
+      const expectedPropagatedEvent2: MovePointEvent = {
+        name: "P2",
+        source: "C1",
+        coordinate: { x: 20, y: 10 },
+      };
+      const expectedPropagatedEvent3: MovePointEvent = {
+        name: "F1",
+        source: "C1",
+        coordinate: { x: 20, y: 10 },
+      };
+
+      expect(updatePosition).toBeCalledTimes(3);
+      expect(updatePosition).toBeCalledWith(expectedPropagatedEvent1);
+      expect(updatePosition).toBeCalledWith(expectedPropagatedEvent2);
+      expect(updatePosition).toBeCalledWith(expectedPropagatedEvent3);
     });
   });
 
