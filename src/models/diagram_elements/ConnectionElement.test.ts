@@ -16,8 +16,32 @@ describe("LinkageEntity", () => {
     point2 = jest.createMockFromModule<Point>("../Point");
   });
 
+  describe("constructor", () => {
+    test("Should move all the external forces from the points to the connection", () => {
+      const force = new ExternalForce("F1", 1, 2);
+      setMockProperty(point1, "externalForces", [force]);
+      setMockProperty(point2, "externalForces", []);
+      const removeExternalForce =
+        jest.fn<(externalForce: ExternalForce) => void>();
+      point1.removeExternalForce = removeExternalForce;
+
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.FREE
+      );
+
+      expect(removeExternalForce).toBeCalledTimes(1);
+      expect(removeExternalForce).toBeCalledWith(force);
+      expect(connectionElement.externalForces).toStrictEqual([force]);
+    });
+  });
+
   describe("addPoint", () => {
     test("Should add a new point to the Connection points", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
@@ -32,6 +56,9 @@ describe("LinkageEntity", () => {
     });
 
     test("Should apply the boundary condition to the added point", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
@@ -51,6 +78,9 @@ describe("LinkageEntity", () => {
 
   describe("removePoint", () => {
     test("Should delete the specified point from the Connection points", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
@@ -69,6 +99,9 @@ describe("LinkageEntity", () => {
     });
 
     test("Should remove the applied the boundary condition from the deleted point", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
@@ -85,6 +118,9 @@ describe("LinkageEntity", () => {
 
   describe("generateEquilibirum", () => {
     test("Should generate the correct equilibrium equation formatted for the solver", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
       setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
       setMockProperty(point1, "symbolM_z", "M_P1z");
@@ -109,6 +145,9 @@ describe("LinkageEntity", () => {
     });
 
     test("Should take the external forces in the point into consideration", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
       setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
       setMockProperty(point1, "symbolM_z", "M_P1z");
@@ -136,6 +175,9 @@ describe("LinkageEntity", () => {
     });
 
     test("Should return empty array if there is only 1 point", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
       setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
       setMockProperty(point1, "symbolM_z", "M_P1z");
@@ -155,6 +197,9 @@ describe("LinkageEntity", () => {
 
   describe("changeConnectionType", () => {
     test("Should reapply the boundary condition of the connection type the point", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       point1.removeConditions = jest.fn();
       point2.removeConditions = jest.fn();
       connectionElement = new ConnectionElement(
@@ -176,6 +221,9 @@ describe("LinkageEntity", () => {
     });
 
     test("Should change the type of connection", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       point1.removeConditions = jest.fn();
       point2.removeConditions = jest.fn();
       connectionElement = new ConnectionElement(
@@ -192,6 +240,9 @@ describe("LinkageEntity", () => {
 
   describe("addExternalForce", () => {
     test("Should add a new force to the Connection externalForces", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
@@ -209,6 +260,9 @@ describe("LinkageEntity", () => {
 
   describe("removeExternalForce", () => {
     test("Should remove the correct force from the connection", () => {
+      setMockProperty(point1, "externalForces", []);
+      setMockProperty(point2, "externalForces", []);
+
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],

@@ -99,10 +99,16 @@ describe("ConnectionEntity", () => {
         source: "C1",
         coordinate: { x: 20, y: 10 },
       };
+      const expectedPropagatedEvent3: MovePointEvent = {
+        name: "C1",
+        source: "C1",
+        coordinate: { x: 20, y: 10 },
+      };
 
-      expect(updatePosition).toBeCalledTimes(2);
+      expect(updatePosition).toBeCalledTimes(3);
       expect(updatePosition).toBeCalledWith(expectedPropagatedEvent1);
       expect(updatePosition).toBeCalledWith(expectedPropagatedEvent2);
+      expect(updatePosition).toBeCalledWith(expectedPropagatedEvent3);
     });
 
     test("Should propagate the event to all external forces in the connection", () => {
@@ -138,7 +144,7 @@ describe("ConnectionEntity", () => {
         coordinate: { x: 20, y: 10 },
       };
       const expectedPropagatedEvent3: MovePointEvent = {
-        name: "F1",
+        name: "C1",
         source: "C1",
         coordinate: { x: 20, y: 10 },
       };

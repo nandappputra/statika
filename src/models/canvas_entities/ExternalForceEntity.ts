@@ -92,6 +92,10 @@ export class ExternalForceEntity implements CanvasEntity {
     return this._location;
   }
 
+  set location(location: Point | ConnectionElement) {
+    this._location = location;
+  }
+
   public setForceComponents(F_x: number, F_y: number) {
     this._externalForce.F_x = F_x;
     this._externalForce.F_y = F_y;

@@ -38,10 +38,8 @@ export class ConnectionEntity implements CanvasEntity {
       this._eventMediator.updatePointPosition(moveEvent);
     });
 
-    this._connection.externalForces.forEach((force) => {
-      const moveEvent: MovePointEvent = { ...movePointEvent, name: force.name };
-      this._eventMediator.updatePointPosition(moveEvent);
-    });
+    const moveEvent: MovePointEvent = { ...movePointEvent, name: this._name };
+    this._eventMediator.updatePointPosition(moveEvent);
   }
 
   get name() {

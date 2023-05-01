@@ -124,6 +124,31 @@ describe("Painter", () => {
 
       expect(painter.getEntityByName("F1")).toStrictEqual(expectedEntity);
     });
+
+    test("Should not cause duplicate when merging a point with external force", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const force = new ExternalForce("F1", 1, 2);
+      point1.addExternalForce(force);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN
+      );
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      const handleElementAddition =
+        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
+      feature.handleElementAddition = handleElementAddition;
+      feature.handleForceAddition = jest.fn();
+
+      painter.addElement(linkage);
+      painter.addElement(connection);
+
+      expect(connection.externalForces.length).toBe(1);
+    });
   });
 
   describe("removeElement", () => {
@@ -817,20 +842,6 @@ describe("Painter", () => {
   });
 
   describe("updatePointPosition", () => {
-    test("Should throw error when the point is not found", () => {
-      feature.handleElementAddition = jest.fn();
-
-      const movePointEvent: MovePointEvent = {
-        name: "P4",
-        source: "user",
-        coordinate: { x: 10, y: 10 },
-      };
-
-      expect(() => painter.updatePointPosition(movePointEvent)).toThrow(
-        "failed to update point position: missing point"
-      );
-    });
-
     test("Should update the position of the point", () => {
       const point1 = new Point("P1", 1, 2);
       const point2 = new Point("P2", 3, 4);

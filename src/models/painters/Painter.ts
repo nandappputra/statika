@@ -214,14 +214,6 @@ export class Painter implements EventMediator {
   }
 
   public updatePointPosition(movePointEvent: MovePointEvent) {
-    const pointToUpdate = this._pointNameToPoint.get(movePointEvent.name);
-    if (!pointToUpdate) {
-      throw new Error("failed to update point position: missing point");
-    }
-
-    pointToUpdate.x = movePointEvent.coordinate.x;
-    pointToUpdate.y = movePointEvent.coordinate.y;
-
     this._updateCanvasEntity(movePointEvent);
 
     this._eventSubscribers.forEach((subscriber) => {
@@ -231,60 +223,6 @@ export class Painter implements EventMediator {
     this._painterFeatures.forEach((feature) => {
       feature.handlePointUpdate(this, movePointEvent);
     });
-
-    this._canvas.renderAll();
-  }
-
-  public addExternalLoad(
-    location: Point | ConnectionElement,
-    externalLoad: ExternalForce
-  ) {
-    const externalForce = new ExternalForceEntity(externalLoad, location, this);
-
-    this._entityNameToEntity.set(externalForce.name, externalForce);
-
-    const affectedForces = this._locationNameToExternalForceEntity.get(
-      location.name
-    );
-    if (!affectedForces || affectedForces.size == 0) {
-      const forceSet = new Set<ExternalForceEntity>();
-      forceSet.add(externalForce);
-      this._locationNameToExternalForceEntity.set(location.name, forceSet);
-    } else {
-      affectedForces.add(externalForce);
-    }
-
-    location.addExternalForce(externalLoad);
-
-    this._canvas.add(externalForce.getObjectsToDraw());
-
-    this._painterFeatures.forEach((feature) =>
-      feature.handleForceAddition(this, location, externalLoad)
-    );
-  }
-
-  public removeExternalLoad(
-    location: Point | ConnectionElement,
-    externalLoad: ExternalForce
-  ) {
-    const entity = this._entityNameToEntity.get(externalLoad.name);
-    const affectedForce = this._locationNameToExternalForceEntity.get(
-      location.name
-    );
-    if (!affectedForce || !entity) {
-      throw new Error("failed to remove force: unrecognized force or location");
-    }
-
-    this._entityNameToEntity.delete(externalLoad.name);
-    this._locationNameToExternalForceEntity
-      .get(location.name)
-      ?.delete(entity as ExternalForceEntity);
-    this._canvas.remove(entity.getObjectsToDraw());
-    location.removeExternalForce(externalLoad);
-
-    this._painterFeatures.forEach((feature) =>
-      feature.handleForceRemoval(this, location, externalLoad)
-    );
 
     this._canvas.renderAll();
   }
@@ -317,6 +255,65 @@ export class Painter implements EventMediator {
     if (connection && movePointEvent.source != connection.name) {
       connection.updatePosition(movePointEvent);
     }
+  }
+
+  public addExternalLoad(
+    location: Point | ConnectionElement,
+    externalLoad: ExternalForce
+  ) {
+    let externalForce = this._entityNameToEntity.get(
+      externalLoad.name
+    ) as ExternalForceEntity;
+    if (externalForce === undefined) {
+      externalForce = new ExternalForceEntity(externalLoad, location, this);
+      this._canvas.add(externalForce.getObjectsToDraw());
+    }
+
+    this._entityNameToEntity.set(externalForce.name, externalForce);
+
+    externalForce.location = location;
+    const affectedForces = this._locationNameToExternalForceEntity.get(
+      location.name
+    );
+    if (!affectedForces || affectedForces.size == 0) {
+      const forceSet = new Set<ExternalForceEntity>();
+      forceSet.add(externalForce);
+      this._locationNameToExternalForceEntity.set(location.name, forceSet);
+    } else {
+      affectedForces.add(externalForce);
+    }
+
+    location.addExternalForce(externalLoad);
+
+    this._painterFeatures.forEach((feature) =>
+      feature.handleForceAddition(this, location, externalLoad)
+    );
+  }
+
+  public removeExternalLoad(
+    location: Point | ConnectionElement,
+    externalLoad: ExternalForce
+  ) {
+    const entity = this._entityNameToEntity.get(externalLoad.name);
+    const affectedForce = this._locationNameToExternalForceEntity.get(
+      location.name
+    );
+    if (!affectedForce || !entity) {
+      throw new Error("failed to remove force: unrecognized force or location");
+    }
+
+    this._entityNameToEntity.delete(externalLoad.name);
+    this._locationNameToExternalForceEntity
+      .get(location.name)
+      ?.delete(entity as ExternalForceEntity);
+    this._canvas.remove(entity.getObjectsToDraw());
+    location.removeExternalForce(externalLoad);
+
+    this._painterFeatures.forEach((feature) =>
+      feature.handleForceRemoval(this, location, externalLoad)
+    );
+
+    this._canvas.renderAll();
   }
 
   public addElement(diagramElement: DiagramElement) {
@@ -355,7 +352,9 @@ export class Painter implements EventMediator {
     });
 
     if (diagramElement instanceof ConnectionElement) {
-      diagramElement.externalForces.forEach((force) => {
+      const forces = [...diagramElement.externalForces];
+      forces.forEach((force) => {
+        diagramElement.removeExternalForce(force);
         this.addExternalLoad(diagramElement, force);
       });
     }
@@ -384,6 +383,12 @@ export class Painter implements EventMediator {
       const pointEntity = this._pointNameToPointEntity.get(point.name);
       if (!pointEntity) {
         return;
+      }
+
+      if (entity instanceof ConnectionEntity) {
+        entity.getElement().externalForces.forEach((force) => {
+          this.removeExternalLoad(entity.getElement(), force);
+        });
       }
 
       if (entity instanceof LinkageEntity) {
@@ -416,6 +421,8 @@ export class Painter implements EventMediator {
         pointEntity.setVisible(true);
       }
     });
+
+    this._canvas.renderAll();
   }
 
   public getCanvasEntity(diagramElement: DiagramElement) {
