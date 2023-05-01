@@ -5,7 +5,7 @@ import { Structure } from "./Structure";
 
 describe("Structure", () => {
   describe("generateAllEquilibirum", () => {
-    test("Should merge all element equations into three equations", () => {
+    test("Should generate an array with equations from all elements", () => {
       const linkage = jest.createMockFromModule<LinkageElement>(
         "./diagram_elements/LinkageElement"
       );
@@ -26,9 +26,13 @@ describe("Structure", () => {
       const structure = new Structure([linkage], [connection1, connection2]);
 
       expect(structure.generateAllEquilibirum()).toStrictEqual([
-        "+1*F_P1x+0+0+0+1*F_P1x+0",
-        "+1*F_P1y+1*F_P2y+0+100+1*F_P1y+1*F_P2y",
-        "+0*F_P1x+0*F_P1y+0+0+-300*F_P2y+0+0+0+0+-10000+0",
+        "1*F_P1x+0+0+0",
+        "1*F_P1y+1*F_P2y+0+100",
+        "0*F_P1x+0*F_P1y+0+0+-300*F_P2y+0+0+0+0+-10000+0",
+        "1*F_P1x",
+        "1*F_P1y",
+        "0",
+        "1*F_P2y",
       ]);
     });
   });

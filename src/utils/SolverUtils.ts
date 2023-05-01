@@ -61,11 +61,59 @@ export function expressEquationsInMatrixMultiplication(
     coefficientOnly.push(coefficients);
   });
 
+  const [filteredCoefficients, filteredConstants] = removeRedundancy(
+    coefficientOnly,
+    constants
+  );
+
   return {
-    coefficients: coefficientOnly,
+    coefficients: filteredCoefficients,
     variables: variableList,
-    constants,
+    constants: filteredConstants,
   };
+}
+
+function removeRedundancy(
+  coefficients: number[][],
+  constants: number[]
+): [number[][], number[]] {
+  const filteredCoefficients: number[][] = [];
+  const filteredConstants: number[] = [];
+
+  const allCoefficients: Set<string> = new Set<string>();
+
+  for (let i = 0; i < coefficients.length; i++) {
+    const magnitude = calculateVectorMagnitude(coefficients[i]);
+    if (magnitude === 0) {
+      if (constants[i] !== 0) {
+        throw new Error(
+          "failed to convert to matrix equation: unsolvable equation found"
+        );
+      }
+      continue;
+    }
+
+    const normalized = normalizeVector(coefficients[i], magnitude);
+    if (allCoefficients.has(normalized.toString())) {
+      continue;
+    }
+
+    allCoefficients.add(normalized.toString());
+    filteredCoefficients.push(coefficients[i]);
+    filteredConstants.push(constants[i]);
+  }
+
+  return [filteredCoefficients, filteredConstants];
+}
+
+function calculateVectorMagnitude(components: number[]): number {
+  return Math.sqrt(
+    components.reduce((prev, current) => prev + current * current, 0)
+  );
+}
+
+function normalizeVector(components: number[], magnitude: number) {
+  return components.map((component) => component / magnitude);
 }
 
 export function formatMomentForSolver(
@@ -73,6 +121,10 @@ export function formatMomentForSolver(
   value: string,
   invertSign = false
 ) {
+  if (signedDistance == 0) {
+    return "0";
+  }
+
   const valueInNumber = parseFloat(value);
   if (value.includes("+") || Number.isNaN(valueInNumber)) {
     const result: string[] = [];
