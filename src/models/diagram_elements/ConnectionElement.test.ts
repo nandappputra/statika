@@ -108,6 +108,33 @@ describe("LinkageEntity", () => {
       expect(actualEquations).toStrictEqual(expectedEquations);
     });
 
+    test("Should take the external forces in the point into consideration", () => {
+      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
+      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
+      setMockProperty(point1, "symbolM_z", "M_P1z");
+
+      setMockProperty(point2, "symbolF_x", "F_P2x+0+-5");
+      setMockProperty(point2, "symbolF_y", "F_P2y+0+-1");
+      setMockProperty(point2, "symbolM_z", "0");
+
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN
+      );
+
+      const force = new ExternalForce("F1", 100, 20);
+      connectionElement.addExternalForce(force);
+
+      const actualEquations = connectionElement.generateEquilibrium();
+      const expectedEquations = [
+        "1*F_P1x+10+2+3+1*F_P2x+0+-5+100",
+        "1*F_P1y+0+1+1*F_P2y+0+-1+20",
+      ];
+
+      expect(actualEquations).toStrictEqual(expectedEquations);
+    });
+
     test("Should return empty array if there is only 1 point", () => {
       setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
       setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
