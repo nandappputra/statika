@@ -78,24 +78,17 @@ function ForceSetting(props: Props) {
       >
         <TextField
           id={`${props.forceName}-X`}
-          label="Fx"
+          label="Fx (Newton)"
           variant="outlined"
           value={fX}
-          sx={{
-            maxWidth: "30%",
-            margin: "0 0.5em",
-          }}
           type="number"
           onChange={setForceComponents}
         />
         <TextField
           id={`${props.forceName}-Y`}
-          label="Fy"
+          label="Fy (Newton)"
           variant="outlined"
           value={fY}
-          sx={{
-            maxWidth: "30%",
-          }}
           type="number"
           onChange={setForceComponents}
         />
@@ -127,6 +120,7 @@ function ForceSetting(props: Props) {
             fontFamily: "sans-serif",
             fontWeight: 700,
             color: "black",
+            width: "100%",
           }}
         >
           Remove

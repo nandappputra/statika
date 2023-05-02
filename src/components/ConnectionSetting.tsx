@@ -92,24 +92,17 @@ function ConnectionSetting(props: Props) {
       >
         <TextField
           id={`${props.connectionName}-X`}
-          label="X"
+          label="X (Meter)"
           variant="outlined"
           value={points[0] ? points[0].x : "0"}
-          sx={{
-            maxWidth: "25%",
-            margin: "0 0.5em",
-          }}
           onChange={moveConnection}
           type="number"
         />
         <TextField
           id={`${props.connectionName}-Y`}
-          label="Y"
+          label="Y (Meter)"
           variant="outlined"
           value={points[0] ? points[0].y : "0"}
-          sx={{
-            maxWidth: "25%",
-          }}
           onChange={moveConnection}
           type="number"
         />
@@ -125,12 +118,12 @@ function ConnectionSetting(props: Props) {
         }}
       >
         <Select
-          id="demo-simple-select"
+          id="connection-type"
           value={connectionType}
-          label="Type"
           sx={{
-            width: "80%",
+            width: "100%",
           }}
+          inputProps={{ "aria-label": "Without label" }}
           MenuProps={{
             disableScrollLock: true,
           }}
@@ -193,6 +186,7 @@ function ConnectionSetting(props: Props) {
             fontFamily: "sans-serif",
             fontWeight: 700,
             color: "black",
+            width: "100%",
           }}
         >
           Remove connection

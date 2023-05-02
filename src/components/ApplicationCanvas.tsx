@@ -9,7 +9,7 @@ function ApplicationCanvas(props: Props): JSX.Element {
     <Box
       sx={{
         width: "100%",
-        backgroundColor: "blue",
+        backgroundColor: "tomato",
         position: "absolute",
         left: 0,
         top: 0,

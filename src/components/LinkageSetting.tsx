@@ -72,39 +72,41 @@ function LinkageSetting(props: Props) {
       >
         {points.map((point, index) => (
           <ListItem key={point.name}>
-            <ListItemText>{point.name}</ListItemText>
-
-            <TextField
-              id={`${point.name}-X`}
-              label="X"
-              variant="outlined"
-              value={point.x}
+            <ListItemText sx={{ padding: "0.2rem" }}>{point.name}</ListItemText>
+            <Container
+              disableGutters
               sx={{
-                maxWidth: "30%",
-                margin: "0 0.5em",
-              }}
-              type="number"
-              onChange={() => movePoint(point.name, index)}
-            />
-            <TextField
-              id={`${point.name}-Y`}
-              label="Y"
-              variant="outlined"
-              value={point.y}
-              sx={{
-                maxWidth: "30%",
-              }}
-              type="number"
-              onChange={() => movePoint(point.name, index)}
-            />
-            <IconButton
-              onClick={() => {
-                props.removePointFromLinkage(point.name, props.linkageName);
-                updatePoints();
+                padding: "0.5em 0.5em",
+                display: "flex",
+                justifyContent: "center",
+                gap: "0.5em",
               }}
             >
-              <HighlightOffIcon />
-            </IconButton>
+              <TextField
+                id={`${point.name}-X`}
+                label="X"
+                variant="outlined"
+                value={point.x}
+                type="number"
+                onChange={() => movePoint(point.name, index)}
+              />
+              <TextField
+                id={`${point.name}-Y`}
+                label="Y"
+                variant="outlined"
+                value={point.y}
+                type="number"
+                onChange={() => movePoint(point.name, index)}
+              />
+              <IconButton
+                onClick={() => {
+                  props.removePointFromLinkage(point.name, props.linkageName);
+                  updatePoints();
+                }}
+              >
+                <HighlightOffIcon />
+              </IconButton>
+            </Container>
           </ListItem>
         ))}
       </List>
@@ -131,6 +133,7 @@ function LinkageSetting(props: Props) {
             fontFamily: "sans-serif",
             fontWeight: 700,
             color: "black",
+            width: "100%",
           }}
         >
           Add point
@@ -149,6 +152,7 @@ function LinkageSetting(props: Props) {
             fontFamily: "sans-serif",
             fontWeight: 700,
             color: "black",
+            width: "100%",
           }}
         >
           Remove

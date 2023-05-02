@@ -13,8 +13,8 @@ export function SolveButton(props: Props) {
       sx={{
         position: "fixed",
         width: "300px",
-        right: "0.2em",
-        bottom: "0.2em",
+        right: "0.5rem",
+        bottom: "0.5rem",
         backgroundColor: "white",
         boxShadow: "none",
         borderRadius: "0.5em",
@@ -25,7 +25,6 @@ export function SolveButton(props: Props) {
         fontFamily: "sans-serif",
         fontWeight: 700,
         color: "black",
-        margin: "1em",
       }}
     >
       {"Solve Structure"}

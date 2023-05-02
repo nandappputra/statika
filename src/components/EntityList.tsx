@@ -24,17 +24,17 @@ function EntityList(props: Props) {
       sx={{
         backgroundColor: "white",
         boxShadow: "none",
-        borderRadius: "0.5em",
+        borderRadius: "0.5rem",
         borderWidth: "3px",
         borderStyle: "solid",
         borderColor: "black",
         maxWidth: "200px",
         position: "fixed",
-        left: "0.5em",
-        top: "7vh",
+        left: "0.5rem",
+        top: "3rem",
         display: "flex",
         flexDirection: "column",
-        bottom: "0.5em",
+        bottom: "0.5rem",
       }}
     >
       <Button

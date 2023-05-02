@@ -78,6 +78,7 @@ export class ExternalForceEntity implements CanvasEntity {
       lockMovementY: true,
       hasControls: false,
       hasBorders: false,
+      hoverCursor: "pointer",
       data: { name: force.name, type: ElementType.FORCE },
     });
 

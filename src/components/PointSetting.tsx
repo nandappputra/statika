@@ -125,25 +125,18 @@ function PointSetting(props: Props) {
       >
         <TextField
           id={`${props.pointName}-X`}
-          label="X"
+          label="X (Meter)"
           variant="outlined"
           value={x}
           type="number"
-          sx={{
-            maxWidth: "25%",
-            margin: "0 0.5em",
-          }}
           onChange={handlePositionChangeX}
         />
         <TextField
           id={`${props.pointName}-Y`}
-          label="Y"
+          label="Y (Meter)"
           variant="outlined"
           value={y}
           type="number"
-          sx={{
-            maxWidth: "25%",
-          }}
           onChange={handlePositionChangeY}
         />
       </Container>

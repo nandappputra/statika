@@ -554,7 +554,7 @@ export class Painter implements EventMediator {
   }
 
   public getCanvasCenter() {
-    return this._canvas.getCenter();
+    return this._canvas.getVpCenter();
   }
 
   public updateForce(externalForce: ExternalForce, F_x: number, F_y: number) {
