@@ -230,7 +230,7 @@ describe("Painter", () => {
       );
     });
 
-    test("Should remove the boundary condition applied to the point when removing the a connection", () => {
+    test("Should remove the boundary condition applied to the point when removing a connection", () => {
       const point1 = new Point("P1", 1, 2);
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
@@ -250,6 +250,34 @@ describe("Painter", () => {
       painter.removeElement(connection);
 
       expect(point1.symbolM_z).toBe("M_P1z");
+    });
+
+    test("Should remove the forces attached to a connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1],
+        ConnectionType.PIN_JOINT
+      );
+      const addToCanvas =
+        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
+      canvas.add = addToCanvas;
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn();
+      feature.handleForceAddition = jest.fn();
+      feature.handleForceRemoval = jest.fn();
+
+      painter.addElement(linkage);
+      painter.addElement(connection);
+
+      const force = new ExternalForce("F1", 1, 2);
+      painter.addExternalLoad(connection, force);
+
+      painter.removeElement(connection);
+
+      expect(connection.externalForces.length).toBe(0);
     });
   });
 
