@@ -23,10 +23,10 @@ export class ConnectionElement implements DiagramElement {
     this._type = connectionType;
     this._connection = this.retrieveConnectionInstance(connectionType);
     this._externalForces = [];
+    this._points.forEach((point) => this._moveForce(point));
     this._points.forEach((point) => {
       this._connection.applyBoundaryCondition(point);
     });
-    this._points.forEach((point) => this._moveForce(point));
   }
 
   private _moveForce(point: Point) {

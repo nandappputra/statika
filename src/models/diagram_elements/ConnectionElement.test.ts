@@ -35,6 +35,27 @@ describe("LinkageEntity", () => {
       expect(removeExternalForce).toBeCalledWith(force);
       expect(connectionElement.externalForces).toStrictEqual([force]);
     });
+
+    test("Should apply appropriate boundary condition to the points", () => {
+      const force = new ExternalForce("F1", 1, 2);
+      setMockProperty(point1, "externalForces", [force]);
+      setMockProperty(point2, "externalForces", []);
+
+      const [, setM_z] = setMockProperty(point1, "M_z", 0);
+
+      point1.removeExternalForce = jest.fn();
+
+      connectionElement = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN
+      );
+
+      point1.F_y = 1;
+
+      expect(setM_z).toBeCalledTimes(1);
+      expect(setM_z).toBeCalledWith(0);
+    });
   });
 
   describe("addPoint", () => {
