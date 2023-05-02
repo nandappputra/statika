@@ -367,17 +367,10 @@ export class Painter implements EventMediator {
   }
 
   public removeElement(diagramElement: DiagramElement) {
-    this._painterFeatures.forEach((feature) => {
-      feature.handleElementRemoval(this, diagramElement);
-    });
-
     const entity = this._entityNameToEntity.get(diagramElement.name);
     if (!entity) {
       throw new Error("no such entity");
     }
-
-    this._canvas.remove(entity.getObjectsToDraw());
-    this._entityNameToEntity.delete(diagramElement.name);
 
     if (entity instanceof ConnectionEntity) {
       const forces = [...entity.getElement().externalForces];
@@ -386,7 +379,9 @@ export class Painter implements EventMediator {
       });
     }
 
-    diagramElement.points.forEach((point) => {
+    const points = [...diagramElement.points];
+
+    points.forEach((point) => {
       const pointEntity = this._pointNameToPointEntity.get(point.name);
       if (!pointEntity) {
         return;
@@ -418,10 +413,16 @@ export class Painter implements EventMediator {
         this._pointNameToPointEntity.delete(point.name);
       } else if (entity instanceof ConnectionEntity) {
         this._pointNameToConnectionEntity.delete(point.name);
-        entity.getElement().removePoint(point);
-        pointEntity.setVisible(true);
+        this.removePointFromConnection(point, entity.getElement());
       }
     });
+
+    this._painterFeatures.forEach((feature) => {
+      feature.handleElementRemoval(this, diagramElement);
+    });
+
+    this._entityNameToEntity.delete(diagramElement.name);
+    this._canvas.remove(entity.getObjectsToDraw());
 
     this._canvas.renderAll();
   }

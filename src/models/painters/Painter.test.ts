@@ -177,35 +177,6 @@ describe("Painter", () => {
       expect(painter.getAllEntityName().length).toBe(0);
     });
 
-    test("Should notify the features about the element addition with all its points", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
-      const addToCanvas =
-        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
-      canvas.add = addToCanvas;
-      const handleElementAddition =
-        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
-      const removeFromCanvas =
-        jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
-      canvas.remove = removeFromCanvas;
-      const handleElementRemoval =
-        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementRemoval = handleElementRemoval;
-
-      painter.addElement(linkage);
-
-      painter.removeElement(linkage);
-      const expectedLinkageArgument = new LinkageElement("L1", point1, point2);
-
-      expect(handleElementRemoval).toBeCalledTimes(1);
-      expect(handleElementRemoval).toBeCalledWith(
-        painter,
-        expectedLinkageArgument
-      );
-    });
-
     test("Should make the pointEntity visible when removing a connection", () => {
       const point1 = new Point("P1", 1, 2);
       const point2 = new Point("P2", 3, 4);
@@ -220,6 +191,7 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       feature.handleElementAddition = jest.fn();
       feature.handleElementRemoval = jest.fn();
+      feature.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -227,6 +199,44 @@ describe("Painter", () => {
 
       expect(painter.getEntityByName("P1")?.getObjectsToDraw().visible).toBe(
         true
+      );
+    });
+
+    test("Should notify point disconnection when removing a connection", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      const connection = new ConnectionElement(
+        "C1",
+        [point1, point2],
+        ConnectionType.PIN_JOINT
+      );
+      canvas.add = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn();
+      const handlePointDisconnection =
+        jest.fn<
+          (
+            _painter: Painter,
+            _connection: ConnectionElement,
+            _point: Point
+          ) => void
+        >();
+      feature.handlePointDisconnection = handlePointDisconnection;
+      painter.addElement(linkage);
+      painter.addElement(connection);
+      painter.removeElement(connection);
+
+      expect(handlePointDisconnection).toBeCalledTimes(2);
+      expect(handlePointDisconnection).toBeCalledWith(
+        painter,
+        connection,
+        point1
+      );
+      expect(handlePointDisconnection).toBeCalledWith(
+        painter,
+        connection,
+        point2
       );
     });
 
@@ -244,6 +254,7 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       feature.handleElementAddition = jest.fn();
       feature.handleElementRemoval = jest.fn();
+      feature.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -268,6 +279,7 @@ describe("Painter", () => {
       feature.handleElementRemoval = jest.fn();
       feature.handleForceAddition = jest.fn();
       feature.handleForceRemoval = jest.fn();
+      feature.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
