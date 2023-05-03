@@ -34,7 +34,7 @@ function EntityList(props: Props) {
         top: "3rem",
         display: "flex",
         flexDirection: "column",
-        bottom: "0.5rem",
+        bottom: "10rem",
       }}
     >
       <Button
