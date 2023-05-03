@@ -291,6 +291,28 @@ describe("Painter", () => {
 
       expect(connection.externalForces.length).toBe(0);
     });
+
+    test("Should notify the feature after actually removing the element", () => {
+      const point1 = new Point("P1", 1, 2);
+      const point2 = new Point("P2", 3, 4);
+      const linkage = new LinkageElement("L1", point1, point2);
+      let numberOfElement = 99;
+      
+      canvas.add = jest.fn();
+      feature.handleElementAddition = jest.fn();
+      feature.handleElementRemoval = jest.fn(
+        (_painter: Painter, _element: DiagramElement) => {
+          numberOfElement = painter.getAllEntityName().length;
+        }
+      );
+      feature.handlePointDisconnection = jest.fn();
+
+      painter.addElement(linkage);
+
+      painter.removeElement(linkage);
+
+      expect(numberOfElement).toBe(0);
+    });
   });
 
   describe("addExternalLoad", () => {

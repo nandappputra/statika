@@ -417,12 +417,12 @@ export class Painter implements EventMediator {
       }
     });
 
+    this._entityNameToEntity.delete(diagramElement.name);
+    this._canvas.remove(entity.getObjectsToDraw());
+
     this._painterFeatures.forEach((feature) => {
       feature.handleElementRemoval(this, diagramElement);
     });
-
-    this._entityNameToEntity.delete(diagramElement.name);
-    this._canvas.remove(entity.getObjectsToDraw());
 
     this._canvas.renderAll();
   }
