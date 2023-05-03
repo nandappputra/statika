@@ -31,7 +31,7 @@ function EntityList(props: Props) {
         maxWidth: "200px",
         position: "fixed",
         left: "0.5rem",
-        top: "3rem",
+        top: "4.5rem",
         display: "flex",
         flexDirection: "column",
         bottom: "10rem",
