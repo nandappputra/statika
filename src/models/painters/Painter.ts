@@ -603,4 +603,8 @@ export class Painter implements EventMediator {
 
     return new Structure(linkages, connections);
   }
+
+  public clearFocus() {
+    this._canvas.discardActiveObject();
+  }
 }
