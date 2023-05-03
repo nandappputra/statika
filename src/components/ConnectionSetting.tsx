@@ -10,6 +10,7 @@ import {
   TextField,
   SelectChangeEvent,
 } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
@@ -34,6 +35,7 @@ type Props = {
     connectionName: string,
     connectionType: ConnectionType
   ) => void;
+  addExternalForce: (location: string) => void;
 };
 
 function ConnectionSetting(props: Props) {
@@ -168,6 +170,7 @@ function ConnectionSetting(props: Props) {
         sx={{
           padding: "0.5em 0.5em",
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           gap: "0.5em",
         }}
@@ -190,6 +193,25 @@ function ConnectionSetting(props: Props) {
           }}
         >
           Remove connection
+        </Button>
+        <Button
+          onClick={() => props.addExternalForce(props.connectionName)}
+          startIcon={<AddCircleOutlineIcon />}
+          sx={{
+            backgroundColor: "white",
+            boxShadow: "none",
+            borderRadius: "0.5em",
+            borderWidth: "3px",
+            borderStyle: "solid",
+            borderColor: "black",
+            textTransform: "none",
+            fontFamily: "sans-serif",
+            fontWeight: 700,
+            color: "black",
+            width: "100%",
+          }}
+        >
+          Add Force
         </Button>
       </Container>
     </div>

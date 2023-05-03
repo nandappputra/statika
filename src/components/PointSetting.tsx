@@ -32,7 +32,7 @@ type Props = {
     pointName: string
   ) => void;
   getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
-  addExternalForceToPoint: (pointName: string) => void;
+  addExternalForce: (pointName: string) => void;
   updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
   buildConnection: (pointName: string) => void;
 };
@@ -71,7 +71,7 @@ function PointSetting(props: Props) {
   };
 
   const addExternalForceToPoint = (pointName: string) => {
-    props.addExternalForceToPoint(pointName);
+    props.addExternalForce(pointName);
     updatePoint();
   };
 
