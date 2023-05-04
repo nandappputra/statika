@@ -53,4 +53,11 @@ export class ElementFactory {
 
     return new ExternalForce(name, F_x, F_y);
   }
+
+  public reset() {
+    this._linkageCounter = 1;
+    this._connectionCounter = 1;
+    this._externalForceCounter = 1;
+    this._pointCounter = 1;
+  }
 }

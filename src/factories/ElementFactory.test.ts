@@ -63,4 +63,14 @@ describe("ElementFactory", () => {
       expect(force.name.charAt(1)).toEqual("2");
     });
   });
+
+  describe("reset", () => {
+    test("Should reset the counter to 0", () => {
+      factory.reset();
+
+      const force = factory.buildExternalForce(30, 30);
+
+      expect(force.name).toEqual("F1");
+    });
+  });
 });
