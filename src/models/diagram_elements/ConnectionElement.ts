@@ -86,10 +86,6 @@ export class ConnectionElement implements DiagramElement {
   }
 
   generateEquilibrium(): string[] {
-    if (this._points.length == 1) {
-      return [];
-    }
-
     const sigmaF_x: string[] = [];
     const sigmaF_y: string[] = [];
 

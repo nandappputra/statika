@@ -195,26 +195,6 @@ describe("LinkageEntity", () => {
       expect(actualEquations).toStrictEqual(expectedEquations);
     });
 
-    test("Should return empty array if there is only 1 point", () => {
-      setMockProperty(point1, "externalForces", []);
-      setMockProperty(point2, "externalForces", []);
-
-      setMockProperty(point1, "symbolF_x", "F_P1x+10+2+3");
-      setMockProperty(point1, "symbolF_y", "F_P1y+0+1");
-      setMockProperty(point1, "symbolM_z", "M_P1z");
-
-      connectionElement = new ConnectionElement(
-        "C1",
-        [point1],
-        ConnectionType.PIN_JOINT
-      );
-
-      const actualEquations = connectionElement.generateEquilibrium();
-      const expectedEquations: string[] = [];
-
-      expect(actualEquations).toStrictEqual(expectedEquations);
-    });
-
     test("Should include external forces", () => {
       setMockProperty(point1, "externalForces", []);
       setMockProperty(point2, "externalForces", []);
