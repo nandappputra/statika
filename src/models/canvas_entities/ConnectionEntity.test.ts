@@ -26,7 +26,7 @@ describe("ConnectionEntity", () => {
       const p1 = new Point("P1", 1, 1);
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
-      setMockProperty(connection, "type", ConnectionType.FREE);
+      setMockProperty(connection, "type", ConnectionType.VERTICAL_ROLLER);
       setMockProperty(connection, "name", "C1");
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -281,7 +281,7 @@ describe("ConnectionEntity", () => {
 
       const initialIcon = connectionEntity.getObjectsToDraw();
 
-      connectionEntity.changeConnectionType(ConnectionType.FREE);
+      connectionEntity.changeConnectionType(ConnectionType.VERTICAL_ROLLER);
 
       const finalIcon = connectionEntity.getObjectsToDraw();
 

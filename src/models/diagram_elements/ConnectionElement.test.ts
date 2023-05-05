@@ -28,7 +28,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       expect(removeExternalForce).toBeCalledTimes(1);
@@ -66,7 +66,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -83,7 +83,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -91,8 +91,8 @@ describe("LinkageEntity", () => {
 
       const actualPoint = connectionElement.points[2];
 
-      expect(actualPoint.symbolF_x).toBe("0");
-      expect(actualPoint.symbolF_y).toBe("0");
+      expect(actualPoint.symbolF_x).toBe("F_P3x");
+      expect(actualPoint.symbolF_y).toBe("F_P3y");
       expect(actualPoint.symbolM_z).toBe("0");
     });
   });
@@ -105,7 +105,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -126,7 +126,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
       const removeCondition = jest.fn();
       point1.removeConditions = removeCondition;
@@ -266,7 +266,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -290,7 +290,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       connectionElement.changeConnectionType(ConnectionType.FIXED);
@@ -307,7 +307,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       const force = new ExternalForce("F1", 100, 100);
@@ -327,7 +327,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FREE
+        ConnectionType.VERTICAL_ROLLER
       );
 
       const force1 = new ExternalForce("F1", 100, 100);

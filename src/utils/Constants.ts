@@ -14,6 +14,6 @@ export enum ConnectionType {
   PIN_JOINT = "Pin joint",
   PIN = "Pin",
   FIXED = "Fixed",
-  FREE = "Free",
   HORIZONTAL_ROLLER = "Horizontal Roller",
+  VERTICAL_ROLLER = "Vertical Roller",
 }

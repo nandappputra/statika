@@ -1049,7 +1049,7 @@ describe("Painter", () => {
       );
 
       expect(() =>
-        painter.changeConnectionType(connection, ConnectionType.FREE)
+        painter.changeConnectionType(connection, ConnectionType.VERTICAL_ROLLER)
       ).toThrow(
         "failed to add change connection type: missing or invalid entity found"
       );

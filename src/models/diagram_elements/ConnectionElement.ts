@@ -5,10 +5,10 @@ import { Point } from "../Point";
 import { DiagramElement } from "./DiagramElement";
 import { Connection } from "./connections/Connection";
 import { FixedConnection } from "./connections/FixedConnection";
-import { FreeConnection } from "./connections/FreeConnection";
 import { HorizontalRollerConnection } from "./connections/HorizontalRollerConnection";
 import { PinConnection } from "./connections/PinConnection";
 import { PinJointConnection } from "./connections/PinJointConnection";
+import { VerticalRoller } from "./connections/VerticalRollerConnection";
 
 export class ConnectionElement implements DiagramElement {
   private _name: string;
@@ -46,8 +46,8 @@ export class ConnectionElement implements DiagramElement {
         return PinJointConnection.getInstance();
       case ConnectionType.FIXED:
         return FixedConnection.getInstance();
-      case ConnectionType.FREE:
-        return FreeConnection.getInstance();
+      case ConnectionType.VERTICAL_ROLLER:
+        return VerticalRoller.getInstance();
       case ConnectionType.HORIZONTAL_ROLLER:
         return HorizontalRollerConnection.getInstance();
       case ConnectionType.PIN:

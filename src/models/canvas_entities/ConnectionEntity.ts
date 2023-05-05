@@ -101,8 +101,8 @@ export class ConnectionEntity implements CanvasEntity {
     switch (connectionType) {
       case ConnectionType.FIXED:
         return this.buildFixedIcon(connection);
-      case ConnectionType.FREE:
-        return this.buildFreeIcon(connection);
+      case ConnectionType.VERTICAL_ROLLER:
+        return this.buildVerticalRollerIcon(connection);
       case ConnectionType.HORIZONTAL_ROLLER:
         return this.buildHorizontalRollerIcon(connection);
       case ConnectionType.PIN_JOINT:
@@ -133,38 +133,9 @@ export class ConnectionEntity implements CanvasEntity {
     return icon;
   }
 
-  private buildFreeIcon(connection: ConnectionElement) {
-    const reference = connection.points[0];
-
-    const line1 = new fabric.Line(
-      [reference.x - 10, reference.y - 10, reference.x + 10, reference.y + 10],
-      {
-        stroke: "black",
-        strokeWidth: 3,
-        strokeLineCap: "round",
-      }
-    );
-    const line2 = new fabric.Line(
-      [reference.x + 10, reference.y - 10, reference.x - 10, reference.y + 10],
-      {
-        stroke: "black",
-        strokeWidth: 3,
-        strokeLineCap: "round",
-      }
-    );
-
-    const icon = new fabric.Group([line1, line2], {
-      originX: "center",
-      originY: "center",
-      left: reference.x,
-      top: reference.y,
-      hasControls: false,
-      data: {
-        name: connection.name,
-        pointName: connection.points[0].name,
-        type: ElementType.CONNECTION,
-      },
-    });
+  private buildVerticalRollerIcon(connection: ConnectionElement) {
+    const icon = this.buildHorizontalRollerIcon(connection);
+    icon.rotate(90);
 
     return icon;
   }
