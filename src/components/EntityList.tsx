@@ -79,6 +79,7 @@ function EntityList(props: Props) {
           padding: 0,
           overflow: "auto",
           scrollbarWidth: "none",
+          flexBasis: "80%",
         }}
       >
         {[...props.entityList]

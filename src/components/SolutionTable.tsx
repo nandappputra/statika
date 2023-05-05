@@ -53,6 +53,7 @@ export function SolutionTable(props: Props) {
           maxHeight: "90%",
           marginTop: "1rem",
           borderTop: "3px black solid",
+          flexBasis: "90%",
         }}
       >
         <Table aria-label="a dense table">
