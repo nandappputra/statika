@@ -203,6 +203,15 @@ export class ConnectionEntity implements CanvasEntity {
   private buildHorizontalRollerIcon(connection: ConnectionElement) {
     const reference = connection.points[0];
 
+    const box = new fabric.Rect({
+      originY: "bottom",
+      originX: "center",
+      left: reference.x,
+      top: reference.y,
+      width: 30,
+      height: 6,
+      fill: "white",
+    });
     const baseLine = new fabric.Line(
       [
         reference.x - 15,
@@ -211,6 +220,32 @@ export class ConnectionEntity implements CanvasEntity {
         reference.y - 2.5,
       ],
       {
+        originX: "center",
+        stroke: "black",
+        strokeWidth: 3,
+        strokeLineCap: "round",
+      }
+    );
+
+    const line1 = new fabric.Line(
+      [reference.x - 8, reference.y - 4, reference.x - 3, reference.y - 10],
+      {
+        stroke: "black",
+        strokeWidth: 3,
+        strokeLineCap: "round",
+      }
+    );
+    const line2 = new fabric.Line(
+      [reference.x, reference.y - 4, reference.x + 5, reference.y - 10],
+      {
+        stroke: "black",
+        strokeWidth: 3,
+        strokeLineCap: "round",
+      }
+    );
+    const line3 = new fabric.Line(
+      [reference.x + 8, reference.y - 4, reference.x + 13, reference.y - 10],
+      {
         stroke: "black",
         strokeWidth: 3,
         strokeLineCap: "round",
@@ -218,27 +253,31 @@ export class ConnectionEntity implements CanvasEntity {
     );
 
     const roller = new fabric.Circle({
+      originX: "center",
       fill: "white",
       stroke: "black",
       strokeWidth: 3,
       radius: 5,
-      left: reference.x - 3,
+      left: reference.x,
       top: reference.y,
       hasControls: false,
     });
 
-    const icon = new fabric.Group([baseLine, roller], {
-      originX: "center",
-      originY: "center",
-      left: reference.x,
-      top: reference.y,
-      hasControls: false,
-      data: {
-        name: connection.name,
-        pointName: connection.points[0].name,
-        type: ElementType.CONNECTION,
-      },
-    });
+    const icon = new fabric.Group(
+      [box, baseLine, line1, line2, line3, roller],
+      {
+        originX: "center",
+        originY: "center",
+        left: reference.x,
+        top: reference.y - 4,
+        hasControls: false,
+        data: {
+          name: connection.name,
+          pointName: connection.points[0].name,
+          type: ElementType.CONNECTION,
+        },
+      }
+    );
 
     return icon;
   }
