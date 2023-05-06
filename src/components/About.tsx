@@ -6,13 +6,13 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 
 interface Props {
   open: boolean;
-  setOpen: (isOpen: boolean) => void;
+  handleClose: () => void;
 }
 
 export default function About(props: Props) {
   return (
     <div>
-      <Dialog open={props.open} onClose={() => props.setOpen(false)} sx={{}}>
+      <Dialog open={props.open} onClose={() => props.handleClose()} sx={{}}>
         <DialogContent
           sx={{
             display: "flex",

@@ -6,7 +6,7 @@ import { Typography, Container } from "@mui/material";
 
 interface Props {
   open: boolean;
-  setOpen: (isOpen: boolean) => void;
+  handleClose: () => void;
 }
 
 export default function Tutorial(props: Props) {
@@ -14,13 +14,14 @@ export default function Tutorial(props: Props) {
     <div>
       <Dialog
         open={props.open}
-        onClose={() => props.setOpen(false)}
+        onClose={() => {
+          props.handleClose();
+        }}
         maxWidth="lg"
         sx={{ display: "flex", flexDirection: "column" }}
       >
         <DialogTitle>
           <Typography
-            variant="h4"
             noWrap
             sx={{
               fontFamily: "sans-serif",

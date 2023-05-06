@@ -34,12 +34,9 @@ function TitleBar(props: Props): JSX.Element {
         >
           Statika
         </Typography>
-        <List
-          sx={{ display: "flex", padding: "0 1rem" }}
-          onClick={() => props.setTutorialOpen(true)}
-        >
+        <List sx={{ display: "flex", padding: "0 1rem" }}>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton onClick={() => props.setTutorialOpen(true)}>
               <Typography
                 noWrap
                 sx={{
