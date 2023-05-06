@@ -160,6 +160,7 @@ describe("LinkageEntity", () => {
       const expectedEquations = [
         "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+0",
         "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+0",
+        "-1*M_P1z+0+0",
       ];
 
       expect(actualEquations).toStrictEqual(expectedEquations);
@@ -190,6 +191,7 @@ describe("LinkageEntity", () => {
       const expectedEquations = [
         "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+100+0",
         "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+20+0",
+        "-1*M_P1z+0+0",
       ];
 
       expect(actualEquations).toStrictEqual(expectedEquations);
@@ -220,6 +222,7 @@ describe("LinkageEntity", () => {
       const expectedEquations = [
         "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+100+0",
         "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+20+0",
+        "-1*M_P1z+0+0",
       ];
 
       expect(actualEquations).toStrictEqual(expectedEquations);
@@ -250,6 +253,7 @@ describe("LinkageEntity", () => {
       const expectedEquations = [
         "-1*F_P1x+-10+-2+-3+-1*F_P2x+-0+--5+100+1*F_C1x_ground",
         "-1*F_P1y+-0+-1+-1*F_P2y+-0+--1+20+1*F_C1y_ground",
+        "-1*M_P1z+0+0",
       ];
 
       expect(actualEquations).toStrictEqual(expectedEquations);

@@ -69,6 +69,36 @@ describe("Statika", () => {
     expect(actualSolution).toStrictEqual(expectedSolution);
   });
 
+  test("Should be capable of solving structure with moment reactions", () => {
+    const p1 = elementFactory.buildPoint({ x: 0, y: 0 });
+    const p2 = elementFactory.buildPoint({ x: 100, y: 0 });
+    const linkage1 = elementFactory.buildLinkage(p1, p2);
+    painter.addElement(linkage1);
+
+    const f1 = elementFactory.buildExternalForce(0, 100);
+    painter.addExternalLoad(p2, f1);
+
+    const connection1 = elementFactory.buildConnection(
+      [p1],
+      ConnectionType.FIXED
+    );
+    painter.addElement(connection1);
+
+    const structure = painter.buildStructure();
+
+    const actualSolution = solver.solve(structure);
+    const expectedSolution = [
+      new Variable("F_P1x", 0),
+      new Variable("F_P1y", -100),
+      new Variable("M_P1z", -10000),
+      new Variable("F_C1x_ground", 0),
+      new Variable("F_C1y_ground", -100),
+      new Variable("M_C1z_ground", -10000),
+    ];
+
+    expect(actualSolution).toStrictEqual(expectedSolution);
+  });
+
   test("Should be capable of building and solving multilinkage structure", () => {
     const p1 = elementFactory.buildPoint({ x: 0, y: 0 });
     const p2 = elementFactory.buildPoint({ x: 100, y: 0 });

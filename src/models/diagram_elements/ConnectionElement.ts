@@ -1,5 +1,8 @@
 import { ConnectionType } from "../../utils/Constants";
-import { formatForceForSolver } from "../../utils/SolverUtils";
+import {
+  formatForceForSolver,
+  formatMomentForSolver,
+} from "../../utils/SolverUtils";
 import { ExternalForce } from "../ExternalForce";
 import { Point } from "../Point";
 import { DiagramElement } from "./DiagramElement";
@@ -88,10 +91,12 @@ export class ConnectionElement implements DiagramElement {
   generateEquilibrium(): string[] {
     const sigmaF_x: string[] = [];
     const sigmaF_y: string[] = [];
+    const sigmaM_z: string[] = [];
 
     this._points.forEach((point) => {
       sigmaF_x.push(formatForceForSolver(point.symbolF_x, true));
       sigmaF_y.push(formatForceForSolver(point.symbolF_y, true));
+      sigmaM_z.push(formatMomentForSolver(1, point.symbolM_z, true));
     });
 
     this._externalForces.forEach((force) => {
@@ -101,8 +106,9 @@ export class ConnectionElement implements DiagramElement {
 
     sigmaF_x.push(this._connection.getF_x(this._name));
     sigmaF_y.push(this._connection.getF_y(this._name));
+    sigmaM_z.push(this._connection.getM_z(this._name));
 
-    return [sigmaF_x.join("+"), sigmaF_y.join("+")];
+    return [sigmaF_x.join("+"), sigmaF_y.join("+"), sigmaM_z.join("+")];
   }
 
   public addPoint(point: Point) {
