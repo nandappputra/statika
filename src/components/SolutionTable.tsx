@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 interface Props {
+  solved: boolean;
   solution: Variable[];
 }
 
@@ -47,35 +48,49 @@ export function SolutionTable(props: Props) {
       >
         Solution
       </Typography>
-      <TableContainer
-        sx={{
-          maxWidth: "100%",
-          maxHeight: "90%",
-          marginTop: "1rem",
-          borderTop: "3px black solid",
-          flexBasis: "90%",
-        }}
-      >
-        <Table aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Variable</TableCell>
-              <TableCell>Value</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {props.solution.map((variable) => (
-              <TableRow key={variable.symbol}>
-                <TableCell>{variable.symbol}</TableCell>
-                <TableCell>
-                  {variable.value.toFixed(2)}{" "}
-                  {variable.symbol.charAt(0) == "F" ? "N" : "Nm"}
-                </TableCell>
+      {props.solved ? (
+        <TableContainer
+          sx={{
+            maxWidth: "100%",
+            maxHeight: "90%",
+            marginTop: "1rem",
+            borderTop: "3px black solid",
+            flexBasis: "90%",
+          }}
+        >
+          <Table aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Variable</TableCell>
+                <TableCell>Value</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {props.solution.map((variable) => (
+                <TableRow key={variable.symbol}>
+                  <TableCell>{variable.symbol}</TableCell>
+                  <TableCell>
+                    {variable.value.toFixed(2)}{" "}
+                    {variable.symbol.charAt(0) == "F" ? "N" : "Nm"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Typography
+          sx={{
+            display: "flex",
+            textDecoration: "none",
+            justifyContent: "center",
+            textAlign: "center",
+          }}
+        >
+          Unable to solve the structure. Structure might be overdefined or
+          unstable! :/
+        </Typography>
+      )}
     </Container>
   );
 }
