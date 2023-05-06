@@ -7,6 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 
 interface Props {
   setAboutOpen: (aboutOpen: boolean) => void;
+  setTutorialOpen: (tutorialOpen: boolean) => void;
 }
 function TitleBar(props: Props): JSX.Element {
   return (
@@ -33,8 +34,26 @@ function TitleBar(props: Props): JSX.Element {
         >
           Statika
         </Typography>
-        <List>
-          <ListItem>
+        <List
+          sx={{ display: "flex", padding: "0 1rem" }}
+          onClick={() => props.setTutorialOpen(true)}
+        >
+          <ListItem disablePadding>
+            <ListItemButton>
+              <Typography
+                noWrap
+                sx={{
+                  fontFamily: "sans-serif",
+                  fontWeight: 700,
+                  color: "black",
+                  textDecoration: "none",
+                }}
+              >
+                Tutorial
+              </Typography>
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
             <ListItemButton onClick={() => props.setAboutOpen(true)}>
               <Typography
                 noWrap
