@@ -67,7 +67,10 @@ export function SolutionTable(props: Props) {
             {props.solution.map((variable) => (
               <TableRow key={variable.symbol}>
                 <TableCell>{variable.symbol}</TableCell>
-                <TableCell>{variable.value.toFixed(2)} N</TableCell>
+                <TableCell>
+                  {variable.value.toFixed(2)}{" "}
+                  {variable.symbol.charAt(0) == "F" ? "N" : "Nm"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
