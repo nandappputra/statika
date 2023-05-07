@@ -1,6 +1,6 @@
-# Application Name
+# Statika
 
-Application description
+Statika is an education tool to calculate structural loading. It features interactive editor where users can define a structure and solve the internal forces & ground reaction with a click of a button.
 
 ## Dev Setup
 
@@ -25,7 +25,9 @@ npm run lint
 ```
 
 To run the tests, use:
-TBD
+```bash
+npm run test
+```
 
 ## How to Build
 
