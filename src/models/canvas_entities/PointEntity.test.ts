@@ -1,6 +1,6 @@
 import { jest, describe, expect, test } from "@jest/globals";
 import { PointEntity } from "./PointEntity";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { MockedObject } from "jest-mock";
 import { Painter } from "../painters/Painter";
 import { setMockProperty } from "../../utils/TestUtils";
@@ -13,7 +13,7 @@ describe("PointEntity", () => {
   let pointEntity: PointEntity;
 
   beforeEach(() => {
-    point = jest.createMockFromModule<Point>("../Point");
+    point = jest.createMockFromModule<Point>("../diagram_elements/Point");
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
   });
 

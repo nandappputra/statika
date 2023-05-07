@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MovePointEvent } from "../../Event";
-import { ExternalForce } from "../../ExternalForce";
-import { Point } from "../../Point";
+import { ExternalForce } from "../../diagram_elements/ExternalForce";
+import { Point } from "../../diagram_elements/Point";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
 import { ConnectionElement } from "../../diagram_elements/ConnectionElement";

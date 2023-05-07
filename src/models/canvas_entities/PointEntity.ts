@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { EventMediator } from "../painters/EventMediator";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";

@@ -3,8 +3,8 @@ import {
   formatForceForSolver,
   formatMomentForSolver,
 } from "../../utils/SolverUtils";
-import { ExternalForce } from "../ExternalForce";
-import { Point } from "../Point";
+import { ExternalForce } from "./ExternalForce";
+import { Point } from "./Point";
 import { DiagramElement } from "./DiagramElement";
 import { Connection } from "./connections/Connection";
 import { FixedConnection } from "./connections/FixedConnection";

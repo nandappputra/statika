@@ -1,5 +1,5 @@
 import { ConnectionKind } from "../../../utils/Constants";
-import { Point } from "../../Point";
+import { Point } from "../Point";
 import { Connection } from "./Connection";
 
 export class PinJointConnection implements Connection {

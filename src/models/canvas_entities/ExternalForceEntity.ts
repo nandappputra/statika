@@ -1,11 +1,11 @@
 import { fabric } from "fabric";
-import { ExternalForce } from "../ExternalForce";
+import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { EventMediator } from "../painters/EventMediator";
 import {
   ElementType,
   RADIAN_TO_DEGREE_MULTIPLIER,
 } from "../../utils/Constants";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";

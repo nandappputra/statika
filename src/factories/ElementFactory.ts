@@ -1,6 +1,6 @@
 import { Coordinate } from "../models/Coordinate";
-import { ExternalForce } from "../models/ExternalForce";
-import { Point } from "../models/Point";
+import { ExternalForce } from "../models/diagram_elements/ExternalForce";
+import { Point } from "../models/diagram_elements/Point";
 import { LinkageElement } from "../models/diagram_elements/LinkageElement";
 import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
 import { ConnectionKind, ElementType } from "../utils/Constants";

@@ -1,10 +1,10 @@
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { Painter } from "../Painter";
 import { MovePointEvent, objectDropEvent } from "../../Event";
-import { Point } from "../../Point";
+import { Point } from "../../diagram_elements/Point";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
 import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
-import { ExternalForce } from "../../ExternalForce";
+import { ExternalForce } from "../../diagram_elements/ExternalForce";
 
 export interface Feature {
   handleElementAddition(painter: Painter, element: DiagramElement): void;

@@ -1,4 +1,4 @@
-import { Variable } from "./Variable";
+import { Variable } from "../Variable";
 
 export class ExternalForce {
   private _name: string;

@@ -2,8 +2,8 @@ import { jest, describe, expect, test } from "@jest/globals";
 import { EntityListFeature } from "./EntityListFeature";
 import { Painter } from "../Painter";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
-import { Point } from "../../Point";
-import { ExternalForce } from "../../ExternalForce";
+import { Point } from "../../diagram_elements/Point";
+import { ExternalForce } from "../../diagram_elements/ExternalForce";
 
 describe("EntityListFeature", () => {
   let entityListFeature: EntityListFeature;
@@ -47,7 +47,9 @@ describe("EntityListFeature", () => {
       const element = jest.createMockFromModule<LinkageElement>(
         "../../diagram_elements/LinkageElement"
       );
-      const point = jest.createMockFromModule<Point>("../../Point");
+      const point = jest.createMockFromModule<Point>(
+        "../../diagram_elements/Point"
+      );
 
       entityListFeature.handlePointAddition(painter, element, point);
 
@@ -60,7 +62,9 @@ describe("EntityListFeature", () => {
       const element = jest.createMockFromModule<LinkageElement>(
         "../../diagram_elements/LinkageElement"
       );
-      const point = jest.createMockFromModule<Point>("../../Point");
+      const point = jest.createMockFromModule<Point>(
+        "../../diagram_elements/Point"
+      );
 
       entityListFeature.handlePointRemoval(painter, element, point);
 
@@ -71,9 +75,11 @@ describe("EntityListFeature", () => {
   describe("handleForceAddition", () => {
     test("Should call update the element list", () => {
       const element = jest.createMockFromModule<ExternalForce>(
-        "../../ExternalForce"
+        "../../diagram_elements/ExternalForce"
       );
-      const point = jest.createMockFromModule<Point>("../../Point");
+      const point = jest.createMockFromModule<Point>(
+        "../../diagram_elements/Point"
+      );
 
       entityListFeature.handleForceAddition(painter, point, element);
 
@@ -84,9 +90,11 @@ describe("EntityListFeature", () => {
   describe("handleForceRemoval", () => {
     test("Should call update the element list", () => {
       const element = jest.createMockFromModule<ExternalForce>(
-        "../../ExternalForce"
+        "../../diagram_elements/ExternalForce"
       );
-      const point = jest.createMockFromModule<Point>("../../Point");
+      const point = jest.createMockFromModule<Point>(
+        "../../diagram_elements/Point"
+      );
 
       entityListFeature.handleForceRemoval(painter, point, element);
 

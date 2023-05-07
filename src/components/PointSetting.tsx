@@ -16,7 +16,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import React, { useEffect, useState } from "react";
 import { PointEntity } from "../models/canvas_entities/PointEntity";
-import { ExternalForce } from "../models/ExternalForce";
+import { ExternalForce } from "../models/diagram_elements/ExternalForce";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import { LinkageElement } from "../models/diagram_elements/LinkageElement";
 import { Coordinate } from "../models/Coordinate";

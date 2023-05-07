@@ -1,13 +1,13 @@
 import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { Painter } from "../painters/Painter";
 import { ConnectionKind, ElementType } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "./ConnectionEntity";
 import { MovePointEvent } from "../Event";
-import { ExternalForce } from "../ExternalForce";
+import { ExternalForce } from "../diagram_elements/ExternalForce";
 
 describe("ConnectionEntity", () => {
   let connection: MockedObject<ConnectionElement>;

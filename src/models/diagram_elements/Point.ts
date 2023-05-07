@@ -1,5 +1,5 @@
 import { ExternalForce } from "./ExternalForce";
-import { Variable } from "./Variable";
+import { Variable } from "../Variable";
 
 export class Point {
   private _name: string;

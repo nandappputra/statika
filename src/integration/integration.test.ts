@@ -8,7 +8,7 @@ import { MatrixSolverService } from "../services/solvers/MatrixSolverService";
 import { SolverService } from "../services/solvers/SolverService";
 import { Variable } from "../models/Variable";
 import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
-import { Point } from "../models/Point";
+import { Point } from "../models/diagram_elements/Point";
 
 describe("Statika", () => {
   let elementFactory: ElementFactory;

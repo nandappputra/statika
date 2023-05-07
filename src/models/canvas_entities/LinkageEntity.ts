@@ -3,7 +3,7 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { EventMediator } from "../painters/EventMediator";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { ElementType } from "../../utils/Constants";
 
 // temporary solution until fabric 6.0.0 exposes setDimensions

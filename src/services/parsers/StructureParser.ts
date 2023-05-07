@@ -4,7 +4,7 @@ import { PinJointConnection } from "../../models/diagram_elements/connections/Pi
 import { FixedConnection } from "../../models/diagram_elements/connections/FixedConnection";
 import { HorizontalRollerConnection } from "../../models/diagram_elements/connections/HorizontalRollerConnection";
 import { FreeConnection } from "../../models/diagram_elements/connections/FreeConnection";
-import { ExternalForce } from "../../models/ExternalForce";
+import { ExternalForce } from "../../models/diagram_elements/ExternalForce";
 import { LinkageElement } from "../../models/diagram_elements/LinkageElement";
 import { Structure } from "../../models/Structure";
 import { ConnectionKind } from "../../utils/Constants";

@@ -2,7 +2,7 @@ import { jest, describe, expect, test } from "@jest/globals";
 import {} from "./EntityListFeature";
 import { Painter } from "../Painter";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
-import { Point } from "../../Point";
+import { Point } from "../../diagram_elements/Point";
 import { PointSnapFeature } from "./PointSnapFeature";
 import { ElementFactory } from "../../../factories/ElementFactory";
 import { PointEntity } from "../../canvas_entities/PointEntity";

@@ -1,7 +1,7 @@
 import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
-import { Point } from "../Point";
+import { Point } from "./Point";
 import { setMockProperty } from "../../utils/TestUtils";
 
 describe("LinkageEntity", () => {
@@ -10,8 +10,8 @@ describe("LinkageEntity", () => {
   let linkageElement: LinkageElement;
 
   beforeEach(() => {
-    point1 = jest.createMockFromModule<Point>("../Point");
-    point2 = jest.createMockFromModule<Point>("../Point");
+    point1 = jest.createMockFromModule<Point>("./Point");
+    point2 = jest.createMockFromModule<Point>("./Point");
   });
 
   describe("addPoint", () => {

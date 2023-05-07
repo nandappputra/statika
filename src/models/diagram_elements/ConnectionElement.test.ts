@@ -1,10 +1,10 @@
 import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
-import { Point } from "../Point";
+import { Point } from "./Point";
 import { ConnectionElement } from "./ConnectionElement";
 import { ConnectionKind } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
-import { ExternalForce } from "../ExternalForce";
+import { ExternalForce } from "./ExternalForce";
 
 describe("LinkageEntity", () => {
   let point1: MockedObject<Point>;
@@ -12,8 +12,8 @@ describe("LinkageEntity", () => {
   let connectionElement: ConnectionElement;
 
   beforeEach(() => {
-    point1 = jest.createMockFromModule<Point>("../Point");
-    point2 = jest.createMockFromModule<Point>("../Point");
+    point1 = jest.createMockFromModule<Point>("./Point");
+    point2 = jest.createMockFromModule<Point>("./Point");
   });
 
   describe("constructor", () => {

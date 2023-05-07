@@ -1,8 +1,8 @@
 import { jest, describe, expect, test } from "@jest/globals";
-import { ExternalForce } from "../ExternalForce";
+import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { MockedObject } from "jest-mock";
 import { ExternalForceEntity } from "./ExternalForceEntity";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { Painter } from "../painters/Painter";
 import { ElementType } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
@@ -15,9 +15,10 @@ describe("ExternalForceEntity", () => {
   let externalForceEntity: ExternalForceEntity;
 
   beforeEach(() => {
-    point = jest.createMockFromModule<Point>("../Point");
-    externalForce =
-      jest.createMockFromModule<ExternalForce>("../ExternalForce");
+    point = jest.createMockFromModule<Point>("../diagram_elements/Point");
+    externalForce = jest.createMockFromModule<ExternalForce>(
+      "../diagram_elements/ExternalForce"
+    );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
   });
 

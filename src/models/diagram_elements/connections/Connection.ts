@@ -1,5 +1,5 @@
 import { ConnectionKind } from "../../../utils/Constants";
-import { Point } from "../../Point";
+import { Point } from "../Point";
 
 export interface Connection {
   kind: ConnectionKind;

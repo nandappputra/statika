@@ -3,9 +3,9 @@ import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { ConnectionKind, ElementType } from "../../utils/Constants";
-import { ExternalForce } from "../ExternalForce";
+import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { IGroupOptions } from "fabric/fabric-impl";
 
 export class ConnectionEntity implements CanvasEntity {

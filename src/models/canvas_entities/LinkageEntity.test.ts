@@ -5,7 +5,7 @@ import { Painter } from "../painters/Painter";
 import { LinkageEntity } from "./LinkageEntity";
 import { setMockProperty } from "../../utils/TestUtils";
 import { ElementType } from "../../utils/Constants";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { MovePointEvent } from "../Event";
 
 describe("LinkageEntity", () => {

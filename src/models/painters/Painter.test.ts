@@ -1,7 +1,7 @@
 import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
-import { Point } from "../Point";
+import { Point } from "../diagram_elements/Point";
 import { EntityConfig, Painter } from "./Painter";
 import { EventTrigger } from "./EventTrigger";
 import { EntityListFeature } from "./features/EntityListFeature";
@@ -9,7 +9,7 @@ import { fabric } from "fabric";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionKind } from "../../utils/Constants";
-import { ExternalForce } from "../ExternalForce";
+import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { MovePointEvent } from "../Event";
 import { Structure } from "../Structure";
 import { ExternalForceEntity } from "../canvas_entities/ExternalForceEntity";

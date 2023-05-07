@@ -2,7 +2,7 @@ import {
   formatForceForSolver,
   formatMomentForSolver,
 } from "../../utils/SolverUtils";
-import { Point } from "../Point";
+import { Point } from "./Point";
 import { DiagramElement } from "./DiagramElement";
 
 export class LinkageElement implements DiagramElement {
