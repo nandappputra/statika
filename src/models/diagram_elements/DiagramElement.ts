@@ -5,4 +5,6 @@ export interface DiagramElement {
   points: Point[];
 
   generateEquilibrium(): string[];
+  addPoint(point: Point): void;
+  removePoint(point: Point): void;
 }
