@@ -3,7 +3,7 @@ import { ExternalForce } from "../models/ExternalForce";
 import { Point } from "../models/Point";
 import { LinkageElement } from "../models/diagram_elements/LinkageElement";
 import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
-import { ConnectionType, ElementType } from "../utils/Constants";
+import { ConnectionKind, ElementType } from "../utils/Constants";
 
 export class ElementFactory {
   private _linkageCounter = 1;
@@ -40,7 +40,7 @@ export class ElementFactory {
 
   public buildConnection(
     points: Point[],
-    connectionType: ConnectionType
+    connectionType: ConnectionKind
   ): ConnectionElement {
     const name = `${ElementType.CONNECTION}${this._connectionCounter}`;
     this._connectionCounter++;

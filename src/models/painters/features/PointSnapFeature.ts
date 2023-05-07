@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ElementFactory } from "../../../factories/ElementFactory";
-import { ConnectionType } from "../../../utils/Constants";
+import { ConnectionKind } from "../../../utils/Constants";
 import { Coordinate } from "../../Coordinate";
 import { MovePointEvent, objectDropEvent } from "../../Event";
 import { ExternalForce } from "../../ExternalForce";
@@ -89,7 +89,7 @@ export class PointSnapFeature implements Feature {
 
           const newConnection = this._elementFactory.buildConnection(
             [p2, p1],
-            ConnectionType.PIN_JOINT
+            ConnectionKind.PIN_JOINT
           );
 
           painter.addElement(newConnection);

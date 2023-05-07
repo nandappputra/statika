@@ -7,7 +7,7 @@ import PointSetting from "./PointSetting";
 import ForceSetting from "./ForceSetting";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import { Coordinate } from "../models/Coordinate";
-import { ConnectionType } from "../utils/Constants";
+import { ConnectionKind } from "../utils/Constants";
 
 type Props = {
   name: string;
@@ -31,7 +31,7 @@ type Props = {
   setForceComponents: (forceName: string, F_x: number, F_y: number) => void;
   changeConnectionType: (
     connectionName: string,
-    connectionType: ConnectionType
+    connectionType: ConnectionKind
   ) => void;
   buildConnection: (pointName: string) => void;
 };

@@ -3,7 +3,7 @@ import { describe, expect, test } from "@jest/globals";
 import { fabric } from "fabric";
 import { PointSnapFeature } from "../models/painters/features/PointSnapFeature";
 import { Painter } from "../models/painters/Painter";
-import { ConnectionType } from "../utils/Constants";
+import { ConnectionKind } from "../utils/Constants";
 import { MatrixSolverService } from "../services/solvers/MatrixSolverService";
 import { SolverService } from "../services/solvers/SolverService";
 import { Variable } from "../models/Variable";
@@ -44,11 +44,11 @@ describe("Statika", () => {
 
     const connection1 = elementFactory.buildConnection(
       [p1],
-      ConnectionType.PIN
+      ConnectionKind.PIN
     );
     const connection2 = elementFactory.buildConnection(
       [p2],
-      ConnectionType.HORIZONTAL_ROLLER
+      ConnectionKind.HORIZONTAL_ROLLER
     );
     painter.addElement(connection1);
     painter.addElement(connection2);
@@ -80,7 +80,7 @@ describe("Statika", () => {
 
     const connection1 = elementFactory.buildConnection(
       [p1],
-      ConnectionType.FIXED
+      ConnectionKind.FIXED
     );
     painter.addElement(connection1);
 
@@ -107,11 +107,11 @@ describe("Statika", () => {
 
     const connection1 = elementFactory.buildConnection(
       [p1],
-      ConnectionType.PIN
+      ConnectionKind.PIN
     );
     const connection2 = elementFactory.buildConnection(
       [p2],
-      ConnectionType.HORIZONTAL_ROLLER
+      ConnectionKind.HORIZONTAL_ROLLER
     );
     painter.addElement(connection1);
     painter.addElement(connection2);

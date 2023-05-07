@@ -2,7 +2,7 @@ import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
 import { Point } from "../Point";
 import { Painter } from "../painters/Painter";
-import { ConnectionType, ElementType } from "../../utils/Constants";
+import { ConnectionKind, ElementType } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "./ConnectionEntity";
@@ -26,7 +26,7 @@ describe("ConnectionEntity", () => {
       const p1 = new Point("P1", 1, 1);
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
-      setMockProperty(connection, "type", ConnectionType.VERTICAL_ROLLER);
+      setMockProperty(connection, "kind", ConnectionKind.VERTICAL_ROLLER);
       setMockProperty(connection, "name", "C1");
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -48,7 +48,7 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
-      setMockProperty(connection, "type", ConnectionType.HORIZONTAL_ROLLER);
+      setMockProperty(connection, "kind", ConnectionKind.HORIZONTAL_ROLLER);
       setMockProperty(connection, "externalForces", []);
       eventMediator.updatePointPosition = jest.fn();
 
@@ -73,7 +73,7 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
-      setMockProperty(connection, "type", ConnectionType.FIXED);
+      setMockProperty(connection, "kind", ConnectionKind.FIXED);
       setMockProperty(connection, "externalForces", []);
       const updatePosition =
         jest.fn<(movePointEvent: MovePointEvent) => void>();
@@ -117,7 +117,7 @@ describe("ConnectionEntity", () => {
       const f1 = new ExternalForce("F1", 3, 3);
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
-      setMockProperty(connection, "type", ConnectionType.FIXED);
+      setMockProperty(connection, "kind", ConnectionKind.FIXED);
       setMockProperty(connection, "externalForces", [f1]);
       const updatePosition =
         jest.fn<(movePointEvent: MovePointEvent) => void>();
@@ -180,7 +180,7 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       const removePoint = jest.fn<(point: Point) => void>();
       connection.removePoint = removePoint;
-      setMockProperty(connection, "type", ConnectionType.PIN_JOINT);
+      setMockProperty(connection, "kind", ConnectionKind.PIN_JOINT);
       setMockProperty(connection, "points", [p1, p2]);
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -197,7 +197,7 @@ describe("ConnectionEntity", () => {
       const p3 = new Point("P3", 3, 3);
       const removePoint = jest.fn<(point: Point) => void>();
       connection.removePoint = removePoint;
-      setMockProperty(connection, "type", ConnectionType.PIN_JOINT);
+      setMockProperty(connection, "kind", ConnectionKind.PIN_JOINT);
       setMockProperty(connection, "points", [p2, p3]);
 
       connectionEntity = new ConnectionEntity(connection, eventMediator);
@@ -275,13 +275,13 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
-      setMockProperty(connection, "type", ConnectionType.HORIZONTAL_ROLLER);
+      setMockProperty(connection, "kind", ConnectionKind.HORIZONTAL_ROLLER);
       connection.changeConnectionType = jest.fn();
       connectionEntity = new ConnectionEntity(connection, eventMediator);
 
       const initialIcon = connectionEntity.getObjectsToDraw();
 
-      connectionEntity.changeConnectionType(ConnectionType.VERTICAL_ROLLER);
+      connectionEntity.changeConnectionType(ConnectionKind.VERTICAL_ROLLER);
 
       const finalIcon = connectionEntity.getObjectsToDraw();
 
@@ -293,19 +293,19 @@ describe("ConnectionEntity", () => {
       const p2 = new Point("P2", 2, 2);
       setMockProperty(connection, "points", [p1, p2]);
       setMockProperty(connection, "name", "C1");
-      setMockProperty(connection, "type", ConnectionType.PIN_JOINT);
+      setMockProperty(connection, "kind", ConnectionKind.PIN_JOINT);
       const changeConnectionType =
-        jest.fn<(connectionType: ConnectionType) => void>();
+        jest.fn<(connectionType: ConnectionKind) => void>();
       connection.changeConnectionType = changeConnectionType;
       connectionEntity = new ConnectionEntity(connection, eventMediator);
 
       connectionEntity.getObjectsToDraw();
 
-      connectionEntity.changeConnectionType(ConnectionType.FIXED);
+      connectionEntity.changeConnectionType(ConnectionKind.FIXED);
 
       connectionEntity.getObjectsToDraw();
 
-      expect(changeConnectionType).toBeCalledWith(ConnectionType.FIXED);
+      expect(changeConnectionType).toBeCalledWith(ConnectionKind.FIXED);
     });
   });
 });

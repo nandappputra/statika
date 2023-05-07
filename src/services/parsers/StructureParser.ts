@@ -7,7 +7,7 @@ import { FreeConnection } from "../../models/diagram_elements/connections/FreeCo
 import { ExternalForce } from "../../models/ExternalForce";
 import { LinkageElement } from "../../models/diagram_elements/LinkageElement";
 import { Structure } from "../../models/Structure";
-import { ConnectionType } from "../../utils/Constants";
+import { ConnectionKind } from "../../utils/Constants";
 
 interface PointJson {
   name: string;
@@ -16,7 +16,7 @@ interface PointJson {
 }
 
 interface ConnectionJson {
-  type: ConnectionType;
+  type: ConnectionKind;
   points: string[];
 }
 
@@ -72,16 +72,16 @@ function buildConnections(
     );
 
     switch (connectionJson.type) {
-      case ConnectionType.PIN_JOINT:
+      case ConnectionKind.PIN_JOINT:
         connections.push(new PinJointConnection(pointsToConnect));
         break;
-      case ConnectionType.FIXED:
+      case ConnectionKind.FIXED:
         connections.push(new FixedConnection(pointsToConnect));
         break;
-      case ConnectionType.HORIZONTAL_ROLLER:
+      case ConnectionKind.HORIZONTAL_ROLLER:
         connections.push(new HorizontalRollerConnection(pointsToConnect));
         break;
-      case ConnectionType.FREE:
+      case ConnectionKind.FREE:
         connections.push(new FreeConnection(pointsToConnect));
         break;
     }

@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
 import { Point } from "../models/Point";
 import { Coordinate } from "../models/Coordinate";
-import { ConnectionType } from "../utils/Constants";
+import { ConnectionKind } from "../utils/Constants";
 
 type Props = {
   selectedX: number;
@@ -33,15 +33,15 @@ type Props = {
   updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
   changeConnectionType: (
     connectionName: string,
-    connectionType: ConnectionType
+    connectionType: ConnectionKind
   ) => void;
   addExternalForce: (location: string) => void;
 };
 
 function ConnectionSetting(props: Props) {
   const [points, setPoints] = useState<Point[]>([]);
-  const [connectionType, setConnectionType] = useState<ConnectionType>(
-    ConnectionType.FIXED
+  const [connectionType, setConnectionType] = useState<ConnectionKind>(
+    ConnectionKind.FIXED
   );
 
   useEffect(() => {
@@ -75,8 +75,8 @@ function ConnectionSetting(props: Props) {
     setPoints(newState);
   };
 
-  const changeConnectionType = (event: SelectChangeEvent<ConnectionType>) => {
-    const selectedType = event.target.value as ConnectionType;
+  const changeConnectionType = (event: SelectChangeEvent<ConnectionKind>) => {
+    const selectedType = event.target.value as ConnectionKind;
     setConnectionType(selectedType);
     props.changeConnectionType(props.connectionName, selectedType);
   };
@@ -131,7 +131,7 @@ function ConnectionSetting(props: Props) {
           }}
           onChange={changeConnectionType}
         >
-          {Object.values(ConnectionType).map((connection) => (
+          {Object.values(ConnectionKind).map((connection) => (
             <MenuItem value={connection} key={connection}>
               {connection}
             </MenuItem>

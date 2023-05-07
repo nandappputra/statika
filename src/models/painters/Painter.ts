@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
-import { ConnectionType, ElementType, USER } from "../../utils/Constants";
+import { ConnectionKind, ElementType, USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
@@ -571,7 +571,7 @@ export class Painter implements EventMediator {
 
   public changeConnectionType(
     connection: ConnectionElement,
-    connectionType: ConnectionType
+    connectionType: ConnectionKind
   ) {
     const connectionEntity = this._entityNameToEntity.get(connection.name);
     if (!connectionEntity || !(connectionEntity instanceof ConnectionEntity)) {

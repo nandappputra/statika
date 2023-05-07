@@ -10,7 +10,7 @@ export enum ElementType {
   NONE = "",
 }
 
-export enum ConnectionType {
+export enum ConnectionKind {
   PIN_JOINT = "Pin joint",
   PIN = "Pin",
   FIXED = "Fixed",

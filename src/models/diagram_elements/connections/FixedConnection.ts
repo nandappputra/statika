@@ -1,3 +1,4 @@
+import { ConnectionKind } from "../../../utils/Constants";
 import { Point } from "../../Point";
 import { Connection } from "./Connection";
 
@@ -13,6 +14,10 @@ export class FixedConnection implements Connection {
     }
 
     return this.instance;
+  }
+
+  get kind() {
+    return ConnectionKind.FIXED;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

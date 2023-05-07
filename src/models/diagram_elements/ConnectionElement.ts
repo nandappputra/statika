@@ -1,4 +1,4 @@
-import { ConnectionType } from "../../utils/Constants";
+import { ConnectionKind } from "../../utils/Constants";
 import {
   formatForceForSolver,
   formatMomentForSolver,
@@ -18,12 +18,10 @@ export class ConnectionElement implements DiagramElement {
   private _points: Point[];
   private _connection: Connection;
   private _externalForces: ExternalForce[];
-  private _type: ConnectionType;
 
-  constructor(name: string, points: Point[], connectionType: ConnectionType) {
+  constructor(name: string, points: Point[], connectionType: ConnectionKind) {
     this._name = name;
     this._points = points;
-    this._type = connectionType;
     this._connection = this.retrieveConnectionInstance(connectionType);
     this._externalForces = [];
     this._points.forEach((point) => this._moveForce(point));
@@ -42,18 +40,18 @@ export class ConnectionElement implements DiagramElement {
   }
 
   private retrieveConnectionInstance(
-    connectionType: ConnectionType
+    connectionType: ConnectionKind
   ): Connection {
     switch (connectionType) {
-      case ConnectionType.PIN_JOINT:
+      case ConnectionKind.PIN_JOINT:
         return PinJointConnection.getInstance();
-      case ConnectionType.FIXED:
+      case ConnectionKind.FIXED:
         return FixedConnection.getInstance();
-      case ConnectionType.VERTICAL_ROLLER:
+      case ConnectionKind.VERTICAL_ROLLER:
         return VerticalRoller.getInstance();
-      case ConnectionType.HORIZONTAL_ROLLER:
+      case ConnectionKind.HORIZONTAL_ROLLER:
         return HorizontalRollerConnection.getInstance();
-      case ConnectionType.PIN:
+      case ConnectionKind.PIN:
         return PinConnection.getInstance();
     }
   }
@@ -123,16 +121,15 @@ export class ConnectionElement implements DiagramElement {
     );
   }
 
-  public changeConnectionType(connectionType: ConnectionType) {
+  public changeConnectionType(connectionType: ConnectionKind) {
     this._points.forEach((point) => point.removeConditions());
     this._connection = this.retrieveConnectionInstance(connectionType);
     this._points.forEach((point) =>
       this._connection.applyBoundaryCondition(point)
     );
-    this._type = connectionType;
   }
 
-  get type() {
-    return this._type;
+  get kind() {
+    return this._connection.kind;
   }
 }

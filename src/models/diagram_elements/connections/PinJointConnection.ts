@@ -1,3 +1,4 @@
+import { ConnectionKind } from "../../../utils/Constants";
 import { Point } from "../../Point";
 import { Connection } from "./Connection";
 
@@ -13,6 +14,10 @@ export class PinJointConnection implements Connection {
     }
 
     return this.instance;
+  }
+
+  get kind() {
+    return ConnectionKind.PIN_JOINT;
   }
 
   applyBoundaryCondition(point: Point) {

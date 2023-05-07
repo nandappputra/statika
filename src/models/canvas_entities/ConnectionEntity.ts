@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../Point";
-import { ConnectionType, ElementType } from "../../utils/Constants";
+import { ConnectionKind, ElementType } from "../../utils/Constants";
 import { ExternalForce } from "../ExternalForce";
 import { IGroupOptions } from "fabric/fabric-impl";
 
@@ -18,7 +18,7 @@ export class ConnectionEntity implements CanvasEntity {
     this._name = connection.name;
     this._connection = connection;
     this._eventMediator = eventMediator;
-    this._icon = this.buildIcon(connection, connection.type);
+    this._icon = this.buildIcon(connection, connection.kind);
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {
@@ -86,28 +86,28 @@ export class ConnectionEntity implements CanvasEntity {
   }
 
   public getConnectionType() {
-    return this._connection.type;
+    return this._connection.kind;
   }
 
-  public changeConnectionType(connectionType: ConnectionType) {
+  public changeConnectionType(connectionType: ConnectionKind) {
     this._connection.changeConnectionType(connectionType);
     this._icon = this.buildIcon(this._connection, connectionType);
   }
 
   private buildIcon(
     connection: ConnectionElement,
-    connectionType: ConnectionType
+    connectionType: ConnectionKind
   ) {
     switch (connectionType) {
-      case ConnectionType.FIXED:
+      case ConnectionKind.FIXED:
         return this.buildFixedIcon(connection);
-      case ConnectionType.VERTICAL_ROLLER:
+      case ConnectionKind.VERTICAL_ROLLER:
         return this.buildVerticalRollerIcon(connection);
-      case ConnectionType.HORIZONTAL_ROLLER:
+      case ConnectionKind.HORIZONTAL_ROLLER:
         return this.buildHorizontalRollerIcon(connection);
-      case ConnectionType.PIN_JOINT:
+      case ConnectionKind.PIN_JOINT:
         return this.buildPinJointIcon(connection);
-      case ConnectionType.PIN:
+      case ConnectionKind.PIN:
         return this.buildPinIcon(connection);
     }
   }

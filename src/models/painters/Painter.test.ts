@@ -8,7 +8,7 @@ import { EntityListFeature } from "./features/EntityListFeature";
 import { fabric } from "fabric";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
-import { ConnectionType } from "../../utils/Constants";
+import { ConnectionKind } from "../../utils/Constants";
 import { ExternalForce } from "../ExternalForce";
 import { MovePointEvent } from "../Event";
 import { Structure } from "../Structure";
@@ -56,7 +56,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -77,7 +77,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -101,7 +101,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const force = new ExternalForce("F1", 1, 2);
       connection.addExternalForce(force);
@@ -134,7 +134,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -184,7 +184,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -209,7 +209,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       canvas.add = jest.fn();
       feature.handleElementAddition = jest.fn();
@@ -247,7 +247,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -270,7 +270,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -297,7 +297,7 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
       let numberOfElement = 99;
-      
+
       canvas.add = jest.fn();
       feature.handleElementAddition = jest.fn();
       feature.handleElementRemoval = jest.fn(
@@ -491,7 +491,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       const point3 = new Point("P3", 5, 6);
       const point4 = new Point("P4", 7, 8);
@@ -512,7 +512,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       const point3 = new Point("P3", 5, 6);
 
@@ -527,7 +527,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       const point3 = new Point("P3", 5, 6);
       const point4 = new Point("P4", 7, 8);
@@ -550,7 +550,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       const point3 = new Point("P3", 5, 6);
       const point4 = new Point("P4", 7, 8);
@@ -580,7 +580,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       feature.handleElementAddition = jest.fn();
       feature.handlePointDisconnection = jest.fn();
@@ -597,7 +597,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       const point3 = new Point("P3", 5, 6);
 
@@ -614,7 +614,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       feature.handleElementAddition = jest.fn();
       const handlePointDisconnection =
@@ -638,7 +638,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       feature.handleElementAddition = jest.fn();
       feature.handleElementRemoval = jest.fn();
@@ -664,7 +664,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       const point3 = new Point("P3", 5, 6);
       const point4 = new Point("P4", 7, 8);
@@ -822,7 +822,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point3, point4],
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
       painter.addPointToLinkage(point3, linkage);
       painter.addElement(connection);
@@ -886,7 +886,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
 
       canvas.remove = jest.fn();
@@ -1045,11 +1045,11 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
 
       expect(() =>
-        painter.changeConnectionType(connection, ConnectionType.VERTICAL_ROLLER)
+        painter.changeConnectionType(connection, ConnectionKind.VERTICAL_ROLLER)
       ).toThrow(
         "failed to add change connection type: missing or invalid entity found"
       );
@@ -1061,7 +1061,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       feature.handleElementAddition = jest.fn();
 
@@ -1069,10 +1069,10 @@ describe("Painter", () => {
 
       painter.changeConnectionType(
         connection,
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
 
-      expect(connection.type).toBe(ConnectionType.HORIZONTAL_ROLLER);
+      expect(connection.kind).toBe(ConnectionKind.HORIZONTAL_ROLLER);
     });
 
     test("Should replace the icon of the connection", () => {
@@ -1081,7 +1081,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
       const add =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -1097,7 +1097,7 @@ describe("Painter", () => {
 
       painter.changeConnectionType(
         connection,
-        ConnectionType.HORIZONTAL_ROLLER
+        ConnectionKind.HORIZONTAL_ROLLER
       );
 
       const after = painter.getEntityByName("C1")?.getObjectsToDraw();
@@ -1115,7 +1115,7 @@ describe("Painter", () => {
       const connection = new ConnectionElement(
         "C1",
         [point1],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
 
       feature.handleElementAddition = jest.fn();

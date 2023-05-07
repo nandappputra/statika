@@ -6,7 +6,7 @@ import { Point } from "../../Point";
 import { PointSnapFeature } from "./PointSnapFeature";
 import { ElementFactory } from "../../../factories/ElementFactory";
 import { PointEntity } from "../../canvas_entities/PointEntity";
-import { ConnectionType } from "../../../utils/Constants";
+import { ConnectionKind } from "../../../utils/Constants";
 import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
 import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../../canvas_entities/CanvasEntity";
@@ -61,7 +61,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);
@@ -86,7 +86,7 @@ describe("PointSnapFeature", () => {
       const connection1 = new ConnectionElement(
         "C1",
         [point2],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
       const connectionEntity = new ConnectionEntity(connection1, painter);
       const getPoint = jest.fn((name: string) => {
@@ -116,7 +116,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);
@@ -164,7 +164,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);
@@ -190,7 +190,7 @@ describe("PointSnapFeature", () => {
       const connection1 = new ConnectionElement(
         "C1",
         [point2],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
       const connectionEntity = new ConnectionEntity(connection1, painter);
       const getPoint = jest.fn((name: string) => {
@@ -220,7 +220,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);
@@ -248,7 +248,7 @@ describe("PointSnapFeature", () => {
       const connection1 = new ConnectionElement(
         "C1",
         [point2],
-        ConnectionType.FIXED
+        ConnectionKind.FIXED
       );
       const connectionEntity = new ConnectionEntity(connection1, painter);
       const getPoint = jest.fn((name: string) => {
@@ -278,7 +278,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);
@@ -331,7 +331,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);
@@ -378,7 +378,7 @@ describe("PointSnapFeature", () => {
       );
       setMockProperty(connectionElement, "name", "test");
       const buildConnection = jest.fn<
-        (points: Point[], connectionType: ConnectionType) => ConnectionElement
+        (points: Point[], connectionType: ConnectionKind) => ConnectionElement
       >(() => connectionElement);
       elementFactory.buildConnection = buildConnection;
       pointSnapFeature.handleElementAddition(painter, linkage1);

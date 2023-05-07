@@ -2,7 +2,7 @@ import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
 import { Point } from "../Point";
 import { ConnectionElement } from "./ConnectionElement";
-import { ConnectionType } from "../../utils/Constants";
+import { ConnectionKind } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
 import { ExternalForce } from "../ExternalForce";
 
@@ -28,7 +28,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       expect(removeExternalForce).toBeCalledTimes(1);
@@ -48,7 +48,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN
+        ConnectionKind.PIN
       );
 
       point1.F_y = 1;
@@ -66,7 +66,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -83,7 +83,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -105,7 +105,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -126,7 +126,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
       const removeCondition = jest.fn();
       point1.removeConditions = removeCondition;
@@ -153,7 +153,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
 
       const actualEquations = connectionElement.generateEquilibrium();
@@ -181,7 +181,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
 
       const force = new ExternalForce("F1", 100, 20);
@@ -212,7 +212,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN_JOINT
+        ConnectionKind.PIN_JOINT
       );
 
       const force = new ExternalForce("F1", 100, 20);
@@ -243,7 +243,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.PIN
+        ConnectionKind.PIN
       );
 
       const force = new ExternalForce("F1", 100, 20);
@@ -270,7 +270,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       const point3 = new Point("P3", 1, 2);
@@ -278,7 +278,7 @@ describe("LinkageEntity", () => {
 
       const actualPoint = connectionElement.points[2];
 
-      connectionElement.changeConnectionType(ConnectionType.FIXED);
+      connectionElement.changeConnectionType(ConnectionKind.FIXED);
 
       expect(actualPoint.symbolF_x).toBe("F_P3x");
       expect(actualPoint.symbolF_y).toBe("F_P3y");
@@ -294,12 +294,12 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
-      connectionElement.changeConnectionType(ConnectionType.FIXED);
+      connectionElement.changeConnectionType(ConnectionKind.FIXED);
 
-      expect(connectionElement.type).toBe(ConnectionType.FIXED);
+      expect(connectionElement.kind).toBe(ConnectionKind.FIXED);
     });
   });
 
@@ -311,7 +311,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       const force = new ExternalForce("F1", 100, 100);
@@ -331,7 +331,7 @@ describe("LinkageEntity", () => {
       connectionElement = new ConnectionElement(
         "C1",
         [point1, point2],
-        ConnectionType.VERTICAL_ROLLER
+        ConnectionKind.VERTICAL_ROLLER
       );
 
       const force1 = new ExternalForce("F1", 100, 100);
