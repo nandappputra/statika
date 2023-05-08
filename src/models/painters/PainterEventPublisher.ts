@@ -11,12 +11,22 @@ import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { Point } from "../diagram_elements/Point";
 import { CanvasBinder } from "./CanvasBinder";
 import { Painter } from "./Painter";
+import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
+import { CanvasEventPublisher } from "./CanvasEventPublisher";
 
-export class PainterEventEmitter implements CanvasBinder {
+export class PainterEventPublisher
+  implements CanvasBinder, CanvasEventPublisher
+{
   private _painter: Painter;
+  private _subscribers: CanvasEventSubscriber[];
 
   constructor(painter: Painter) {
     this._painter = painter;
+    this._subscribers = [];
+  }
+
+  subscribe(subscriber: CanvasEventSubscriber) {
+    this._subscribers.push(subscriber);
   }
 
   getEntityByName(name: string): CanvasEntity | undefined {
