@@ -2,7 +2,7 @@
 import { ElementFactory } from "../../../factories/ElementFactory";
 import { ConnectionKind } from "../../../utils/Constants";
 import { Coordinate } from "../../Coordinate";
-import { MovePointEvent, objectDropEvent } from "../../Event";
+import { MovePointEvent, ObjectDropEvent } from "../../Event";
 import { ExternalForce } from "../../diagram_elements/ExternalForce";
 import { Point } from "../../diagram_elements/Point";
 import { ConnectionEntity } from "../../canvas_entities/ConnectionEntity";
@@ -52,7 +52,7 @@ export class PointSnapFeature implements Feature {
 
   handlePointUpdate(_painter: Painter, _movePointEvent: MovePointEvent): void {}
 
-  handleObjectDrop(painter: Painter, movePointEvent: objectDropEvent): void {
+  handleObjectDrop(painter: Painter, movePointEvent: ObjectDropEvent): void {
     const entity = movePointEvent.entity;
     if (
       !(entity instanceof PointEntity) ||

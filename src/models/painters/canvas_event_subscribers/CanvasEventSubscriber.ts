@@ -1,12 +1,16 @@
-import { DiagramElement } from "../../diagram_elements/DiagramElement";
-import { Painter } from "../Painter";
-import { MovePointEvent, ObjectDropEvent } from "../../Event";
-import { Point } from "../../diagram_elements/Point";
-import { LinkageElement } from "../../diagram_elements/LinkageElement";
+import {
+  MovePointEvent,
+  ObjectDropEvent,
+  ObjectSelectionEvent,
+} from "../../Event";
 import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
+import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { ExternalForce } from "../../diagram_elements/ExternalForce";
+import { LinkageElement } from "../../diagram_elements/LinkageElement";
+import { Point } from "../../diagram_elements/Point";
+import { Painter } from "../Painter";
 
-export interface Feature {
+export interface CanvasEventSubscriber {
   handleElementAddition(painter: Painter, element: DiagramElement): void;
   handleElementRemoval(painter: Painter, element: DiagramElement): void;
   handlePointUpdate(painter: Painter, movePointEvent: MovePointEvent): void;
@@ -36,4 +40,6 @@ export interface Feature {
     location: Point | ConnectionElement,
     externalForce: ExternalForce
   ): void;
+  handleObjectSelectionEvent(objectSelectionEvent: ObjectSelectionEvent): void;
+  handleObjectSelectionClearEvent(): void;
 }

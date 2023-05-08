@@ -12,7 +12,7 @@ export interface ObjectSelectionEvent {
   entity: CanvasEntity;
 }
 
-export interface objectDropEvent {
+export interface ObjectDropEvent {
   name: string;
   entity: CanvasEntity;
 }
