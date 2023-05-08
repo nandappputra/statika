@@ -17,6 +17,7 @@ import { EventSubscriber } from "./EventTrigger";
 import { ExternalForceEntity } from "../canvas_entities/ExternalForceEntity";
 import { PointEntity } from "../canvas_entities/PointEntity";
 import { Structure } from "../Structure";
+import { CanvasBinder } from "./CanvasBinder";
 
 interface NamedObject {
   name: string;
@@ -28,7 +29,7 @@ export interface EntityConfig {
   connectionConfig: ICircleOptions;
 }
 
-export class Painter implements EventMediator {
+export class Painter implements EventMediator, CanvasBinder {
   private _canvas: fabric.Canvas;
   private _eventSubscribers: EventSubscriber[];
   private _entityNameToEntity: Map<string, CanvasEntity>;
