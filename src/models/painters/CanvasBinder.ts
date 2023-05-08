@@ -22,7 +22,7 @@ export interface CanvasBinder {
 
   updatePointPosition(movePointEvent: MovePointEvent): void;
 
-  addElement(diagramElement: DiagramElement): void;
+  addElement(diagramElement: DiagramElement): CanvasEntity;
   removeElement(diagramElement: DiagramElement): void;
 
   addPointToLinkage(point: Point, linkage: LinkageElement): void;
