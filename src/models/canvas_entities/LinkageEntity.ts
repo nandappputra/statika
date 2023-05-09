@@ -4,7 +4,7 @@ import { CanvasEntity } from "./CanvasEntity";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../diagram_elements/Point";
-import { EntityPrefix } from "../../utils/Constants";
+import { EntityKind, EntityPrefix } from "../../utils/Constants";
 
 // temporary solution until fabric 6.0.0 exposes setDimensions
 interface PolygonWithSetPositionDimension extends fabric.Polygon {
@@ -12,6 +12,8 @@ interface PolygonWithSetPositionDimension extends fabric.Polygon {
 }
 
 export class LinkageEntity implements CanvasEntity {
+  private _kind = EntityKind.LINKAGE;
+
   private _name: string;
   private _nameToIndexMap: Map<string, number>;
   private _indexToNameMap: Map<number, string>;
@@ -72,6 +74,10 @@ export class LinkageEntity implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  get kind() {
+    return this._kind;
   }
 
   public addPoint(point: Point) {

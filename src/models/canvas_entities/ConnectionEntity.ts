@@ -4,11 +4,17 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../diagram_elements/Point";
-import { ConnectionKind, EntityPrefix } from "../../utils/Constants";
+import {
+  ConnectionKind,
+  EntityKind,
+  EntityPrefix,
+} from "../../utils/Constants";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { IGroupOptions } from "fabric/fabric-impl";
 
 export class ConnectionEntity implements CanvasEntity {
+  private _kind = EntityKind.CONNECTION;
+
   private _name: string;
   private _connection: ConnectionElement;
   private _eventMediator: EventMediator;
@@ -45,6 +51,10 @@ export class ConnectionEntity implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  get kind() {
+    return this._kind;
   }
 
   get x() {

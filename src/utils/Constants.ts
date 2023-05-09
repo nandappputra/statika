@@ -10,6 +10,13 @@ export enum EntityPrefix {
   NONE = "",
 }
 
+export enum EntityKind {
+  LINKAGE = "Linkage",
+  CONNECTION = "Connection",
+  POINT = "Point",
+  FORCE = "Force",
+}
+
 export enum ConnectionKind {
   PIN_JOINT = "Pin joint",
   PIN = "Pin",

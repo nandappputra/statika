@@ -2,6 +2,7 @@ import { fabric } from "fabric";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { EventMediator } from "../painters/EventMediator";
 import {
+  EntityKind,
   EntityPrefix,
   RADIAN_TO_DEGREE_MULTIPLIER,
 } from "../../utils/Constants";
@@ -13,6 +14,8 @@ import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 const ARROW_ANGLE_ADJUSTMENT = 90;
 
 export class ExternalForceEntity implements CanvasEntity {
+  private _kind = EntityKind.FORCE;
+
   private _name: string;
   private _externalForce: ExternalForce;
   private _eventMediator: EventMediator;
@@ -44,6 +47,10 @@ export class ExternalForceEntity implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  get kind() {
+    return this._kind;
   }
 
   private _buildIcon(

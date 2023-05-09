@@ -3,9 +3,11 @@ import { Point } from "../diagram_elements/Point";
 import { EventMediator } from "../painters/EventMediator";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";
-import { EntityPrefix } from "../../utils/Constants";
+import { EntityKind, EntityPrefix } from "../../utils/Constants";
 
 export class PointEntity implements CanvasEntity {
+  private _kind = EntityKind.POINT;
+
   private _name: string;
   private _point: Point;
   private _eventMediator: EventMediator;
@@ -33,6 +35,10 @@ export class PointEntity implements CanvasEntity {
 
   get name() {
     return this._name;
+  }
+
+  get kind() {
+    return this._kind;
   }
 
   public getElement() {

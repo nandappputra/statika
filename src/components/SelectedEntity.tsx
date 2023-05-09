@@ -7,7 +7,7 @@ import PointSetting from "./PointSetting";
 import ForceSetting from "./ForceSetting";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import { Coordinate } from "../models/Coordinate";
-import { ConnectionKind } from "../utils/Constants";
+import { ConnectionKind, EntityKind } from "../utils/Constants";
 
 type Props = {
   name: string;
@@ -37,10 +37,10 @@ type Props = {
 };
 
 function SelectedEntity(props: Props) {
-  const [entityType, setEntityType] = useState<string | undefined>(undefined);
+  const [entityKind, setEntityKind] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    setEntityType(props.getEntity(props.name)?.constructor.name);
+    setEntityKind(props.getEntity(props.name)?.kind);
   }, [props.name]);
 
   return (
@@ -90,9 +90,9 @@ function SelectedEntity(props: Props) {
               width: "100%",
             }}
           >
-            {entityType}
+            {entityKind}
           </Typography>
-          {entityType === "LinkageEntity" ? (
+          {entityKind === EntityKind.LINKAGE ? (
             <LinkageSetting
               linkageName={props.name}
               removeEntity={props.removeEntity}
@@ -101,7 +101,7 @@ function SelectedEntity(props: Props) {
               getEntity={props.getEntity}
               updatePointPosition={props.updatePointPosition}
             />
-          ) : entityType === "ConnectionEntity" ? (
+          ) : entityKind === EntityKind.CONNECTION ? (
             <ConnectionSetting
               selectedX={props.selectedX}
               selectedY={props.selectedY}
@@ -113,7 +113,7 @@ function SelectedEntity(props: Props) {
               changeConnectionType={props.changeConnectionType}
               addExternalForce={props.addExternalForce}
             />
-          ) : entityType === "PointEntity" ? (
+          ) : entityKind === EntityKind.POINT ? (
             <PointSetting
               selectedX={props.selectedX}
               selectedY={props.selectedY}
@@ -126,7 +126,7 @@ function SelectedEntity(props: Props) {
               updatePointPosition={props.updatePointPosition}
               buildConnection={props.buildConnection}
             />
-          ) : entityType === "ExternalForceEntity" ? (
+          ) : entityKind === EntityKind.FORCE ? (
             <ForceSetting
               forceName={props.name}
               getEntity={props.getEntity}
