@@ -1,5 +1,4 @@
 import { jest, describe, expect, test } from "@jest/globals";
-import {} from "./EntityListFeature";
 import { Painter } from "../Painter";
 import { LinkageElement } from "../../diagram_elements/LinkageElement";
 import { Point } from "../../diagram_elements/Point";

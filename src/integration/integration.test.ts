@@ -1,7 +1,7 @@
 import { ElementFactory } from "../factories/ElementFactory";
 import { describe, expect, test } from "@jest/globals";
 import { fabric } from "fabric";
-import { PointSnapFeature } from "../models/painters/features/PointSnapFeature";
+import { PointSnapFeature } from "../models/painters/canvas_event_subscribers/PointSnapFeature";
 import { Painter } from "../models/painters/Painter";
 import { ConnectionKind } from "../utils/Constants";
 import { MatrixSolverService } from "../services/solvers/MatrixSolverService";
