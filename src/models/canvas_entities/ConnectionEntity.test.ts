@@ -2,7 +2,7 @@ import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
 import { Point } from "../diagram_elements/Point";
 import { Painter } from "../painters/Painter";
-import { ConnectionKind, ElementType } from "../../utils/Constants";
+import { ConnectionKind, EntityPrefix } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "./ConnectionEntity";
@@ -35,7 +35,7 @@ describe("ConnectionEntity", () => {
       const expectedObject = {
         name: "C1",
         pointName: "P1",
-        type: ElementType.CONNECTION,
+        type: EntityPrefix.CONNECTION,
       };
 
       expect(actualObjects.data).toStrictEqual(expectedObject);

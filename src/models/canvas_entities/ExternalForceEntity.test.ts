@@ -4,7 +4,7 @@ import { MockedObject } from "jest-mock";
 import { ExternalForceEntity } from "./ExternalForceEntity";
 import { Point } from "../diagram_elements/Point";
 import { Painter } from "../painters/Painter";
-import { ElementType } from "../../utils/Constants";
+import { EntityPrefix } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
 import { MovePointEvent } from "../Event";
 
@@ -35,7 +35,7 @@ describe("ExternalForceEntity", () => {
       const actualObjects = externalForceEntity.getObjectsToDraw();
       const expectedObject = {
         name: "F1",
-        type: ElementType.FORCE,
+        type: EntityPrefix.FORCE,
       };
 
       expect(actualObjects.data).toStrictEqual(expectedObject);

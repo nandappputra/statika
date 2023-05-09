@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { CanvasEntity } from "./CanvasEntity";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../diagram_elements/Point";
-import { ConnectionKind, ElementType } from "../../utils/Constants";
+import { ConnectionKind, EntityPrefix } from "../../utils/Constants";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { IGroupOptions } from "fabric/fabric-impl";
 
@@ -126,7 +126,7 @@ export class ConnectionEntity implements CanvasEntity {
       data: {
         name: connection.name,
         pointName: connection.points[0].name,
-        type: ElementType.CONNECTION,
+        type: EntityPrefix.CONNECTION,
       },
     });
 
@@ -191,7 +191,7 @@ export class ConnectionEntity implements CanvasEntity {
       data: {
         name: connection.name,
         pointName: connection.points[0].name,
-        type: ElementType.CONNECTION,
+        type: EntityPrefix.CONNECTION,
       },
     });
   }
@@ -209,7 +209,7 @@ export class ConnectionEntity implements CanvasEntity {
       data: {
         name: connection.name,
         pointName: connection.points[0].name,
-        type: ElementType.CONNECTION,
+        type: EntityPrefix.CONNECTION,
       },
       hasControls: false,
     });
@@ -264,7 +264,7 @@ export class ConnectionEntity implements CanvasEntity {
       data: {
         name: connection.name,
         pointName: connection.points[0].name,
-        type: ElementType.CONNECTION,
+        type: EntityPrefix.CONNECTION,
       },
     });
   }

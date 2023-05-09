@@ -3,7 +3,7 @@ import { Point } from "../diagram_elements/Point";
 import { EventMediator } from "../painters/EventMediator";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";
-import { ElementType } from "../../utils/Constants";
+import { EntityPrefix } from "../../utils/Constants";
 
 export class PointEntity implements CanvasEntity {
   private _name: string;
@@ -54,7 +54,7 @@ export class PointEntity implements CanvasEntity {
       data: {
         name: point.name,
         pointName: point.name,
-        type: ElementType.POINT,
+        type: EntityPrefix.POINT,
       },
     });
   }

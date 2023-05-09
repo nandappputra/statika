@@ -4,7 +4,7 @@ import { CanvasEntity } from "./CanvasEntity";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { EventMediator } from "../painters/EventMediator";
 import { Point } from "../diagram_elements/Point";
-import { ElementType } from "../../utils/Constants";
+import { EntityPrefix } from "../../utils/Constants";
 
 // temporary solution until fabric 6.0.0 exposes setDimensions
 interface PolygonWithSetPositionDimension extends fabric.Polygon {
@@ -39,7 +39,7 @@ export class LinkageEntity implements CanvasEntity {
 
     this._eventMediator = eventMediator;
     this._polygon = new fabric.Polygon(coordinates, options);
-    this._polygon.data = { name: this._name, type: ElementType.LINKAGE };
+    this._polygon.data = { name: this._name, type: EntityPrefix.LINKAGE };
     this._polygon.hasControls = false;
     this._polygon.lockMovementX = true;
     this._polygon.lockMovementY = true;

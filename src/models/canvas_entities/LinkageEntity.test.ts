@@ -4,7 +4,7 @@ import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { Painter } from "../painters/Painter";
 import { LinkageEntity } from "./LinkageEntity";
 import { setMockProperty } from "../../utils/TestUtils";
-import { ElementType } from "../../utils/Constants";
+import { EntityPrefix } from "../../utils/Constants";
 import { Point } from "../diagram_elements/Point";
 import { MovePointEvent } from "../Event";
 
@@ -31,7 +31,7 @@ describe("LinkageEntity", () => {
       const actualObjects = linkageEntity.getObjectsToDraw();
       const expectedObject = {
         name: "L1",
-        type: ElementType.LINKAGE,
+        type: EntityPrefix.LINKAGE,
       };
 
       expect(actualObjects.data).toStrictEqual(expectedObject);

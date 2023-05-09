@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
-import { ConnectionKind, ElementType, USER } from "../../utils/Constants";
+import { ConnectionKind, EntityPrefix, USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
@@ -88,7 +88,7 @@ export class Painter implements EventMediator, CanvasBinder {
       if (
         !(typeof name === "string") ||
         !(typeof elementType === "string") ||
-        !Object.values<string>(ElementType).includes(elementType)
+        !Object.values<string>(EntityPrefix).includes(elementType)
       ) {
         return;
       }
@@ -115,7 +115,7 @@ export class Painter implements EventMediator, CanvasBinder {
     if (
       !(typeof name === "string") ||
       !(typeof elementType === "string") ||
-      !Object.values<string>(ElementType).includes(elementType)
+      !Object.values<string>(EntityPrefix).includes(elementType)
     ) {
       return;
     }

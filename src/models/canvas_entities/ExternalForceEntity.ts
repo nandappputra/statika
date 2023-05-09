@@ -2,7 +2,7 @@ import { fabric } from "fabric";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { EventMediator } from "../painters/EventMediator";
 import {
-  ElementType,
+  EntityPrefix,
   RADIAN_TO_DEGREE_MULTIPLIER,
 } from "../../utils/Constants";
 import { Point } from "../diagram_elements/Point";
@@ -79,7 +79,7 @@ export class ExternalForceEntity implements CanvasEntity {
       hasControls: false,
       hasBorders: false,
       hoverCursor: "pointer",
-      data: { name: force.name, type: ElementType.FORCE },
+      data: { name: force.name, type: EntityPrefix.FORCE },
     });
 
     return arrow;

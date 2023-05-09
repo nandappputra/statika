@@ -10,7 +10,7 @@ import {
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { Point } from "../models/Point";
+import { Point } from "../models/diagram_elements/Point";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";

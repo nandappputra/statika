@@ -3,7 +3,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { ExternalForceEntity } from "../models/canvas_entities/ExternalForceEntity";
-import { Point } from "../models/Point";
+import { Point } from "../models/diagram_elements/Point";
 import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
 
 type Props = {

@@ -4,7 +4,7 @@ import { Point } from "../diagram_elements/Point";
 import { MockedObject } from "jest-mock";
 import { Painter } from "../painters/Painter";
 import { setMockProperty } from "../../utils/TestUtils";
-import { ElementType } from "../../utils/Constants";
+import { EntityPrefix } from "../../utils/Constants";
 import { MovePointEvent } from "../Event";
 
 describe("PointEntity", () => {
@@ -26,7 +26,7 @@ describe("PointEntity", () => {
       const expectedObject = {
         name: "p1",
         pointName: "p1",
-        type: ElementType.POINT,
+        type: EntityPrefix.POINT,
       };
 
       expect(actualObjects.data).toStrictEqual(expectedObject);

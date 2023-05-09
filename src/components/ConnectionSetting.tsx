@@ -16,7 +16,7 @@ import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
-import { Point } from "../models/Point";
+import { Point } from "../models/diagram_elements/Point";
 import { Coordinate } from "../models/Coordinate";
 import { ConnectionKind } from "../utils/Constants";
 
