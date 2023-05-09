@@ -8,16 +8,15 @@ import { ConnectionKind, ElementType, USER } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
-import { Feature } from "./features/Feature";
 import { Point } from "../diagram_elements/Point";
 import { IPolylineOptions } from "fabric/fabric-impl";
 import { ICircleOptions } from "fabric/fabric-impl";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
-import { EventSubscriber } from "./EventTrigger";
 import { ExternalForceEntity } from "../canvas_entities/ExternalForceEntity";
 import { PointEntity } from "../canvas_entities/PointEntity";
 import { Structure } from "../Structure";
 import { CanvasBinder } from "./CanvasBinder";
+import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
 
 interface NamedObject {
   name: string;
@@ -31,9 +30,8 @@ export interface EntityConfig {
 
 export class Painter implements EventMediator, CanvasBinder {
   private _canvas: fabric.Canvas;
-  private _eventSubscribers: EventSubscriber[];
+  private _eventSubscribers: CanvasEventSubscriber[];
   private _entityNameToEntity: Map<string, CanvasEntity>;
-  private _painterFeatures: Feature[];
   private _pointNameToPoint: Map<string, Point>;
   private _entityConfig: EntityConfig;
 
@@ -49,14 +47,12 @@ export class Painter implements EventMediator, CanvasBinder {
 
   constructor(
     canvas: fabric.Canvas,
-    eventSubscriber: EventSubscriber[],
-    painterFeatures: Feature[],
+    eventSubscriber: CanvasEventSubscriber[],
     entityConfig: EntityConfig
   ) {
     this._canvas = canvas;
     this._eventSubscribers = eventSubscriber;
     this._entityNameToEntity = new Map<string, CanvasEntity>();
-    this._painterFeatures = painterFeatures;
     this._pointNameToPoint = new Map<string, Point>();
     this._entityConfig = entityConfig;
 
@@ -102,7 +98,7 @@ export class Painter implements EventMediator, CanvasBinder {
         return;
       }
 
-      this._painterFeatures.forEach((feature) =>
+      this._eventSubscribers.forEach((feature) =>
         feature.handleObjectDrop(this, {
           name,
           entity: canvasEntity,
@@ -130,7 +126,7 @@ export class Painter implements EventMediator, CanvasBinder {
     }
 
     this._eventSubscribers.forEach((subscriber) => {
-      subscriber.notifyObjectSelectionEvent({
+      subscriber.handleObjectSelectionEvent({
         name,
         entity: canvasEntity,
       });
@@ -140,7 +136,7 @@ export class Painter implements EventMediator, CanvasBinder {
   private _handleObjectSelectionClearEvent() {
     this._isDragging = false;
     this._eventSubscribers.forEach((subscriber) => {
-      subscriber.notifyObjectSelectionClearEvent();
+      subscriber.handleObjectSelectionClearEvent();
     });
   }
 
@@ -218,11 +214,7 @@ export class Painter implements EventMediator, CanvasBinder {
     this._updateCanvasEntity(movePointEvent);
 
     this._eventSubscribers.forEach((subscriber) => {
-      subscriber.notifyMovePointEvent(movePointEvent);
-    });
-
-    this._painterFeatures.forEach((feature) => {
-      feature.handlePointUpdate(this, movePointEvent);
+      subscriber.handlePointUpdate(this, movePointEvent);
     });
 
     this._canvas.renderAll();
@@ -286,8 +278,8 @@ export class Painter implements EventMediator, CanvasBinder {
 
     location.addExternalForce(externalLoad);
 
-    this._painterFeatures.forEach((feature) =>
-      feature.handleForceAddition(this, location, externalLoad)
+    this._eventSubscribers.forEach((subscriber) =>
+      subscriber.handleForceAddition(this, location, externalLoad)
     );
   }
 
@@ -310,8 +302,8 @@ export class Painter implements EventMediator, CanvasBinder {
     this._canvas.remove(entity.getObjectsToDraw());
     location.removeExternalForce(externalLoad);
 
-    this._painterFeatures.forEach((feature) =>
-      feature.handleForceRemoval(this, location, externalLoad)
+    this._eventSubscribers.forEach((subscriber) =>
+      subscriber.handleForceRemoval(this, location, externalLoad)
     );
 
     this._canvas.renderAll();
@@ -360,8 +352,8 @@ export class Painter implements EventMediator, CanvasBinder {
       });
     }
 
-    this._painterFeatures.forEach((feature) => {
-      feature.handleElementAddition(this, diagramElement);
+    this._eventSubscribers.forEach((subscriber) => {
+      subscriber.handleElementAddition(this, diagramElement);
     });
 
     return entity;
@@ -421,8 +413,8 @@ export class Painter implements EventMediator, CanvasBinder {
     this._entityNameToEntity.delete(diagramElement.name);
     this._canvas.remove(entity.getObjectsToDraw());
 
-    this._painterFeatures.forEach((feature) => {
-      feature.handleElementRemoval(this, diagramElement);
+    this._eventSubscribers.forEach((subscriber) => {
+      subscriber.handleElementRemoval(this, diagramElement);
     });
 
     this._canvas.renderAll();
@@ -453,8 +445,8 @@ export class Painter implements EventMediator, CanvasBinder {
     this._pointNameToPointEntity.set(point.name, pointEntity);
     this._entityNameToEntity.set(point.name, pointEntity);
 
-    this._painterFeatures.forEach((feature) =>
-      feature.handlePointAddition(this, linkage, point)
+    this._eventSubscribers.forEach((subscriber) =>
+      subscriber.handlePointAddition(this, linkage, point)
     );
   }
 
@@ -489,8 +481,8 @@ export class Painter implements EventMediator, CanvasBinder {
       this.removeExternalLoad(point, force.getElement())
     );
 
-    this._painterFeatures.forEach((feature) =>
-      feature.handlePointRemoval(this, linkage, point)
+    this._eventSubscribers.forEach((subscriber) =>
+      subscriber.handlePointRemoval(this, linkage, point)
     );
 
     if (targetLinkage && targetLinkage?.getAllPoints().length == 1) {
@@ -545,8 +537,8 @@ export class Painter implements EventMediator, CanvasBinder {
     if (affectedConnection.getAllPoints().length === 0) {
       this.removeElement(connection);
     }
-    this._painterFeatures.forEach((feature) =>
-      feature.handlePointDisconnection(this, connection, point)
+    this._eventSubscribers.forEach((subscriber) =>
+      subscriber.handlePointDisconnection(this, connection, point)
     );
   }
 

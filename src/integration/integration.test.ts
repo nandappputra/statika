@@ -23,7 +23,7 @@ describe("Statika", () => {
 
     canvas = new fabric.Canvas(null);
     pointSnapFeature = new PointSnapFeature(elementFactory);
-    painter = new Painter(canvas, [], [pointSnapFeature], {
+    painter = new Painter(canvas, [pointSnapFeature], {
       linkageConfig: {},
       connectionConfig: {},
     });

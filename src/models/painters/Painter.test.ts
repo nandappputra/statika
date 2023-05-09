@@ -3,8 +3,6 @@ import { MockedObject } from "jest-mock";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { Point } from "../diagram_elements/Point";
 import { EntityConfig, Painter } from "./Painter";
-import { EventTrigger } from "./EventTrigger";
-import { EntityListFeature } from "./features/EntityListFeature";
 import { fabric } from "fabric";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
@@ -13,23 +11,22 @@ import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { MovePointEvent } from "../Event";
 import { Structure } from "../Structure";
 import { ExternalForceEntity } from "../canvas_entities/ExternalForceEntity";
+import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
 
 describe("Painter", () => {
   let canvas: MockedObject<fabric.Canvas>;
-  let eventSubscriber: MockedObject<EventTrigger>;
-  let feature: MockedObject<EntityListFeature>;
+  let eventSubscriber: MockedObject<CanvasEventSubscriber>;
   let entityConfig: MockedObject<EntityConfig>;
   let painter: Painter;
 
   beforeEach(() => {
     canvas = jest.mocked(new fabric.Canvas(null));
-    eventSubscriber = jest.createMockFromModule<EventTrigger>("./EventTrigger");
-    feature = jest.createMockFromModule<EntityListFeature>(
-      "./features/EntityListFeature"
+    eventSubscriber = jest.createMockFromModule<CanvasEventSubscriber>(
+      "./canvas_event_subscribers/CanvasEventSubscriber"
     );
     entityConfig = jest.createMockFromModule<EntityConfig>("./Painter");
 
-    painter = new Painter(canvas, [eventSubscriber], [feature], entityConfig);
+    painter = new Painter(canvas, [eventSubscriber], entityConfig);
   });
 
   describe("addElement", () => {
@@ -40,9 +37,7 @@ describe("Painter", () => {
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
-      const handleElementAddition =
-        jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = jest.fn();
 
       painter.addElement(linkage);
 
@@ -63,7 +58,7 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
 
       painter.addElement(connection);
 
@@ -84,7 +79,7 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -110,8 +105,8 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
-      feature.handleForceAddition = jest.fn();
+      eventSubscriber.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleForceAddition = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -141,8 +136,8 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
-      feature.handleForceAddition = jest.fn();
+      eventSubscriber.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleForceAddition = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -161,13 +156,13 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
       const removeFromCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.remove = removeFromCanvas;
       const handleElementRemoval =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementRemoval = handleElementRemoval;
+      eventSubscriber.handleElementRemoval = handleElementRemoval;
 
       painter.addElement(linkage);
 
@@ -189,9 +184,9 @@ describe("Painter", () => {
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -212,8 +207,8 @@ describe("Painter", () => {
         ConnectionKind.PIN_JOINT
       );
       canvas.add = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
       const handlePointDisconnection =
         jest.fn<
           (
@@ -222,7 +217,7 @@ describe("Painter", () => {
             _point: Point
           ) => void
         >();
-      feature.handlePointDisconnection = handlePointDisconnection;
+      eventSubscriber.handlePointDisconnection = handlePointDisconnection;
       painter.addElement(linkage);
       painter.addElement(connection);
       painter.removeElement(connection);
@@ -252,9 +247,9 @@ describe("Painter", () => {
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -275,11 +270,11 @@ describe("Painter", () => {
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
-      feature.handleForceAddition = jest.fn();
-      feature.handleForceRemoval = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
+      eventSubscriber.handleForceAddition = jest.fn();
+      eventSubscriber.handleForceRemoval = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
       painter.addElement(connection);
@@ -299,13 +294,13 @@ describe("Painter", () => {
       let numberOfElement = 99;
 
       canvas.add = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn(
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn(
         (_painter: Painter, _element: DiagramElement) => {
           numberOfElement = painter.getAllEntityName().length;
         }
       );
-      feature.handlePointDisconnection = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
 
       painter.addElement(linkage);
 
@@ -325,12 +320,12 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
       const handleForceAddition =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceAddition = handleForceAddition;
+      eventSubscriber.handleForceAddition = handleForceAddition;
       painter.addElement(linkage);
 
       const force = new ExternalForce("F1", 20, 30);
@@ -352,12 +347,12 @@ describe("Painter", () => {
       canvas.add = addToCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
       const handleForceAddition =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceAddition = handleForceAddition;
+      eventSubscriber.handleForceAddition = handleForceAddition;
       painter.addElement(linkage);
 
       const force = new ExternalForce("F1", 20, 30);
@@ -381,20 +376,20 @@ describe("Painter", () => {
       canvas.remove = removeFromCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
       const handleElementRemoval =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementRemoval = handleElementRemoval;
+      eventSubscriber.handleElementRemoval = handleElementRemoval;
       const handleForceAddition =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceAddition = handleForceAddition;
+      eventSubscriber.handleForceAddition = handleForceAddition;
       const handleForceRemoval =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceRemoval = handleForceRemoval;
+      eventSubscriber.handleForceRemoval = handleForceRemoval;
       painter.addElement(linkage);
 
       const force = new ExternalForce("F1", 20, 30);
@@ -420,20 +415,20 @@ describe("Painter", () => {
       canvas.remove = removeFromCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
       const handleElementRemoval =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementRemoval = handleElementRemoval;
+      eventSubscriber.handleElementRemoval = handleElementRemoval;
       const handleForceAddition =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceAddition = handleForceAddition;
+      eventSubscriber.handleForceAddition = handleForceAddition;
       const handleForceRemoval =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceRemoval = handleForceRemoval;
+      eventSubscriber.handleForceRemoval = handleForceRemoval;
       painter.addElement(linkage);
 
       const force = new ExternalForce("F1", 20, 30);
@@ -457,20 +452,20 @@ describe("Painter", () => {
       canvas.remove = removeFromCanvas;
       const handleElementAddition =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementAddition = handleElementAddition;
+      eventSubscriber.handleElementAddition = handleElementAddition;
       const handleElementRemoval =
         jest.fn<(painter: Painter, _element: DiagramElement) => void>();
-      feature.handleElementRemoval = handleElementRemoval;
+      eventSubscriber.handleElementRemoval = handleElementRemoval;
       const handleForceAddition =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceAddition = handleForceAddition;
+      eventSubscriber.handleForceAddition = handleForceAddition;
       const handleForceRemoval =
         jest.fn<
           (painter: Painter, point: Point, externalForce: ExternalForce) => void
         >();
-      feature.handleForceRemoval = handleForceRemoval;
+      eventSubscriber.handleForceRemoval = handleForceRemoval;
       painter.addElement(linkage);
 
       const force1 = new ExternalForce("F1", 20, 30);
@@ -497,7 +492,7 @@ describe("Painter", () => {
       const point4 = new Point("P4", 7, 8);
       const linkage = new LinkageElement("L1", point3, point4);
 
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
       painter.addElement(linkage);
 
@@ -533,7 +528,7 @@ describe("Painter", () => {
       const point4 = new Point("P4", 7, 8);
       const linkage = new LinkageElement("L1", point3, point4);
 
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
       painter.addElement(linkage);
 
@@ -558,9 +553,9 @@ describe("Painter", () => {
 
       const force = new ExternalForce("F1", 1, 2);
 
-      feature.handleForceRemoval = jest.fn();
-      feature.handleForceAddition = jest.fn();
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleForceRemoval = jest.fn();
+      eventSubscriber.handleForceAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
       painter.addElement(linkage);
       painter.addExternalLoad(point3, force);
@@ -582,8 +577,8 @@ describe("Painter", () => {
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
       painter.addElement(connection);
 
       painter.removePointFromConnection(point2, connection);
@@ -616,7 +611,7 @@ describe("Painter", () => {
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       const handlePointDisconnection =
         jest.fn<
           (
@@ -625,7 +620,7 @@ describe("Painter", () => {
             _point: Point
           ) => void
         >();
-      feature.handlePointDisconnection = handlePointDisconnection;
+      eventSubscriber.handlePointDisconnection = handlePointDisconnection;
       painter.addElement(connection);
 
       painter.removePointFromConnection(point2, connection);
@@ -640,8 +635,8 @@ describe("Painter", () => {
         [point1],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
       const handlePointDisconnection =
         jest.fn<
           (
@@ -650,7 +645,7 @@ describe("Painter", () => {
             _point: Point
           ) => void
         >();
-      feature.handlePointDisconnection = handlePointDisconnection;
+      eventSubscriber.handlePointDisconnection = handlePointDisconnection;
       painter.addElement(connection);
 
       painter.removePointFromConnection(point1, connection);
@@ -670,7 +665,7 @@ describe("Painter", () => {
       const point4 = new Point("P4", 7, 8);
       const linkage = new LinkageElement("L1", point3, point4);
 
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
       painter.addElement(linkage);
 
@@ -691,8 +686,8 @@ describe("Painter", () => {
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointAddition = jest.fn();
       painter.addElement(linkage);
       const point3 = new Point("P3", 5, 6);
 
@@ -708,12 +703,12 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
 
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       const handlePointAddition =
         jest.fn<
           (painter: Painter, _linkage: LinkageElement, _point: Point) => void
         >();
-      feature.handlePointAddition = handlePointAddition;
+      eventSubscriber.handlePointAddition = handlePointAddition;
       painter.addElement(linkage);
       const point3 = new Point("P3", 5, 6);
 
@@ -742,7 +737,7 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
 
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(linkage);
       const point3 = new Point("P3", 5, 6);
 
@@ -759,9 +754,9 @@ describe("Painter", () => {
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.remove = remove;
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointAddition = jest.fn();
-      feature.handlePointRemoval = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointAddition = jest.fn();
+      eventSubscriber.handlePointRemoval = jest.fn();
       painter.addElement(linkage);
 
       const point3 = new Point("P3", 5, 6);
@@ -782,13 +777,13 @@ describe("Painter", () => {
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.remove = remove;
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointAddition = jest.fn();
       const handlePointRemoval =
         jest.fn<
           (painter: Painter, _linkage: LinkageElement, _point: Point) => void
         >();
-      feature.handlePointRemoval = handlePointRemoval;
+      eventSubscriber.handlePointRemoval = handlePointRemoval;
       painter.addElement(linkage);
 
       const point3 = new Point("P3", 5, 6);
@@ -807,14 +802,14 @@ describe("Painter", () => {
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.remove = remove;
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointAddition = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointAddition = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
       const handlePointRemoval =
         jest.fn<
           (painter: Painter, _linkage: LinkageElement, _point: Point) => void
         >();
-      feature.handlePointRemoval = handlePointRemoval;
+      eventSubscriber.handlePointRemoval = handlePointRemoval;
       painter.addElement(linkage);
 
       const point3 = new Point("P3", 5, 6);
@@ -840,16 +835,16 @@ describe("Painter", () => {
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.remove = remove;
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointAddition = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
-      feature.handleForceAddition = jest.fn();
-      feature.handleForceRemoval = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointAddition = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
+      eventSubscriber.handleForceAddition = jest.fn();
+      eventSubscriber.handleForceRemoval = jest.fn();
       const handlePointRemoval =
         jest.fn<
           (painter: Painter, _linkage: LinkageElement, _point: Point) => void
         >();
-      feature.handlePointRemoval = handlePointRemoval;
+      eventSubscriber.handlePointRemoval = handlePointRemoval;
       painter.addElement(linkage);
 
       const point3 = new Point("P3", 4, 5);
@@ -869,9 +864,9 @@ describe("Painter", () => {
       const linkage = new LinkageElement("L1", point1, point2);
 
       canvas.remove = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
-      feature.handlePointRemoval = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
+      eventSubscriber.handlePointRemoval = jest.fn();
       painter.addElement(linkage);
 
       painter.removePointFromLinkage(point2, linkage);
@@ -890,10 +885,10 @@ describe("Painter", () => {
       );
 
       canvas.remove = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handleElementRemoval = jest.fn();
-      feature.handlePointDisconnection = jest.fn();
-      feature.handlePointRemoval = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementRemoval = jest.fn();
+      eventSubscriber.handlePointDisconnection = jest.fn();
+      eventSubscriber.handlePointRemoval = jest.fn();
       painter.addElement(linkage);
       painter.addElement(connection);
 
@@ -909,9 +904,9 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
 
-      eventSubscriber.notifyMovePointEvent = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointUpdate = jest.fn();
+      eventSubscriber.handlePointUpdate = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointUpdate = jest.fn();
       painter.addElement(linkage);
 
       const movePointEvent: MovePointEvent = {
@@ -931,10 +926,10 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
 
-      eventSubscriber.notifyMovePointEvent = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handlePointUpdate = jest.fn();
-      feature.handleForceAddition = jest.fn();
+      eventSubscriber.handlePointUpdate = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handlePointUpdate = jest.fn();
+      eventSubscriber.handleForceAddition = jest.fn();
       painter.addElement(linkage);
 
       const movePointEvent: MovePointEvent = {
@@ -952,18 +947,15 @@ describe("Painter", () => {
       expect(painter.getEntityByName("F1")?.getObjectsToDraw().top).toBe(20);
     });
 
-    test("Should notify the subscriber and the feature about the update", () => {
+    test("Should notify the subscriber about the update", () => {
       const point1 = new Point("P1", 1, 2);
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
 
-      const notifyMovePointEvent =
-        jest.fn<(movePointEvent: MovePointEvent) => void>();
-      eventSubscriber.notifyMovePointEvent = notifyMovePointEvent;
-      feature.handleElementAddition = jest.fn();
       const handlePointUpdate =
-        jest.fn<(_painter: Painter, _movePointEvent: MovePointEvent) => void>();
-      feature.handlePointUpdate = handlePointUpdate;
+        jest.fn<(painter: Painter, movePointEvent: MovePointEvent) => void>();
+      eventSubscriber.handlePointUpdate = handlePointUpdate;
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(linkage);
 
       const movePointEvent: MovePointEvent = {
@@ -974,7 +966,6 @@ describe("Painter", () => {
 
       painter.updatePointPosition(movePointEvent);
 
-      expect(notifyMovePointEvent).toBeCalledTimes(1);
       expect(handlePointUpdate).toBeCalledTimes(1);
     });
   });
@@ -985,7 +976,7 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
       canvas.add = jest.fn();
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       const setActiveObject =
         jest.fn<
           (object: fabric.Object, e?: Event | undefined) => fabric.Canvas
@@ -1025,8 +1016,8 @@ describe("Painter", () => {
       const point2 = new Point("P2", 3, 4);
       const linkage = new LinkageElement("L1", point1, point2);
       canvas.add = jest.fn();
-      feature.handleElementAddition = jest.fn();
-      feature.handleForceAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
+      eventSubscriber.handleForceAddition = jest.fn();
       painter.addElement(linkage);
       const force = new ExternalForce("F1", 20, 30);
       painter.addExternalLoad(point1, force);
@@ -1063,7 +1054,7 @@ describe("Painter", () => {
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
 
       painter.addElement(connection);
 
@@ -1089,7 +1080,7 @@ describe("Painter", () => {
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.remove = remove;
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
 
       painter.addElement(connection);
 
@@ -1118,7 +1109,7 @@ describe("Painter", () => {
         ConnectionKind.FIXED
       );
 
-      feature.handleElementAddition = jest.fn();
+      eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(linkage);
       painter.addElement(connection);
 
