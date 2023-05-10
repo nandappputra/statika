@@ -50,3 +50,7 @@ or run based on the built application using:
 ```
 npm run preview
 ```
+
+## Lisence
+
+[MIT](https://github.com/nandappputra/statika/blob/master/LICENSE)
