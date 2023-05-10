@@ -1,3 +1,5 @@
+![statikalogo](https://github.com/nandappputra/statika/assets/60767596/b92c517a-7f66-4883-82bf-041b046c2e4f)
+
 # Statika
 
 Statika is an education tool to calculate structural loading. It features interactive editor where users can define a structure and solve the internal forces & ground reaction with a click of a button.
