@@ -58,3 +58,10 @@ npm run preview
 ## License
 
 [MIT](https://github.com/nandappputra/statika/blob/master/LICENSE)
+
+## Acknowledgements
+
+- [fabric.js](https://github.com/fabricjs/fabric.js) team for their awesome work!
+- Stackoverflow
+- Google
+- ChatGPT
