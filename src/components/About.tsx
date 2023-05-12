@@ -43,7 +43,8 @@ export default function About(props: Props) {
           </Typography>
           <Typography sx={{ padding: "1rem", textAlign: "center" }}>
             Statika is an open-source educational tool to calculate structural
-            loadings with easy-to-use user interface
+            loadings with easy-to-use user interface. Statika is provided under
+            MIT license.
           </Typography>
           <IconButton
             href="https://github.com/nandappputra/statika"
