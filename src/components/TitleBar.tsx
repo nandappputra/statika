@@ -13,17 +13,14 @@ function TitleBar(props: Props): JSX.Element {
   return (
     <AppBar
       sx={{
-        position: "static",
         backgroundColor: "white",
         boxShadow: "none",
-        border: "3px black solid",
-        borderRadius: "0.5rem",
+        borderBottom: "3px black solid",
       }}
     >
-      <Toolbar disableGutters variant="dense" sx={{ height: "1rem" }}>
+      <Toolbar disableGutters variant="string">
         <img src="icon.svg" style={{ height: "1.5rem", padding: "0 1rem" }} />
         <Typography
-          variant="h6"
           noWrap
           sx={{
             fontFamily: "sans-serif",
@@ -36,12 +33,11 @@ function TitleBar(props: Props): JSX.Element {
         </Typography>
         <List sx={{ display: "flex", padding: "0 1rem" }}>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => props.setTutorialOpen(true)}>
+            <ListItemButton dense onClick={() => props.setTutorialOpen(true)}>
               <Typography
                 noWrap
                 sx={{
                   fontFamily: "sans-serif",
-                  fontWeight: 700,
                   color: "black",
                   textDecoration: "none",
                 }}
@@ -51,12 +47,11 @@ function TitleBar(props: Props): JSX.Element {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => props.setAboutOpen(true)}>
+            <ListItemButton dense onClick={() => props.setAboutOpen(true)}>
               <Typography
                 noWrap
                 sx={{
                   fontFamily: "sans-serif",
-                  fontWeight: 700,
                   color: "black",
                   textDecoration: "none",
                 }}

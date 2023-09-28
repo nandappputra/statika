@@ -376,40 +376,42 @@ function App() {
   };
 
   return (
-    <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
+    <div>
       <TitleBar setAboutOpen={setAboutOpen} setTutorialOpen={setTutorialOpen} />
-      <About open={aboutOpen} handleClose={closeAllDialogs} />
-      <Tutorial open={tutorialOpen} handleClose={closeAllDialogs} />
-      <Container maxWidth="xl" sx={{ padding: "1em" }}>
-        <EntityList
-          entityList={entityList}
-          onClick={handleSelection}
-          buildLinkage={buildLinkage}
-        />
-        <SelectedEntity
-          name={selectedName}
-          selectedX={selectedX}
-          selectedY={selectedY}
-          getEntity={getEntity}
-          removeEntity={removeEntity}
-          addPointToLinkage={addPointToLinkage}
-          removePointFromLinkage={removePointFromLinkage}
-          removePointFromConnection={removePointFromConnection}
-          addExternalForce={addExternalForce}
-          removeExternalForceFromPoint={removeExternalForceFromPoint}
-          getLinkageFromPoint={getLinkageFromPoint}
-          updatePointPosition={updatePointPosition}
-          setForceComponents={setForceComponents}
-          changeConnectionType={changeConnectionType}
-          buildConnection={buildConnection}
-        />
-        <ApplicationCanvas canvasId={CANVAS_ID} />
-      </Container>
-      {selectedName === "" && solutionOpen && (
-        <SolutionTable solution={solution} solved={solved}></SolutionTable>
-      )}
-      <CoordinateReference />
-      <SolveButton solveStructure={solveStructure} />
+      <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
+        <About open={aboutOpen} handleClose={closeAllDialogs} />
+        <Tutorial open={tutorialOpen} handleClose={closeAllDialogs} />
+        <Container maxWidth="xl" sx={{ padding: "1em" }}>
+          <EntityList
+            entityList={entityList}
+            onClick={handleSelection}
+            buildLinkage={buildLinkage}
+          />
+          <SelectedEntity
+            name={selectedName}
+            selectedX={selectedX}
+            selectedY={selectedY}
+            getEntity={getEntity}
+            removeEntity={removeEntity}
+            addPointToLinkage={addPointToLinkage}
+            removePointFromLinkage={removePointFromLinkage}
+            removePointFromConnection={removePointFromConnection}
+            addExternalForce={addExternalForce}
+            removeExternalForceFromPoint={removeExternalForceFromPoint}
+            getLinkageFromPoint={getLinkageFromPoint}
+            updatePointPosition={updatePointPosition}
+            setForceComponents={setForceComponents}
+            changeConnectionType={changeConnectionType}
+            buildConnection={buildConnection}
+          />
+          <ApplicationCanvas canvasId={CANVAS_ID} />
+        </Container>
+        {selectedName === "" && solutionOpen && (
+          <SolutionTable solution={solution} solved={solved}></SolutionTable>
+        )}
+        <CoordinateReference />
+        <SolveButton solveStructure={solveStructure} />
+      </div>
     </div>
   );
 }
