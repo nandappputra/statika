@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Box, Container, Grid } from "@mui/material";
 import { fabric } from "fabric";
 import TitleBar from "./components/TitleBar";
 import ApplicationCanvas from "./components/ApplicationCanvas";
@@ -29,6 +29,7 @@ import { LinkageElement } from "./models/diagram_elements/LinkageElement";
 import { Point } from "./models/diagram_elements/Point";
 import { ConnectionElement } from "./models/diagram_elements/ConnectionElement";
 import { ExternalForce } from "./models/diagram_elements/ExternalForce";
+import AddLinkageButton from "./components/AddLinkageButton";
 
 function App() {
   let canvasRendered = false;
@@ -378,15 +379,32 @@ function App() {
   return (
     <div>
       <TitleBar setAboutOpen={setAboutOpen} setTutorialOpen={setTutorialOpen} />
-      <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
-        <About open={aboutOpen} handleClose={closeAllDialogs} />
-        <Tutorial open={tutorialOpen} handleClose={closeAllDialogs} />
-        <Container maxWidth="xl" sx={{ padding: "1em" }}>
+      <Box
+        sx={{
+          backgroundColor: "white",
+          position: "fixed",
+          left: "0rem",
+          top: "2rem",
+          bottom: "0rem",
+          borderRight: "3px black solid",
+          flexDirection: "column",
+        }}
+      >
+        <div style={{ padding: "1rem", backgroundColor: "lightgray" }}>
+          <AddLinkageButton buildLinkage={buildLinkage} />
+        </div>
+        <div>
           <EntityList
             entityList={entityList}
             onClick={handleSelection}
             buildLinkage={buildLinkage}
           />
+        </div>
+      </Box>
+      <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
+        <About open={aboutOpen} handleClose={closeAllDialogs} />
+        <Tutorial open={tutorialOpen} handleClose={closeAllDialogs} />
+        <Container maxWidth="xl" sx={{ padding: "1em" }}>
           <SelectedEntity
             name={selectedName}
             selectedX={selectedX}
@@ -409,7 +427,7 @@ function App() {
         {selectedName === "" && solutionOpen && (
           <SolutionTable solution={solution} solved={solved}></SolutionTable>
         )}
-        <CoordinateReference />
+        {/* <CoordinateReference /> */}
         <SolveButton solveStructure={solveStructure} />
       </div>
     </div>

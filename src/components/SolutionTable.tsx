@@ -27,7 +27,7 @@ export function SolutionTable(props: Props) {
         maxWidth: "300px",
         position: "fixed",
         right: "0.5rem",
-        top: "4.5rem",
+        top: "2.5rem",
         display: "flex",
         flexDirection: "column",
         bottom: "10rem",
