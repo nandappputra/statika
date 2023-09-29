@@ -1,5 +1,4 @@
 import {
-  Button,
   Container,
   List,
   ListItem,
@@ -7,8 +6,6 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 type Props = {
   entityList: string[];
@@ -19,48 +16,16 @@ type Props = {
 function EntityList(props: Props) {
   return (
     <Container
-      maxWidth={false}
       disableGutters
       sx={{
-        backgroundColor: "white",
         boxShadow: "none",
-        borderRadius: "0.5rem",
-        borderWidth: "3px",
-        borderStyle: "solid",
-        borderColor: "black",
-        maxWidth: "200px",
-        position: "fixed",
-        left: "0.5rem",
-        top: "4.5rem",
-        display: "flex",
-        flexDirection: "column",
-        bottom: "10rem",
+        borderTop: "3px black solid",
       }}
     >
-      <Button
-        startIcon={<AddCircleOutlineIcon />}
-        onClick={props.buildLinkage}
-        sx={{
-          backgroundColor: "white",
-          boxShadow: "none",
-          borderRadius: "0.5em",
-          borderWidth: "3px",
-          borderStyle: "solid",
-          borderColor: "black",
-          textTransform: "none",
-          fontFamily: "sans-serif",
-          fontWeight: 700,
-          color: "black",
-          margin: "1em",
-        }}
-      >
-        Add linkage
-      </Button>
       <Typography
         variant="h6"
         noWrap
         sx={{
-          mr: 2,
           display: "flex",
           fontFamily: "sans-serif",
           fontWeight: 700,
@@ -79,7 +44,7 @@ function EntityList(props: Props) {
           padding: 0,
           overflow: "auto",
           scrollbarWidth: "none",
-          flexBasis: "80%",
+          maxHeight: "400px",
         }}
       >
         {[...props.entityList]
@@ -87,7 +52,13 @@ function EntityList(props: Props) {
           .filter((entity) => entity.charAt(0) !== "P")
           .map((entity) => {
             return (
-              <ListItem key={entity} disablePadding>
+              <ListItem
+                key={entity}
+                disablePadding
+                sx={{
+                  borderBottom: "1px lightgrey solid",
+                }}
+              >
                 <ListItemButton onClick={() => props.onClick(entity)}>
                   <ListItemText primary={entity} />
                 </ListItemButton>
