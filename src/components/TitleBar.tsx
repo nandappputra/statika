@@ -18,7 +18,7 @@ function TitleBar(props: Props): JSX.Element {
         borderBottom: "3px black solid",
       }}
     >
-      <Toolbar disableGutters variant="string">
+      <Toolbar disableGutters variant={"string" as "dense"}>
         <img src="icon.svg" style={{ height: "1.5rem", padding: "0 1rem" }} />
         <Typography
           noWrap
