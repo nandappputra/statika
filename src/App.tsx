@@ -1,4 +1,4 @@
-import { Box, Container, Grid } from "@mui/material";
+import { Container } from "@mui/material";
 import { fabric } from "fabric";
 import TitleBar from "./components/TitleBar";
 import ApplicationCanvas from "./components/ApplicationCanvas";
@@ -7,7 +7,6 @@ import { EntityConfig, Painter } from "./models/painters/Painter";
 import { useEffect, useState } from "react";
 import { ElementFactory } from "./factories/ElementFactory";
 import { CANVAS_ID, ConnectionKind, USER } from "./utils/Constants";
-import EntityList from "./components/EntityList";
 import SelectedEntity from "./components/SelectedEntity";
 import { LinkageEntity } from "./models/canvas_entities/LinkageEntity";
 import { ConnectionEntity } from "./models/canvas_entities/ConnectionEntity";
@@ -29,7 +28,7 @@ import { LinkageElement } from "./models/diagram_elements/LinkageElement";
 import { Point } from "./models/diagram_elements/Point";
 import { ConnectionElement } from "./models/diagram_elements/ConnectionElement";
 import { ExternalForce } from "./models/diagram_elements/ExternalForce";
-import AddLinkageButton from "./components/AddLinkageButton";
+import EntityListSidebar from "./components/EntityListSidebar";
 
 function App() {
   let canvasRendered = false;
@@ -379,28 +378,11 @@ function App() {
   return (
     <div>
       <TitleBar setAboutOpen={setAboutOpen} setTutorialOpen={setTutorialOpen} />
-      <Box
-        sx={{
-          backgroundColor: "white",
-          position: "fixed",
-          left: "0rem",
-          top: "2rem",
-          bottom: "0rem",
-          borderRight: "3px black solid",
-          flexDirection: "column",
-        }}
-      >
-        <div style={{ padding: "1rem", backgroundColor: "lightgray" }}>
-          <AddLinkageButton buildLinkage={buildLinkage} />
-        </div>
-        <div>
-          <EntityList
-            entityList={entityList}
-            onClick={handleSelection}
-            buildLinkage={buildLinkage}
-          />
-        </div>
-      </Box>
+      <EntityListSidebar
+        buildLinkage={buildLinkage}
+        entityList={entityList}
+        handleSelection={handleSelection}
+      />
       <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
         <About open={aboutOpen} handleClose={closeAllDialogs} />
         <Tutorial open={tutorialOpen} handleClose={closeAllDialogs} />
