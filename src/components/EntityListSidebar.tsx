@@ -11,6 +11,7 @@ type Props = {
   buildLinkage: () => void;
   entityList: string[];
   handleSelection: (entity: string) => void;
+  togglePanningMode: (isActive: boolean) => void;
 };
 
 function EntityListSidebar(props: Props) {
@@ -54,7 +55,7 @@ function EntityListSidebar(props: Props) {
               }}
             >
               <CollapsibleButton
-                callback={props.buildLinkage}
+                callback={() => props.togglePanningMode(!isClicked)}
                 isExpanded={isExpanded}
                 expandedIcon={<OpenWithIcon />}
                 text="Pan canvas"
@@ -105,10 +106,10 @@ function EntityListSidebar(props: Props) {
 
             <div style={{ padding: "0rem 0.5rem" }}>
               <CollapsibleButton
-                callback={props.buildLinkage}
+                callback={() => props.togglePanningMode(!isClicked)}
                 isExpanded={isExpanded}
                 expandedIcon={<OpenWithIcon />}
-                text="Pan"
+                text="Pan canvas"
                 tooltipPlacement="right"
                 isToggle={true}
                 isClicked={isClicked}
