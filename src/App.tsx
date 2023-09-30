@@ -344,6 +344,10 @@ function App() {
     }
   };
 
+  const handlePanningMode = (isActive: boolean) => {
+    painterState?.setPanningMode(isActive);
+  };
+
   const solveStructure = () => {
     setSolutionOpen(true);
 
@@ -382,6 +386,7 @@ function App() {
         buildLinkage={buildLinkage}
         entityList={entityList}
         handleSelection={handleSelection}
+        togglePanningMode={handlePanningMode}
       />
       <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
         <About open={aboutOpen} handleClose={closeAllDialogs} />

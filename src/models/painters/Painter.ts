@@ -17,6 +17,7 @@ import { PointEntity } from "../canvas_entities/PointEntity";
 import { Structure } from "../Structure";
 import { CanvasBinder } from "./CanvasBinder";
 import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
+import { CanvasPanController } from "./CanvasPanController";
 
 interface NamedObject {
   name: string;
@@ -42,6 +43,7 @@ export class Painter implements EventMediator, CanvasBinder {
     Set<ExternalForceEntity>
   >;
   private _pointNameToPointEntity: Map<string, PointEntity>;
+  private _canvasPanController: CanvasPanController;
 
   private _isDragging = false;
 
@@ -63,7 +65,13 @@ export class Painter implements EventMediator, CanvasBinder {
       Set<ExternalForceEntity>
     >();
     this._pointNameToPointEntity = new Map<string, PointEntity>();
+    this._setupEventHandler();
+    this._canvasPanController = new CanvasPanController(canvas, () =>
+      this._setupEventHandler()
+    );
+  }
 
+  private _setupEventHandler() {
     this._canvas.on("object:moving", (event) =>
       this._handleObjectMotionEvent(event)
     );
@@ -599,5 +607,9 @@ export class Painter implements EventMediator, CanvasBinder {
 
   public clearFocus() {
     this._canvas.discardActiveObject();
+  }
+
+  public setPanningMode(isActive: boolean) {
+    this._canvasPanController.togglePanMode(isActive);
   }
 }
