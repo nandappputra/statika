@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
 import EntityList from "./EntityList";
-import CollapsibleButton from "./CollapseButton";
+import CollapsibleButton from "./CollapsibleButton";
 import { useState } from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import OpenWithIcon from "@mui/icons-material/OpenWith";
 import ModeIcon from "@mui/icons-material/Mode";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 
 function EntityListSidebar(props: Props) {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
 
   const invertExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -44,6 +46,23 @@ function EntityListSidebar(props: Props) {
                 text="Add linkage"
               />
             </div>
+
+            <div
+              style={{
+                padding: "0rem 0.5rem 0.5rem 0.5rem",
+                backgroundColor: "lightgray",
+              }}
+            >
+              <CollapsibleButton
+                callback={props.buildLinkage}
+                isExpanded={isExpanded}
+                expandedIcon={<OpenWithIcon />}
+                text="Pan canvas"
+                isToggle={true}
+                isClicked={isClicked}
+                setIsClicked={setIsClicked}
+              />
+            </div>
             <div>
               <EntityList
                 entityList={props.entityList}
@@ -70,7 +89,7 @@ function EntityListSidebar(props: Props) {
               position: "fixed",
               left: "0rem",
               top: "2rem",
-              flexDirection: "column-reverse",
+              flexDirection: "column",
               display: "flex",
             }}
           >
@@ -80,6 +99,20 @@ function EntityListSidebar(props: Props) {
                 isExpanded={isExpanded}
                 expandedIcon={<ModeIcon />}
                 text="Add linkage"
+                tooltipPlacement="right"
+              />
+            </div>
+
+            <div style={{ padding: "0rem 0.5rem" }}>
+              <CollapsibleButton
+                callback={props.buildLinkage}
+                isExpanded={isExpanded}
+                expandedIcon={<OpenWithIcon />}
+                text="Pan"
+                tooltipPlacement="right"
+                isToggle={true}
+                isClicked={isClicked}
+                setIsClicked={setIsClicked}
               />
             </div>
           </Box>
@@ -100,6 +133,7 @@ function EntityListSidebar(props: Props) {
                 expandedIcon={<KeyboardDoubleArrowLeftIcon />}
                 collapsedIcon={<KeyboardDoubleArrowRightIcon />}
                 text="Collapse"
+                tooltipPlacement="right"
               />
             </div>
           </Box>
