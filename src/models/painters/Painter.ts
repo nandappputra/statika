@@ -24,6 +24,11 @@ interface NamedObject {
   pointName: string;
 }
 
+interface ValidCanvasEntity {
+  name: string;
+  type: string;
+}
+
 export interface EntityConfig {
   linkageConfig: IPolylineOptions;
   connectionConfig: ICircleOptions;
@@ -71,6 +76,28 @@ export class Painter implements EventMediator, CanvasBinder {
     );
   }
 
+  private _isValidCanvasEntity(
+    canvasObjectData: unknown
+  ): canvasObjectData is ValidCanvasEntity {
+    if (!canvasObjectData || typeof canvasObjectData !== "object") {
+      return false;
+    }
+
+    if (!("name" in canvasObjectData) || !("type" in canvasObjectData)) {
+      return false;
+    }
+
+    if (
+      !(typeof canvasObjectData.name === "string") ||
+      !(typeof canvasObjectData.type === "string") ||
+      !Object.values<string>(EntityPrefix).includes(canvasObjectData.type)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   private _setupEventHandler() {
     this._canvas.on("object:moving", (event) =>
       this._handleObjectMotionEvent(event)
@@ -89,44 +116,38 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   private _handleMouseUpEvent(_event: IEvent<MouseEvent>) {
-    if (this._isDragging) {
-      const name: unknown = this._canvas.getActiveObject()?.data?.name;
-      const elementType: unknown = this._canvas.getActiveObject()?.data?.type;
-
-      if (
-        !(typeof name === "string") ||
-        !(typeof elementType === "string") ||
-        !Object.values<string>(EntityPrefix).includes(elementType)
-      ) {
-        return;
-      }
-
-      const canvasEntity = this._entityNameToEntity.get(name);
-      if (!canvasEntity) {
-        return;
-      }
-
-      this._eventSubscribers.forEach((feature) =>
-        feature.handleObjectDrop(this, {
-          name,
-          entity: canvasEntity,
-        })
-      );
-      this._isDragging = false;
+    if (!this._isDragging) {
+      return;
     }
+
+    const activeObjectData = this._canvas.getActiveObject()?.data as unknown;
+    if (!this._isValidCanvasEntity(activeObjectData)) {
+      return;
+    }
+
+    const name = activeObjectData.name;
+
+    const canvasEntity = this._entityNameToEntity.get(name);
+    if (!canvasEntity) {
+      return;
+    }
+
+    this._eventSubscribers.forEach((feature) =>
+      feature.handleObjectDrop(this, {
+        name,
+        entity: canvasEntity,
+      })
+    );
+    this._isDragging = false;
   }
 
   private _handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
-    const name: unknown = this._canvas.getActiveObject()?.data?.name;
-    const elementType: unknown = this._canvas.getActiveObject()?.data?.type;
-
-    if (
-      !(typeof name === "string") ||
-      !(typeof elementType === "string") ||
-      !Object.values<string>(EntityPrefix).includes(elementType)
-    ) {
+    const activeObjectData = this._canvas.getActiveObject()?.data as unknown;
+    if (!this._isValidCanvasEntity(activeObjectData)) {
       return;
     }
+
+    const name = activeObjectData.name;
 
     const canvasEntity = this._entityNameToEntity.get(name);
     if (!canvasEntity) {
