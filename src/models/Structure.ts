@@ -23,4 +23,12 @@ export class Structure {
 
     return equations;
   }
+
+  get linkages() {
+    return this._linkages;
+  }
+
+  get connections() {
+    return this._connections;
+  }
 }

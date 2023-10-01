@@ -99,6 +99,7 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   private _setupEventHandler() {
+    this._canvas.off();
     this._canvas.on("object:moving", (event) =>
       this._handleObjectMotionEvent(event)
     );
@@ -624,6 +625,34 @@ export class Painter implements EventMediator, CanvasBinder {
     });
 
     return new Structure(linkages, connections);
+  }
+
+  public reset() {
+    this._canvas.clear();
+    this._entityNameToEntity = new Map<string, CanvasEntity>();
+    this._pointNameToPoint = new Map<string, Point>();
+
+    this._pointNameToLinkageEntity = new Map<string, LinkageEntity>();
+    this._pointNameToConnectionEntity = new Map<string, ConnectionEntity>();
+    this._locationNameToExternalForceEntity = new Map<
+      string,
+      Set<ExternalForceEntity>
+    >();
+    this._pointNameToPointEntity = new Map<string, PointEntity>();
+    this._setupEventHandler();
+    this._canvasPanController = new CanvasPanController(this._canvas, () =>
+      this._setupEventHandler()
+    );
+  }
+
+  public loadStructure(structure: Structure) {
+    this.reset();
+
+    const linkages = structure.linkages;
+    linkages.forEach((linkage) => this.addElement(linkage));
+
+    const connections = structure.connections;
+    connections.forEach((linkage) => this.addElement(linkage));
   }
 
   public clearFocus() {
