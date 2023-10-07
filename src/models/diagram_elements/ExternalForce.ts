@@ -2,12 +2,14 @@ import { Variable } from "../Variable";
 
 export class ExternalForce {
   private _name: string;
+  private _id: number;
 
   private _F_x: Variable;
   private _F_y: Variable;
 
-  constructor(name: string, F_x: number, F_y: number) {
+  constructor(name: string, id: number, F_x: number, F_y: number) {
     this._name = name;
+    this._id = id;
 
     this._F_x = new Variable(`${name}x`, F_x);
     this._F_y = new Variable(`${name}y`, F_y);
@@ -23,6 +25,10 @@ export class ExternalForce {
 
   get name(): string {
     return this._name;
+  }
+
+  get id() {
+    return this._id;
   }
 
   set F_x(F_x: number) {

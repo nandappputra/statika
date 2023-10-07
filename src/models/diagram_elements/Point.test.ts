@@ -5,8 +5,8 @@ import { ExternalForce } from "./ExternalForce";
 describe("Point", () => {
   describe("addExternalForce", () => {
     test("Should add external force to the point", () => {
-      const point = new Point("P1", 1, 2);
-      const force = new ExternalForce("F1", 30, 40);
+      const point = new Point("P1", 1, 1, 2);
+      const force = new ExternalForce("F1", 2, 30, 40);
 
       point.addExternalForce(force);
 
@@ -15,8 +15,8 @@ describe("Point", () => {
     });
 
     test("Should set the internal forces and moment component to known and zero", () => {
-      const point = new Point("P1", 1, 2);
-      const force = new ExternalForce("F1", 30, 40);
+      const point = new Point("P1", 1, 1, 2);
+      const force = new ExternalForce("F1", 2, 30, 40);
 
       point.addExternalForce(force);
 
@@ -28,9 +28,9 @@ describe("Point", () => {
 
   describe("removeExternalForce", () => {
     test("Should remove the correct force", () => {
-      const point = new Point("P1", 1, 2);
-      const force1 = new ExternalForce("F1", 30, 40);
-      const force2 = new ExternalForce("F2", 50, 60);
+      const point = new Point("P1", 1, 1, 2);
+      const force1 = new ExternalForce("F1", 2, 30, 40);
+      const force2 = new ExternalForce("F2", 3, 50, 60);
 
       point.addExternalForce(force1);
       point.addExternalForce(force2);
@@ -42,8 +42,8 @@ describe("Point", () => {
     });
 
     test("Should set the variables to unknown after removing the last force", () => {
-      const point = new Point("P1", 1, 2);
-      const force1 = new ExternalForce("F1", 30, 40);
+      const point = new Point("P1", 1, 1, 2);
+      const force1 = new ExternalForce("F1", 2, 30, 40);
 
       point.addExternalForce(force1);
 
@@ -57,9 +57,9 @@ describe("Point", () => {
 
   describe("symbolF_x", () => {
     test("Should return properly formatted equation that includes external forces", () => {
-      const point = new Point("P1", 1, 2);
-      const force1 = new ExternalForce("F1", 30, 40);
-      const force2 = new ExternalForce("F2", 50, 60);
+      const point = new Point("P1", 1, 1, 2);
+      const force1 = new ExternalForce("F1", 2, 30, 40);
+      const force2 = new ExternalForce("F2", 3, 50, 60);
 
       point.addExternalForce(force1);
       point.addExternalForce(force2);
@@ -70,9 +70,9 @@ describe("Point", () => {
 
   describe("symbolF_y", () => {
     test("Should return properly formatted equation that includes external forces", () => {
-      const point = new Point("P1", 1, 2);
-      const force1 = new ExternalForce("F1", 30, 40);
-      const force2 = new ExternalForce("F2", 50, 60);
+      const point = new Point("P1", 1, 1, 2);
+      const force1 = new ExternalForce("F1", 2, 30, 40);
+      const force2 = new ExternalForce("F2", 3, 50, 60);
 
       point.addExternalForce(force1);
       point.addExternalForce(force2);

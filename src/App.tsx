@@ -6,7 +6,7 @@ import { MovePointEvent, ObjectSelectionEvent } from "./models/Event";
 import { EntityConfig, Painter } from "./models/painters/Painter";
 import { useEffect, useState } from "react";
 import { ElementFactory } from "./factories/ElementFactory";
-import { CANVAS_ID, ConnectionKind, USER } from "./utils/Constants";
+import { CANVAS_ID, ConnectionKind, USER_ID } from "./utils/Constants";
 import SelectedEntity from "./components/SelectedEntity";
 import { LinkageEntity } from "./models/canvas_entities/LinkageEntity";
 import { ConnectionEntity } from "./models/canvas_entities/ConnectionEntity";
@@ -29,6 +29,7 @@ import { Point } from "./models/diagram_elements/Point";
 import { ConnectionElement } from "./models/diagram_elements/ConnectionElement";
 import { ExternalForce } from "./models/diagram_elements/ExternalForce";
 import EntityListSidebar from "./components/EntityListSidebar";
+import { CanvasEntity } from "./models/canvas_entities/CanvasEntity";
 
 function App() {
   let canvasRendered = false;
@@ -37,8 +38,11 @@ function App() {
   const [tutorialOpen, setTutorialOpen] = useState<boolean>(false);
   const [solutionOpen, setSolutionOpen] = useState<boolean>(false);
 
-  const [entityList, setEntityList] = useState<string[]>([]);
+  const [entityList, setEntityList] = useState<CanvasEntity[]>([]);
   const [selectedName, setSelectedName] = useState<string>("");
+  const [selectedEntity, setSelectedEntity] = useState<
+    CanvasEntity | undefined
+  >(undefined);
   const [selectedX, setSelectedX] = useState<number>(0);
   const [selectedY, setSelectedY] = useState<number>(0);
 
@@ -106,7 +110,8 @@ function App() {
     const objectSelectionEventCallback = (
       objectSelectionEvent: ObjectSelectionEvent
     ) => {
-      setSelectedName(objectSelectionEvent.name);
+      setSelectedName(objectSelectionEvent.entity.name);
+      setSelectedEntity(objectSelectionEvent.entity);
     };
 
     const objectSelectionClearCallback = () => {
@@ -121,14 +126,14 @@ function App() {
       painter: Painter,
       _element: DiagramElement
     ) => {
-      setEntityList(painter.getAllEntityName());
+      setEntityList(painter.getAllEntities());
     };
 
     const elementRemovalCallback = (
       painter: Painter,
       _element: DiagramElement
     ) => {
-      setEntityList(painter.getAllEntityName());
+      setEntityList(painter.getAllEntities());
     };
 
     const pointAdditionCallback = (
@@ -136,7 +141,7 @@ function App() {
       _linkage: LinkageElement,
       _point: Point
     ) => {
-      setEntityList(painter.getAllEntityName());
+      setEntityList(painter.getAllEntities());
     };
 
     const pointRemovalCallback = (
@@ -144,7 +149,7 @@ function App() {
       _linkage: LinkageElement,
       _point: Point
     ) => {
-      setEntityList(painter.getAllEntityName());
+      setEntityList(painter.getAllEntities());
     };
 
     const forceAdditionCallback = (
@@ -152,7 +157,7 @@ function App() {
       _location: Point | ConnectionElement,
       _externalForce: ExternalForce
     ) => {
-      setEntityList(painter.getAllEntityName());
+      setEntityList(painter.getAllEntities());
     };
 
     const forceRemovalCallback = (
@@ -160,7 +165,7 @@ function App() {
       _location: Point | ConnectionElement,
       _externalForce: ExternalForce
     ) => {
-      setEntityList(painter.getAllEntityName());
+      setEntityList(painter.getAllEntities());
     };
 
     const pointSnapFeature = new PointSnapFeature(elementFactory);
@@ -185,11 +190,11 @@ function App() {
     setPainterState(painter);
   };
 
-  const handleSelection = (name: string): void => {
+  const handleSelection = (id: number): void => {
     setSolved(false);
     setSolution([]);
     setSolutionOpen(false);
-    painterState?.setFocus(name);
+    painterState?.setFocus(id);
   };
 
   const buildLinkage = (): void => {
@@ -210,11 +215,11 @@ function App() {
 
     const linkage = elementFactoryState.buildLinkage(point1, point2);
     painterState?.addElement(linkage);
-    painterState?.setFocus(linkage.name);
+    painterState?.setFocus(linkage.id);
   };
 
-  const buildConnection = (pointName: string) => {
-    const point = painterState?.getPoint(pointName);
+  const buildConnection = (pointId: number) => {
+    const point = painterState?.getPoint(pointId);
     if (!point) {
       return;
     }
@@ -225,22 +230,22 @@ function App() {
     );
 
     painterState?.addElement(connectionElement);
-    painterState?.setFocus(connectionElement.name);
+    painterState?.setFocus(connectionElement.id);
   };
 
-  const getEntity = (entityName: string) => {
-    return painterState?.getEntityByName(entityName);
+  const getEntity = (entityId: number) => {
+    return painterState?.getEntityById(entityId);
   };
 
-  const removeEntity = (entityName: string) => {
-    const entity = painterState?.getEntityByName(entityName);
+  const removeEntity = (entityId: number) => {
+    const entity = painterState?.getEntityById(entityId);
     if (entity instanceof LinkageEntity || entity instanceof ConnectionEntity) {
       painterState?.removeElement(entity.getElement());
     }
   };
 
-  const addPointToLinkage = (selectedLinkage: string) => {
-    const linkage = painterState?.getEntityByName(selectedLinkage);
+  const addPointToLinkage = (linkageId: number) => {
+    const linkage = painterState?.getEntityById(linkageId);
     if (linkage instanceof LinkageEntity) {
       const center = linkage.getCenter();
       const point = elementFactoryState.buildPoint({
@@ -253,12 +258,12 @@ function App() {
   };
 
   const removePointFromLinkage = (
-    pointName: string,
-    selectedLinkage: string
+    pointId: number,
+    selectedLinkageId: number
   ) => {
-    const linkage = painterState?.getEntityByName(selectedLinkage);
+    const linkage = painterState?.getEntityById(selectedLinkageId);
     if (linkage instanceof LinkageEntity) {
-      const point = painterState?.getPoint(pointName);
+      const point = painterState?.getPoint(pointId);
       if (!point) {
         return;
       }
@@ -267,13 +272,10 @@ function App() {
     }
   };
 
-  const removePointFromConnection = (
-    pointName: string,
-    selectedConnection: string
-  ) => {
-    const connection = painterState?.getEntityByName(selectedConnection);
+  const removePointFromConnection = (pointId: number, connectionId: number) => {
+    const connection = painterState?.getEntityById(connectionId);
     if (connection instanceof ConnectionEntity) {
-      const point = painterState?.getPoint(pointName);
+      const point = painterState?.getPoint(pointId);
       if (!point) {
         return;
       }
@@ -283,11 +285,11 @@ function App() {
   };
 
   const removeExternalForceFromPoint = (
-    externalForceName: string,
-    pointName: string
+    externalForceId: number,
+    pointId: number
   ) => {
-    const location = painterState?.getEntityByName(pointName);
-    const externalForce = painterState?.getEntityByName(externalForceName);
+    const location = painterState?.getEntityById(pointId);
+    const externalForce = painterState?.getEntityById(externalForceId);
 
     if (
       (location instanceof PointEntity ||
@@ -301,32 +303,32 @@ function App() {
     }
   };
 
-  const getLinkageFromPoint = (pointName: string) => {
-    const point = painterState?.getPoint(pointName);
+  const getLinkageFromPoint = (pointId: number) => {
+    const point = painterState?.getPoint(pointId);
     if (point) {
       return painterState?.getLinkageFromPoint(point);
     }
   };
 
-  const addExternalForce = (location: string) => {
-    const entity = painterState?.getEntityByName(location);
+  const addExternalForce = (locationId: number) => {
+    const entity = painterState?.getEntityById(locationId);
     if (entity instanceof PointEntity || entity instanceof ConnectionEntity) {
       const force = elementFactoryState.buildExternalForce(100, 100);
       painterState?.addExternalLoad(entity.getElement(), force);
-      painterState?.setFocus(force.name);
+      painterState?.setFocus(force.id);
     }
   };
 
-  const updatePointPosition = (pointName: string, coordinate: Coordinate) => {
+  const updatePointPosition = (pointId: number, coordinate: Coordinate) => {
     painterState?.updatePointPosition({
-      name: pointName,
-      source: USER,
+      id: pointId,
+      source: USER_ID,
       coordinate: coordinate,
     });
   };
 
-  const setForceComponents = (forceName: string, F_x: number, F_y: number) => {
-    const force = painterState?.getEntityByName(forceName);
+  const setForceComponents = (forceId: number, F_x: number, F_y: number) => {
+    const force = painterState?.getEntityById(forceId);
     if (force instanceof ExternalForceEntity) {
       const forceElement = force.getElement();
       painterState?.updateForce(forceElement, F_x, F_y);
@@ -334,10 +336,10 @@ function App() {
   };
 
   const changeConnectionType = (
-    connectionName: string,
+    connectionId: number,
     connectionType: ConnectionKind
   ) => {
-    const connection = painterState?.getEntityByName(connectionName);
+    const connection = painterState?.getEntityById(connectionId);
     if (connection instanceof ConnectionEntity) {
       const connectionElement = connection.getElement();
       painterState?.changeConnectionType(connectionElement, connectionType);
@@ -394,6 +396,7 @@ function App() {
         <Container maxWidth="xl" sx={{ padding: "1em" }}>
           <SelectedEntity
             name={selectedName}
+            entity={selectedEntity}
             selectedX={selectedX}
             selectedY={selectedY}
             getEntity={getEntity}

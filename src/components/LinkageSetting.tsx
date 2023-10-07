@@ -11,18 +11,17 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Point } from "../models/diagram_elements/Point";
-import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { LinkageEntity } from "../models/canvas_entities/LinkageEntity";
 import { Coordinate } from "../models/Coordinate";
 
 type Props = {
   linkageName: string;
-  getEntity: (entityName: string) => CanvasEntity | undefined;
-  removeEntity: (entityName: string) => void;
-  addPointToLinkage: (selectedLinkage: string) => void;
-  removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
-  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
+  linkageEntity: LinkageEntity;
+  removeEntity: (entityId: number) => void;
+  addPointToLinkage: (selectedLinkageId: number) => void;
+  removePointFromLinkage: (pointId: number, selectedLinkageId: number) => void;
+  updatePointPosition: (pointId: number, coordinate: Coordinate) => void;
 };
 
 function LinkageSetting(props: Props) {
@@ -33,13 +32,10 @@ function LinkageSetting(props: Props) {
   }, [props.linkageName]);
 
   const updatePoints = () => {
-    const entity = props.getEntity(props.linkageName);
-    if (entity instanceof LinkageEntity) {
-      setPoints(entity.getAllPoints());
-    }
+    setPoints(props.linkageEntity.getAllPoints());
   };
 
-  const movePoint = (pointName: string, index: number) => {
+  const movePoint = (pointName: string, pointId: number, index: number) => {
     const valueX = (
       document.getElementById(`${pointName}-X`) as HTMLInputElement
     )?.valueAsNumber;
@@ -54,7 +50,7 @@ function LinkageSetting(props: Props) {
     const newState = [...points];
     newState[index].x = valueX;
     newState[index].y = valueY;
-    props.updatePointPosition(pointName, { x: valueX, y: valueY });
+    props.updatePointPosition(pointId, { x: valueX, y: valueY });
     setPoints(newState);
   };
 
@@ -71,7 +67,7 @@ function LinkageSetting(props: Props) {
         }}
       >
         {points.map((point, index) => (
-          <ListItem key={point.name}>
+          <ListItem key={point.id}>
             <ListItemText sx={{ padding: "0.2rem" }}>{point.name}</ListItemText>
             <Container
               disableGutters
@@ -88,7 +84,7 @@ function LinkageSetting(props: Props) {
                 variant="outlined"
                 value={point.x}
                 type="number"
-                onChange={() => movePoint(point.name, index)}
+                onChange={() => movePoint(point.name, point.id, index)}
               />
               <TextField
                 id={`${point.name}-Y`}
@@ -96,11 +92,14 @@ function LinkageSetting(props: Props) {
                 variant="outlined"
                 value={point.y}
                 type="number"
-                onChange={() => movePoint(point.name, index)}
+                onChange={() => movePoint(point.name, point.id, index)}
               />
               <IconButton
                 onClick={() => {
-                  props.removePointFromLinkage(point.name, props.linkageName);
+                  props.removePointFromLinkage(
+                    point.id,
+                    props.linkageEntity.id
+                  );
                   updatePoints();
                 }}
               >
@@ -120,7 +119,7 @@ function LinkageSetting(props: Props) {
         }}
       >
         <Button
-          onClick={() => props.addPointToLinkage(props.linkageName)}
+          onClick={() => props.addPointToLinkage(props.linkageEntity.id)}
           startIcon={<AddCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",
@@ -139,7 +138,7 @@ function LinkageSetting(props: Props) {
           Add point
         </Button>
         <Button
-          onClick={() => props.removeEntity(props.linkageName)}
+          onClick={() => props.removeEntity(props.linkageEntity.id)}
           startIcon={<RemoveCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

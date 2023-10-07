@@ -6,10 +6,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 
 type Props = {
-  entityList: string[];
-  onClick: (name: string) => void;
+  entityList: CanvasEntity[];
+  onClick: (id: number) => void;
   buildLinkage: () => void;
 };
 
@@ -49,18 +50,18 @@ function EntityList(props: Props) {
       >
         {[...props.entityList]
           .reverse()
-          .filter((entity) => entity.charAt(0) !== "P")
+          .filter((entity) => entity.name.charAt(0) !== "P")
           .map((entity) => {
             return (
               <ListItem
-                key={entity}
+                key={entity.id}
                 disablePadding
                 sx={{
                   borderBottom: "1px lightgrey solid",
                 }}
               >
-                <ListItemButton onClick={() => props.onClick(entity)}>
-                  <ListItemText primary={entity} />
+                <ListItemButton onClick={() => props.onClick(entity.id)}>
+                  <ListItemText primary={entity.name} secondary={entity.id} />
                 </ListItemButton>
               </ListItem>
             );

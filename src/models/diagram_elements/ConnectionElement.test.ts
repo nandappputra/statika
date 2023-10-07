@@ -18,7 +18,7 @@ describe("LinkageEntity", () => {
 
   describe("constructor", () => {
     test("Should move all the external forces from the points to the connection", () => {
-      const force = new ExternalForce("F1", 1, 2);
+      const force = new ExternalForce("F1", 1, 1, 2);
       setMockProperty(point1, "externalForces", [force]);
       setMockProperty(point2, "externalForces", []);
       const removeExternalForce =
@@ -27,6 +27,7 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        2,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
@@ -37,7 +38,7 @@ describe("LinkageEntity", () => {
     });
 
     test("Should apply appropriate boundary condition to the points", () => {
-      const force = new ExternalForce("F1", 1, 2);
+      const force = new ExternalForce("F1", 3, 1, 2);
       setMockProperty(point1, "externalForces", [force]);
       setMockProperty(point2, "externalForces", []);
 
@@ -47,6 +48,7 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        4,
         [point1, point2],
         ConnectionKind.PIN
       );
@@ -65,11 +67,12 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        5,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
 
-      const point3 = new Point("P3", 1, 2);
+      const point3 = new Point("P3", 1, 1, 2);
       connectionElement.addPoint(point3);
 
       expect(connectionElement.points.length).toBe(3);
@@ -82,11 +85,12 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
 
-      const point3 = new Point("P3", 1, 2);
+      const point3 = new Point("P3", 2, 1, 2);
       connectionElement.addPoint(point3);
 
       const actualPoint = connectionElement.points[2];
@@ -104,12 +108,13 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
 
-      const point3 = new Point("P3", 1, 2);
-      const point4 = new Point("P4", 3, 5);
+      const point3 = new Point("P3", 4, 1, 2);
+      const point4 = new Point("P4", 5, 3, 5);
       connectionElement.addPoint(point3);
       connectionElement.addPoint(point4);
 
@@ -125,6 +130,7 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
@@ -152,6 +158,7 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
@@ -180,11 +187,12 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        2,
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
 
-      const force = new ExternalForce("F1", 100, 20);
+      const force = new ExternalForce("F1", 1, 100, 20);
       connectionElement.addExternalForce(force);
 
       const actualEquations = connectionElement.generateEquilibrium();
@@ -211,11 +219,12 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
 
-      const force = new ExternalForce("F1", 100, 20);
+      const force = new ExternalForce("F1", 1, 100, 20);
       connectionElement.addExternalForce(force);
 
       const actualEquations = connectionElement.generateEquilibrium();
@@ -242,11 +251,12 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.PIN
       );
 
-      const force = new ExternalForce("F1", 100, 20);
+      const force = new ExternalForce("F1", 1, 100, 20);
       connectionElement.addExternalForce(force);
 
       const actualEquations = connectionElement.generateEquilibrium();
@@ -269,11 +279,12 @@ describe("LinkageEntity", () => {
       point2.removeConditions = jest.fn();
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
 
-      const point3 = new Point("P3", 1, 2);
+      const point3 = new Point("P3", 1, 1, 2);
       connectionElement.addPoint(point3);
 
       const actualPoint = connectionElement.points[2];
@@ -293,6 +304,7 @@ describe("LinkageEntity", () => {
       point2.removeConditions = jest.fn();
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
@@ -310,11 +322,12 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
 
-      const force = new ExternalForce("F1", 100, 100);
+      const force = new ExternalForce("F1", 1, 100, 100);
 
       connectionElement.addExternalForce(force);
 
@@ -330,12 +343,13 @@ describe("LinkageEntity", () => {
 
       connectionElement = new ConnectionElement(
         "C1",
+        1,
         [point1, point2],
         ConnectionKind.VERTICAL_ROLLER
       );
 
-      const force1 = new ExternalForce("F1", 100, 100);
-      const force2 = new ExternalForce("F2", 200, 200);
+      const force1 = new ExternalForce("F1", 1, 100, 100);
+      const force2 = new ExternalForce("F2", 2, 200, 200);
 
       connectionElement.addExternalForce(force1);
       connectionElement.addExternalForce(force2);

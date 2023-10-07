@@ -3,6 +3,7 @@ import { Variable } from "../Variable";
 
 export class Point {
   private _name: string;
+  private _id: number;
   private _positionX: number;
   private _positionY: number;
   private _externalForces: ExternalForce[];
@@ -11,8 +12,9 @@ export class Point {
   private _F_y: Variable;
   private _M_z: Variable;
 
-  constructor(name: string, positionX: number, positionY: number) {
+  constructor(name: string, id: number, positionX: number, positionY: number) {
     this._name = name;
+    this._id = id;
     this._positionX = positionX;
     this._positionY = positionY;
     this._externalForces = [];
@@ -60,6 +62,10 @@ export class Point {
 
   get name() {
     return this._name;
+  }
+
+  get id() {
+    return this._id;
   }
 
   get x() {

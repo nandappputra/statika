@@ -1,16 +1,15 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
-import { ExternalForceEntity } from "../models/canvas_entities/ExternalForceEntity";
 import { Point } from "../models/diagram_elements/Point";
 import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
+import { ExternalForceEntity } from "../models/canvas_entities/ExternalForceEntity";
 
 type Props = {
   forceName: string;
-  getEntity: (entityName: string) => CanvasEntity | undefined;
-  removeExternalForce: (externalForce: string, location: string) => void;
-  setForceComponents: (forceName: string, F_x: number, F_y: number) => void;
+  forceEntity: ExternalForceEntity;
+  removeExternalForce: (externalForceId: number, locationId: number) => void;
+  setForceComponents: (forceId: number, F_x: number, F_y: number) => void;
 };
 
 function ForceSetting(props: Props) {
@@ -25,12 +24,9 @@ function ForceSetting(props: Props) {
   }, [props.forceName]);
 
   const updateForce = () => {
-    const entity = props.getEntity(props.forceName);
-    if (entity instanceof ExternalForceEntity) {
-      setFX(parseFloat(entity.getElement().symbolF_x));
-      setFY(parseFloat(entity.getElement().symbolF_y));
-      setLocation(entity.location);
-    }
+    setFX(parseFloat(props.forceEntity.getElement().symbolF_x));
+    setFY(parseFloat(props.forceEntity.getElement().symbolF_y));
+    setLocation(props.forceEntity.location);
   };
 
   const setForceComponents = () => {
@@ -49,7 +45,7 @@ function ForceSetting(props: Props) {
       F_y = 0;
     }
 
-    props.setForceComponents(props.forceName, F_x, F_y);
+    props.setForceComponents(props.forceEntity.id, F_x, F_y);
     setFX(F_x);
     setFY(F_y);
   };
@@ -105,7 +101,7 @@ function ForceSetting(props: Props) {
         <Button
           onClick={() => {
             if (location) {
-              props.removeExternalForce(props.forceName, location.name);
+              props.removeExternalForce(props.forceEntity.id, location.id);
             }
           }}
           startIcon={<RemoveCircleOutlineIcon />}

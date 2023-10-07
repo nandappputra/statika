@@ -13,7 +13,6 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import React, { useEffect, useState } from "react";
 import { PointEntity } from "../models/canvas_entities/PointEntity";
 import { ExternalForce } from "../models/diagram_elements/ExternalForce";
@@ -25,16 +24,16 @@ type Props = {
   selectedX: number;
   selectedY: number;
   pointName: string;
-  getEntity: (entityName: string) => CanvasEntity | undefined;
-  removePointFromLinkage: (pointName: string, selectedLinkage: string) => void;
+  pointEntity: PointEntity;
+  removePointFromLinkage: (pointId: number, selectedLinkageId: number) => void;
   removeExternalForceFromPoint: (
-    externalForce: string,
-    pointName: string
+    externalForceId: number,
+    pointId: number
   ) => void;
-  getLinkageFromPoint: (pointName: string) => LinkageEntity | undefined;
-  addExternalForce: (pointName: string) => void;
-  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
-  buildConnection: (pointName: string) => void;
+  getLinkageFromPoint: (pointId: number) => LinkageEntity | undefined;
+  addExternalForce: (pointId: number) => void;
+  updatePointPosition: (pointId: number, coordinate: Coordinate) => void;
+  buildConnection: (pointId: number) => void;
 };
 
 function PointSetting(props: Props) {
@@ -48,30 +47,25 @@ function PointSetting(props: Props) {
   }, [props.pointName, props.selectedX, props.selectedY]);
 
   const updatePoint = () => {
-    const entity = props.getEntity(props.pointName);
-    if (!(entity instanceof PointEntity)) {
-      return;
-    }
-
-    const parentLinkage = props.getLinkageFromPoint(props.pointName);
+    const parentLinkage = props.getLinkageFromPoint(props.pointEntity.id);
     if (!parentLinkage) {
       return;
     }
 
-    setForces(entity.getElement().externalForces);
+    setForces(props.pointEntity.getElement().externalForces);
     setLinkage(parentLinkage.getElement());
-    setX(entity.getElement().x);
-    setY(entity.getElement().y);
+    setX(props.pointEntity.getElement().x);
+    setY(props.pointEntity.getElement().y);
   };
 
-  const removePoint = (pointName: string) => {
+  const removePoint = (pointId: number) => {
     if (linkage) {
-      props.removePointFromLinkage(pointName, linkage.name);
+      props.removePointFromLinkage(pointId, linkage.id);
     }
   };
 
-  const addExternalForceToPoint = (pointName: string) => {
-    props.addExternalForce(pointName);
+  const addExternalForceToPoint = (pointId: number) => {
+    props.addExternalForce(pointId);
     updatePoint();
   };
 
@@ -81,10 +75,10 @@ function PointSetting(props: Props) {
     const xValue = event.target.valueAsNumber;
     if (Number.isNaN(xValue)) {
       setX(0);
-      props.updatePointPosition(props.pointName, { x: 0, y });
+      props.updatePointPosition(props.pointEntity.id, { x: 0, y });
     } else {
       setX(xValue);
-      props.updatePointPosition(props.pointName, { x: xValue, y });
+      props.updatePointPosition(props.pointEntity.id, { x: xValue, y });
     }
   };
 
@@ -94,10 +88,10 @@ function PointSetting(props: Props) {
     const yValue = event.target.valueAsNumber;
     if (Number.isNaN(yValue)) {
       setY(0);
-      props.updatePointPosition(props.pointName, { x, y: 0 });
+      props.updatePointPosition(props.pointEntity.id, { x, y: 0 });
     } else {
       setY(yValue);
-      props.updatePointPosition(props.pointName, { x, y: yValue });
+      props.updatePointPosition(props.pointEntity.id, { x, y: yValue });
     }
   };
 
@@ -152,13 +146,13 @@ function PointSetting(props: Props) {
           }}
         >
           {forces?.map((force) => (
-            <ListItem key={`${props.pointName}-${force}`}>
-              <ListItemText>{force.name}</ListItemText>
+            <ListItem key={`${props.pointEntity.id}-${force}`}>
+              <ListItemText>{force.id}</ListItemText>
               <IconButton
                 onClick={() => {
                   props.removeExternalForceFromPoint(
-                    force.name,
-                    props.pointName
+                    force.id,
+                    props.pointEntity.id
                   );
                   updatePoint();
                 }}
@@ -174,7 +168,7 @@ function PointSetting(props: Props) {
       <Grid container columnSpacing={1} rowSpacing={1} padding={1}>
         <Grid item xs={6}>
           <Button
-            onClick={() => addExternalForceToPoint(props.pointName)}
+            onClick={() => addExternalForceToPoint(props.pointEntity.id)}
             startIcon={<AddCircleOutlineIcon />}
             sx={{
               backgroundColor: "white",
@@ -195,7 +189,7 @@ function PointSetting(props: Props) {
         </Grid>
         <Grid item xs={6}>
           <Button
-            onClick={() => removePoint(props.pointName)}
+            onClick={() => removePoint(props.pointEntity.id)}
             startIcon={<RemoveCircleOutlineIcon />}
             sx={{
               backgroundColor: "white",
@@ -216,7 +210,7 @@ function PointSetting(props: Props) {
         </Grid>
         <Grid item xs={12}>
           <Button
-            onClick={() => props.buildConnection(props.pointName)}
+            onClick={() => props.buildConnection(props.pointEntity.id)}
             startIcon={<AddLinkIcon />}
             sx={{
               backgroundColor: "white",

@@ -10,14 +10,15 @@ import { LinkageElement } from "../diagram_elements/LinkageElement";
 import { Point } from "../diagram_elements/Point";
 
 export interface CanvasBinder {
-  getEntityByName(name: string): CanvasEntity | undefined;
+  getEntityById(id: number): CanvasEntity | undefined;
   getAllEntityName(): string[];
+  getAllEntities(): CanvasEntity[];
   getCanvasEntity(diagramElement: DiagramElement): CanvasEntity | undefined;
-  getPoint(pointName: string): Point | undefined;
+  getPoint(pointId: number): Point | undefined;
   getLinkageFromPoint(point: Point): LinkageEntity | undefined;
   getCanvasCenter(): fabric.Point;
 
-  setFocus(name: string): void;
+  setFocus(id: number): void;
   clearFocus(): void;
 
   updatePointPosition(movePointEvent: MovePointEvent): void;

@@ -159,7 +159,7 @@ describe("Statika", () => {
   });
 
   const drag = (draggable: Point | ConnectionElement, x: number, y: number) => {
-    const entity = painter.getEntityByName(draggable.name);
+    const entity = painter.getEntityById(draggable.id);
     const canvasObject = entity?.getObjectsToDraw();
     if (!canvasObject) {
       return;

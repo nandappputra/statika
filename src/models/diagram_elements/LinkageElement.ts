@@ -7,10 +7,12 @@ import { DiagramElement } from "./DiagramElement";
 
 export class LinkageElement implements DiagramElement {
   private _name: string;
+  private _id: number;
   private _points: Point[];
 
-  constructor(name: string, p1: Point, p2: Point) {
+  constructor(name: string, id: number, p1: Point, p2: Point) {
     this._name = name;
+    this._id = id;
     this._points = [p1, p2];
   }
 
@@ -55,6 +57,10 @@ export class LinkageElement implements DiagramElement {
 
   get name() {
     return this._name;
+  }
+
+  get id() {
+    return this._id;
   }
 
   addPoint(point: Point) {

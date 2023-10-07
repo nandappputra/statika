@@ -16,7 +16,6 @@ const ARROW_ANGLE_ADJUSTMENT = 90;
 export class ExternalForceEntity implements CanvasEntity {
   private _kind = EntityKind.FORCE;
 
-  private _name: string;
   private _externalForce: ExternalForce;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
@@ -27,7 +26,6 @@ export class ExternalForceEntity implements CanvasEntity {
     location: Point | ConnectionElement,
     eventMediator: EventMediator
   ) {
-    this._name = externalForce.name;
     this._externalForce = externalForce;
     this._eventMediator = eventMediator;
     this._icon = this._buildIcon(externalForce, location);
@@ -46,7 +44,11 @@ export class ExternalForceEntity implements CanvasEntity {
   }
 
   get name() {
-    return this._name;
+    return this._externalForce.name;
+  }
+
+  get id() {
+    return this._externalForce.id;
   }
 
   get kind() {
@@ -86,7 +88,7 @@ export class ExternalForceEntity implements CanvasEntity {
       hasControls: false,
       hasBorders: false,
       hoverCursor: "pointer",
-      data: { name: force.name, type: EntityPrefix.FORCE },
+      data: { name: force.name, type: EntityPrefix.FORCE, id: force.id },
     });
 
     return arrow;

@@ -13,7 +13,6 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
-import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 import { useEffect, useState } from "react";
 import { ConnectionEntity } from "../models/canvas_entities/ConnectionEntity";
 import { Point } from "../models/diagram_elements/Point";
@@ -24,18 +23,18 @@ type Props = {
   selectedX: number;
   selectedY: number;
   connectionName: string;
-  getEntity: (entityName: string) => CanvasEntity | undefined;
-  removeEntity: (entityName: string) => void;
+  connectionEntity: ConnectionEntity;
+  removeEntity: (entityId: number) => void;
   removePointFromConnection: (
-    pointName: string,
-    selectedConnection: string
+    pointId: number,
+    selectedConnectionId: number
   ) => void;
-  updatePointPosition: (pointName: string, coordinate: Coordinate) => void;
+  updatePointPosition: (pointId: number, coordinate: Coordinate) => void;
   changeConnectionType: (
-    connectionName: string,
+    connectionId: number,
     connectionType: ConnectionKind
   ) => void;
-  addExternalForce: (location: string) => void;
+  addExternalForce: (location: number) => void;
 };
 
 function ConnectionSetting(props: Props) {
@@ -49,11 +48,8 @@ function ConnectionSetting(props: Props) {
   }, [props.connectionName, props.selectedX, props.selectedY]);
 
   const updatePoints = () => {
-    const entity = props.getEntity(props.connectionName);
-    if (entity instanceof ConnectionEntity) {
-      setConnectionType(entity.getConnectionType());
-      setPoints(entity.getAllPoints());
-    }
+    setConnectionType(props.connectionEntity.getConnectionType());
+    setPoints(props.connectionEntity.getAllPoints());
   };
 
   const moveConnection = () => {
@@ -71,14 +67,14 @@ function ConnectionSetting(props: Props) {
     const newState = [...points];
     newState[0].x = valueX;
     newState[0].y = valueY;
-    props.updatePointPosition(points[0].name, { x: valueX, y: valueY });
+    props.updatePointPosition(points[0].id, { x: valueX, y: valueY });
     setPoints(newState);
   };
 
   const changeConnectionType = (event: SelectChangeEvent<ConnectionKind>) => {
     const selectedType = event.target.value as ConnectionKind;
     setConnectionType(selectedType);
-    props.changeConnectionType(props.connectionName, selectedType);
+    props.changeConnectionType(props.connectionEntity.id, selectedType);
   };
 
   return (
@@ -154,8 +150,8 @@ function ConnectionSetting(props: Props) {
             <IconButton
               onClick={() => {
                 props.removePointFromConnection(
-                  point.name,
-                  props.connectionName
+                  point.id,
+                  props.connectionEntity.id
                 );
                 updatePoints();
               }}
@@ -176,7 +172,7 @@ function ConnectionSetting(props: Props) {
         }}
       >
         <Button
-          onClick={() => props.removeEntity(props.connectionName)}
+          onClick={() => props.removeEntity(props.connectionEntity.id)}
           startIcon={<RemoveCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",
@@ -195,7 +191,7 @@ function ConnectionSetting(props: Props) {
           Remove connection
         </Button>
         <Button
-          onClick={() => props.addExternalForce(props.connectionName)}
+          onClick={() => props.addExternalForce(props.connectionEntity.id)}
           startIcon={<AddCircleOutlineIcon />}
           sx={{
             backgroundColor: "white",

@@ -10,6 +10,7 @@ export class ElementFactory {
   private _externalForceCounter = 1;
   private _connectionCounter = 1;
   private _pointCounter = 1;
+  private _idCounter = 1;
 
   private static instance: ElementFactory;
 
@@ -27,15 +28,19 @@ export class ElementFactory {
   public buildPoint(coordinate: Coordinate) {
     const name = `${EntityPrefix.POINT}${this._pointCounter}`;
     this._pointCounter++;
+    const id = this._idCounter;
+    this._idCounter++;
 
-    return new Point(name, coordinate.x, coordinate.y);
+    return new Point(name, id, coordinate.x, coordinate.y);
   }
 
   public buildLinkage(point1: Point, point2: Point) {
     const name = `${EntityPrefix.LINKAGE}${this._linkageCounter}`;
     this._linkageCounter++;
+    const id = this._idCounter;
+    this._idCounter++;
 
-    return new LinkageElement(name, point1, point2);
+    return new LinkageElement(name, id, point1, point2);
   }
 
   public buildConnection(
@@ -44,14 +49,19 @@ export class ElementFactory {
   ): ConnectionElement {
     const name = `${EntityPrefix.CONNECTION}${this._connectionCounter}`;
     this._connectionCounter++;
-    return new ConnectionElement(name, points, connectionType);
+    const id = this._idCounter;
+    this._idCounter++;
+
+    return new ConnectionElement(name, id, points, connectionType);
   }
 
   public buildExternalForce(F_x: number, F_y: number) {
     const name = `${EntityPrefix.FORCE}${this._externalForceCounter}`;
     this._externalForceCounter++;
+    const id = this._idCounter;
+    this._idCounter++;
 
-    return new ExternalForce(name, F_x, F_y);
+    return new ExternalForce(name, id, F_x, F_y);
   }
 
   public reset() {
@@ -59,5 +69,20 @@ export class ElementFactory {
     this._connectionCounter = 1;
     this._externalForceCounter = 1;
     this._pointCounter = 1;
+    this._idCounter = 1;
+  }
+
+  public set(
+    linkageCounter: number,
+    connectionCounter: number,
+    externalForceCounter: number,
+    pointCounter: number,
+    idCounter: number
+  ) {
+    this._linkageCounter = linkageCounter;
+    this._connectionCounter = connectionCounter;
+    this._externalForceCounter = externalForceCounter;
+    this._pointCounter = pointCounter;
+    this._idCounter = idCounter;
   }
 }

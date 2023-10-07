@@ -16,9 +16,9 @@ describe("LinkageEntity", () => {
 
   describe("addPoint", () => {
     test("Should add a new point to the Linkage points", () => {
-      linkageElement = new LinkageElement("L1", point1, point2);
+      linkageElement = new LinkageElement("L1", 1, point1, point2);
 
-      const point3 = new Point("P3", 1, 2);
+      const point3 = new Point("P3", 2, 1, 2);
 
       linkageElement.addPoint(point3);
 
@@ -29,10 +29,10 @@ describe("LinkageEntity", () => {
 
   describe("removePoint", () => {
     test("Should remove the correct point from the linkage", () => {
-      linkageElement = new LinkageElement("L1", point1, point2);
+      linkageElement = new LinkageElement("L1", 1, point1, point2);
 
-      const point3 = new Point("P3", 1, 2);
-      const point4 = new Point("P4", 3, 5);
+      const point3 = new Point("P3", 2, 1, 2);
+      const point4 = new Point("P4", 3, 3, 5);
 
       linkageElement.addPoint(point3);
       linkageElement.addPoint(point4);
@@ -58,7 +58,7 @@ describe("LinkageEntity", () => {
 
       setMockProperty(point2, "x", "30");
       setMockProperty(point2, "y", "40");
-      linkageElement = new LinkageElement("L1", point1, point2);
+      linkageElement = new LinkageElement("L1", 1, point1, point2);
 
       const actualEquations = linkageElement.generateEquilibrium();
       const expectedEquations = [
@@ -84,7 +84,7 @@ describe("LinkageEntity", () => {
 
       setMockProperty(point2, "x", "30");
       setMockProperty(point2, "y", "40");
-      linkageElement = new LinkageElement("L1", point1, point2);
+      linkageElement = new LinkageElement("L1", 2, point1, point2);
 
       const actualEquations = linkageElement.generateEquilibrium();
       const expectedEquations = [
