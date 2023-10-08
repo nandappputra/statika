@@ -18,6 +18,7 @@ import { Structure } from "../Structure";
 import { CanvasBinder } from "./CanvasBinder";
 import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
 import { CanvasPanController } from "./CanvasPanController";
+import { fabric } from "fabric";
 
 interface ValidCanvasEntity {
   name: string;
@@ -547,7 +548,6 @@ export class Painter implements EventMediator, CanvasBinder {
       );
     }
 
-    console.log("REMOVING", point.id);
     affectedPoint.setVisible(true);
 
     this._pointIdToConnectionEntity.delete(point.id);
@@ -649,7 +649,43 @@ export class Painter implements EventMediator, CanvasBinder {
     this._canvasPanController.togglePanMode(isActive);
   }
 
-  public toDataURI() {
-    return this._canvas.toDataURL({ format: "png" });
+  // public toDataURI() {
+  //   const dataUrl = this._canvas.toDataURL({
+  //     format: "png",
+  //     multiplier: 0.5,
+  //     withoutTransform: true,
+  //   });
+
+  //   return this._flipY(dataUrl);
+  // }
+
+  public async toDataURI() {
+    const dataUrl = this._canvas.toDataURL({
+      format: "png",
+      multiplier: 0.5,
+      withoutTransform: true,
+    });
+
+    return await this._flipY(dataUrl);
+  }
+
+  private _flipY(dataUrl: string) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const image = new Image();
+
+    const promise = new Promise<string>((resolve) => {
+      image.onload = function () {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.scale(1, -1);
+        ctx.drawImage(image, 0, -image.height);
+        resolve(canvas.toDataURL());
+      };
+    });
+
+    image.src = dataUrl;
+
+    return promise;
   }
 }

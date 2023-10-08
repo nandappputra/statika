@@ -145,7 +145,6 @@ export class ConnectionElement implements DiagramElement {
   }
 
   static fromJson(obj: object, pointMap: Map<number, Point>) {
-    console.log("THIS IS THE CONNECTION OBJECT", obj);
     if (
       !("_name" in obj && typeof obj._name === "string") ||
       !("_id" in obj && typeof obj._id === "number") ||

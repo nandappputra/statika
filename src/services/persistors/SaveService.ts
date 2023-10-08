@@ -12,8 +12,8 @@ export class SaveService {
     this._elementFactory = elementFactory;
   }
 
-  public buildPngWithMetadata() {
-    const dataUri = this._painter.toDataURI();
+  public async buildPngWithMetadata() {
+    const dataUri = await this._painter.toDataURI();
 
     const structureMetadata = this._getStructureJson(this._painter);
     const elementFactoryMetadata = this._getElementFactoryJson(

@@ -30,6 +30,9 @@ import { ConnectionElement } from "./models/diagram_elements/ConnectionElement";
 import { ExternalForce } from "./models/diagram_elements/ExternalForce";
 import EntityListSidebar from "./components/EntityListSidebar";
 import { CanvasEntity } from "./models/canvas_entities/CanvasEntity";
+import { SaveService } from "./services/persistors/SaveService";
+import Load from "./components/Load";
+import { LoadService } from "./services/persistors/LoadService";
 
 function App() {
   let canvasRendered = false;
@@ -37,6 +40,7 @@ function App() {
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
   const [tutorialOpen, setTutorialOpen] = useState<boolean>(false);
   const [solutionOpen, setSolutionOpen] = useState<boolean>(false);
+  const [loadOpen, setLoadOpen] = useState<boolean>(false);
 
   const [entityList, setEntityList] = useState<CanvasEntity[]>([]);
   const [selectedName, setSelectedName] = useState<string>("");
@@ -376,14 +380,48 @@ function App() {
     }
   };
 
+  const save = async () => {
+    if (!painterState) {
+      return;
+    }
+
+    const saveService = new SaveService(painterState, elementFactoryState);
+    const imageUri = await saveService.buildPngWithMetadata();
+
+    const link = document.createElement("a");
+    link.download = "structure.statika.png";
+    link.href = imageUri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    return;
+  };
+
+  const load = (dataURI: string) => {
+    if (!painterState) {
+      return;
+    }
+
+    const loadService = new LoadService(painterState, elementFactoryState);
+
+    loadService.loadState(dataURI);
+  };
+
   const closeAllDialogs = () => {
     setAboutOpen(false);
     setTutorialOpen(false);
+    setLoadOpen(false);
   };
 
   return (
     <div>
-      <TitleBar setAboutOpen={setAboutOpen} setTutorialOpen={setTutorialOpen} />
+      <TitleBar
+        save={save}
+        setLoadOpen={setLoadOpen}
+        setAboutOpen={setAboutOpen}
+        setTutorialOpen={setTutorialOpen}
+      />
       <EntityListSidebar
         buildLinkage={buildLinkage}
         entityList={entityList}
@@ -393,6 +431,7 @@ function App() {
       <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
         <About open={aboutOpen} handleClose={closeAllDialogs} />
         <Tutorial open={tutorialOpen} handleClose={closeAllDialogs} />
+        <Load open={loadOpen} handleClose={closeAllDialogs} load={load} />
         <Container maxWidth="xl" sx={{ padding: "1em" }}>
           <SelectedEntity
             name={selectedName}
