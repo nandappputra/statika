@@ -4,6 +4,7 @@ import { Connection } from "./Connection";
 
 export class PinConnection implements Connection {
   private static instance: PinConnection;
+  private _kind = ConnectionKind.PIN;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
@@ -17,7 +18,7 @@ export class PinConnection implements Connection {
   }
 
   get kind() {
-    return ConnectionKind.PIN;
+    return this._kind;
   }
 
   applyBoundaryCondition(point: Point) {

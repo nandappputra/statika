@@ -38,4 +38,24 @@ export class ExternalForce {
   set F_y(F_y: number) {
     this._F_y = new Variable(`${this._name}y`, F_y);
   }
+
+  static fromJson(obj: object) {
+    if (
+      !("_name" in obj && typeof obj._name === "string") ||
+      !("_id" in obj && typeof obj._id === "number") ||
+      !("_F_x" in obj && typeof obj._F_x === "object" && obj._F_x) ||
+      !("_value" in obj._F_x && typeof obj._F_x._value === "number") ||
+      !("_F_y" in obj && typeof obj._F_y === "object" && obj._F_y) ||
+      !("_value" in obj._F_y && typeof obj._F_y._value === "number")
+    ) {
+      throw new Error("Invalid JSON for External Force");
+    }
+
+    return new ExternalForce(
+      obj._name,
+      obj._id,
+      obj._F_x._value,
+      obj._F_y._value
+    );
+  }
 }

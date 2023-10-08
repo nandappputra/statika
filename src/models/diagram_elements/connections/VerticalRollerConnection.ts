@@ -4,6 +4,7 @@ import { Connection } from "./Connection";
 
 export class VerticalRoller implements Connection {
   private static instance: VerticalRoller;
+  private _kind = ConnectionKind.VERTICAL_ROLLER;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
@@ -17,7 +18,7 @@ export class VerticalRoller implements Connection {
   }
 
   get kind() {
-    return ConnectionKind.VERTICAL_ROLLER;
+    return this._kind;
   }
 
   applyBoundaryCondition(point: Point) {

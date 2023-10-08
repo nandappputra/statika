@@ -4,6 +4,7 @@ import { Connection } from "./Connection";
 
 export class HorizontalRollerConnection implements Connection {
   private static instance: HorizontalRollerConnection;
+  private _kind = ConnectionKind.HORIZONTAL_ROLLER;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
@@ -17,7 +18,7 @@ export class HorizontalRollerConnection implements Connection {
   }
 
   get kind() {
-    return ConnectionKind.HORIZONTAL_ROLLER;
+    return this._kind;
   }
 
   applyBoundaryCondition(point: Point) {

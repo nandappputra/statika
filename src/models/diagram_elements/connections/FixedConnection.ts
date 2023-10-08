@@ -4,6 +4,7 @@ import { Connection } from "./Connection";
 
 export class FixedConnection implements Connection {
   private static instance: FixedConnection;
+  private _kind = ConnectionKind.FIXED;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
@@ -17,7 +18,7 @@ export class FixedConnection implements Connection {
   }
 
   get kind() {
-    return ConnectionKind.FIXED;
+    return this._kind;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

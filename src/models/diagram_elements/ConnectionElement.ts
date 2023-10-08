@@ -143,4 +143,44 @@ export class ConnectionElement implements DiagramElement {
   get kind() {
     return this._connection.kind;
   }
+
+  static fromJson(obj: object, pointMap: Map<number, Point>) {
+    console.log("THIS IS THE CONNECTION OBJECT", obj);
+    if (
+      !("_name" in obj && typeof obj._name === "string") ||
+      !("_id" in obj && typeof obj._id === "number") ||
+      !("_points" in obj && Array.isArray(obj._points)) ||
+      !(
+        "_connection" in obj &&
+        obj._connection &&
+        typeof obj._connection === "object" &&
+        "_kind" in obj._connection &&
+        typeof obj._connection._kind === "string" &&
+        Object.values<string>(ConnectionKind).includes(obj._connection._kind)
+      )
+    ) {
+      throw new Error("Invalid JSON for Connection");
+    }
+
+    const points: Point[] = [];
+
+    obj._points.forEach((point: object) => {
+      points.push(Point.fromJson(point, pointMap));
+    });
+
+    const connection = new ConnectionElement(
+      obj._name,
+      obj._id,
+      points,
+      obj._connection._kind as ConnectionKind
+    );
+
+    if ("_externalForces" in obj && Array.isArray(obj._externalForces)) {
+      obj._externalForces.forEach((force: object) => {
+        connection.addExternalForce(ExternalForce.fromJson(force));
+      });
+    }
+
+    return connection;
+  }
 }

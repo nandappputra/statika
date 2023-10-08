@@ -70,4 +70,35 @@ export class LinkageElement implements DiagramElement {
   removePoint(point: Point) {
     this._points = this._points.filter((data) => data.name !== point.name);
   }
+
+  static fromJson(obj: object, pointMap: Map<number, Point>) {
+    if (
+      !("_name" in obj && typeof obj._name === "string") ||
+      !("_id" in obj && typeof obj._id === "number") ||
+      !("_points" in obj && Array.isArray(obj._points))
+    ) {
+      throw new Error("Invalid JSON for Linkage");
+    }
+
+    const points: Point[] = [];
+
+    obj._points.forEach((point: object) => {
+      points.push(Point.fromJson(point, pointMap));
+    });
+
+    const linkage = new LinkageElement(
+      obj._name,
+      obj._id,
+      points[0],
+      points[1]
+    );
+
+    if (points.length > 2) {
+      for (let i = 2; i < points.length; i++) {
+        linkage.addPoint(points[i]);
+      }
+    }
+
+    return linkage;
+  }
 }
