@@ -15,12 +15,19 @@ import { VerticalRoller } from "./connections/VerticalRollerConnection";
 
 export class ConnectionElement implements DiagramElement {
   private _name: string;
+  private _id: number;
   private _points: Point[];
   private _connection: Connection;
   private _externalForces: ExternalForce[];
 
-  constructor(name: string, points: Point[], connectionType: ConnectionKind) {
+  constructor(
+    name: string,
+    id: number,
+    points: Point[],
+    connectionType: ConnectionKind
+  ) {
     this._name = name;
+    this._id = id;
     this._points = points;
     this._connection = this.retrieveConnectionInstance(connectionType);
     this._externalForces = [];
@@ -62,6 +69,10 @@ export class ConnectionElement implements DiagramElement {
 
   get name() {
     return this._name;
+  }
+
+  get id() {
+    return this._id;
   }
 
   get externalForces() {
@@ -131,5 +142,44 @@ export class ConnectionElement implements DiagramElement {
 
   get kind() {
     return this._connection.kind;
+  }
+
+  static fromJson(obj: object, pointMap: Map<number, Point>) {
+    if (
+      !("_name" in obj && typeof obj._name === "string") ||
+      !("_id" in obj && typeof obj._id === "number") ||
+      !("_points" in obj && Array.isArray(obj._points)) ||
+      !(
+        "_connection" in obj &&
+        obj._connection &&
+        typeof obj._connection === "object" &&
+        "_kind" in obj._connection &&
+        typeof obj._connection._kind === "string" &&
+        Object.values<string>(ConnectionKind).includes(obj._connection._kind)
+      )
+    ) {
+      throw new Error("Invalid JSON for Connection");
+    }
+
+    const points: Point[] = [];
+
+    obj._points.forEach((point: object) => {
+      points.push(Point.fromJson(point, pointMap));
+    });
+
+    const connection = new ConnectionElement(
+      obj._name,
+      obj._id,
+      points,
+      obj._connection._kind as ConnectionKind
+    );
+
+    if ("_externalForces" in obj && Array.isArray(obj._externalForces)) {
+      obj._externalForces.forEach((force: object) => {
+        connection.addExternalForce(ExternalForce.fromJson(force));
+      });
+    }
+
+    return connection;
   }
 }

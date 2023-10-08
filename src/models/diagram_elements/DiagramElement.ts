@@ -2,6 +2,7 @@ import { Point } from "./Point";
 
 export interface DiagramElement {
   name: string;
+  id: number;
   points: Point[];
 
   generateEquilibrium(): string[];

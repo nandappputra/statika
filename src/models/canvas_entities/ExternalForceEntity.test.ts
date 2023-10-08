@@ -25,6 +25,7 @@ describe("ExternalForceEntity", () => {
   describe("getObjectsToDraw", () => {
     test("Should return an array of Fabric Object with name and type in its data", () => {
       setMockProperty(externalForce, "name", "F1");
+      setMockProperty(externalForce, "id", 1);
 
       externalForceEntity = new ExternalForceEntity(
         externalForce,
@@ -35,6 +36,7 @@ describe("ExternalForceEntity", () => {
       const actualObjects = externalForceEntity.getObjectsToDraw();
       const expectedObject = {
         name: "F1",
+        id: 1,
         type: EntityPrefix.FORCE,
       };
 
@@ -45,6 +47,7 @@ describe("ExternalForceEntity", () => {
   describe("updatePosition", () => {
     test("Should update the position of the icon", () => {
       setMockProperty(externalForce, "name", "F1");
+      setMockProperty(externalForce, "id", 1);
       externalForceEntity = new ExternalForceEntity(
         externalForce,
         point,
@@ -52,8 +55,8 @@ describe("ExternalForceEntity", () => {
       );
 
       const movePointEvent: MovePointEvent = {
-        name: "P1",
-        source: "user",
+        id: 1,
+        source: 0,
         coordinate: { x: 20, y: 10 },
       };
 

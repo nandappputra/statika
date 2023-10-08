@@ -7,10 +7,12 @@ import { DiagramElement } from "./DiagramElement";
 
 export class LinkageElement implements DiagramElement {
   private _name: string;
+  private _id: number;
   private _points: Point[];
 
-  constructor(name: string, p1: Point, p2: Point) {
+  constructor(name: string, id: number, p1: Point, p2: Point) {
     this._name = name;
+    this._id = id;
     this._points = [p1, p2];
   }
 
@@ -57,11 +59,46 @@ export class LinkageElement implements DiagramElement {
     return this._name;
   }
 
+  get id() {
+    return this._id;
+  }
+
   addPoint(point: Point) {
     this._points.push(point);
   }
 
   removePoint(point: Point) {
     this._points = this._points.filter((data) => data.name !== point.name);
+  }
+
+  static fromJson(obj: object, pointMap: Map<number, Point>) {
+    if (
+      !("_name" in obj && typeof obj._name === "string") ||
+      !("_id" in obj && typeof obj._id === "number") ||
+      !("_points" in obj && Array.isArray(obj._points))
+    ) {
+      throw new Error("Invalid JSON for Linkage");
+    }
+
+    const points: Point[] = [];
+
+    obj._points.forEach((point: object) => {
+      points.push(Point.fromJson(point, pointMap));
+    });
+
+    const linkage = new LinkageElement(
+      obj._name,
+      obj._id,
+      points[0],
+      points[1]
+    );
+
+    if (points.length > 2) {
+      for (let i = 2; i < points.length; i++) {
+        linkage.addPoint(points[i]);
+      }
+    }
+
+    return linkage;
   }
 }

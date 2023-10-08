@@ -15,13 +15,11 @@ import { IGroupOptions } from "fabric/fabric-impl";
 export class ConnectionEntity implements CanvasEntity {
   private _kind = EntityKind.CONNECTION;
 
-  private _name: string;
   private _connection: ConnectionElement;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
 
   constructor(connection: ConnectionElement, eventMediator: EventMediator) {
-    this._name = connection.name;
     this._connection = connection;
     this._eventMediator = eventMediator;
     this._icon = this.buildIcon(connection, connection.kind);
@@ -32,7 +30,7 @@ export class ConnectionEntity implements CanvasEntity {
     this._icon.set("top", movePointEvent.coordinate.y);
     this._icon.setCoords();
 
-    this.propagateEvent({ ...movePointEvent, source: this._connection.name });
+    this.propagateEvent({ ...movePointEvent, source: this._connection.id });
   }
 
   public getObjectsToDraw() {
@@ -41,16 +39,23 @@ export class ConnectionEntity implements CanvasEntity {
 
   private propagateEvent(movePointEvent: MovePointEvent) {
     this._connection.points.forEach((point) => {
-      const moveEvent: MovePointEvent = { ...movePointEvent, name: point.name };
+      const moveEvent: MovePointEvent = { ...movePointEvent, id: point.id };
       this._eventMediator.updatePointPosition(moveEvent);
     });
 
-    const moveEvent: MovePointEvent = { ...movePointEvent, name: this._name };
+    const moveEvent: MovePointEvent = {
+      ...movePointEvent,
+      id: this._connection.id,
+    };
     this._eventMediator.updatePointPosition(moveEvent);
   }
 
   get name() {
-    return this._name;
+    return this._connection.name;
+  }
+
+  get id() {
+    return this._connection.id;
   }
 
   get kind() {
@@ -74,13 +79,16 @@ export class ConnectionEntity implements CanvasEntity {
   }
 
   public deletePoint(point: Point) {
-    if (!this._icon.data?.pointName) {
-      throw new Error("missing pointName in metadata");
+    if (!this._icon.data?.pointId) {
+      throw new Error("missing pointId in metadata");
     }
 
-    this._icon.data.pointName = this._connection.points[0].name;
-
     this._connection.removePoint(point);
+    const points = this._connection.points;
+
+    if (points.length > 0) {
+      this._icon.data.pointId = this._connection.points[0].id;
+    }
   }
 
   public addExternalForce(externalForce: ExternalForce) {
@@ -135,8 +143,9 @@ export class ConnectionEntity implements CanvasEntity {
       hasControls: false,
       data: {
         name: connection.name,
-        pointName: connection.points[0].name,
+        pointId: connection.points[0].id,
         type: EntityPrefix.CONNECTION,
+        id: connection.id,
       },
     });
 
@@ -200,8 +209,9 @@ export class ConnectionEntity implements CanvasEntity {
       hasControls: false,
       data: {
         name: connection.name,
-        pointName: connection.points[0].name,
+        pointId: connection.points[0].id,
         type: EntityPrefix.CONNECTION,
+        id: connection.id,
       },
     });
   }
@@ -218,8 +228,9 @@ export class ConnectionEntity implements CanvasEntity {
       top: connection.points[0].y,
       data: {
         name: connection.name,
-        pointName: connection.points[0].name,
+        pointId: connection.points[0].id,
         type: EntityPrefix.CONNECTION,
+        id: connection.id,
       },
       hasControls: false,
     });
@@ -273,8 +284,9 @@ export class ConnectionEntity implements CanvasEntity {
       hasControls: false,
       data: {
         name: connection.name,
-        pointName: connection.points[0].name,
+        pointId: connection.points[0].id,
         type: EntityPrefix.CONNECTION,
+        id: connection.id,
       },
     });
   }

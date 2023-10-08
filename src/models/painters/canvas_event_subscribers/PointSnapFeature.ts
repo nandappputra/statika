@@ -12,14 +12,14 @@ import { Painter } from "../Painter";
 import { BaseSubscriber } from "./BaseSubscriber";
 
 export class PointSnapFeature extends BaseSubscriber {
-  private _freePoints: Set<string>;
-  private _connections: Set<string>;
+  private _freePoints: Set<number>;
+  private _connections: Set<number>;
   private _elementFactory: ElementFactory;
 
   constructor(elementFactory: ElementFactory) {
     super();
-    this._freePoints = new Set<string>();
-    this._connections = new Set<string>();
+    this._freePoints = new Set<number>();
+    this._connections = new Set<number>();
     this._elementFactory = elementFactory;
   }
 
@@ -29,13 +29,13 @@ export class PointSnapFeature extends BaseSubscriber {
   ): void {
     if (element instanceof LinkageElement) {
       element.points.forEach((point) => {
-        this._freePoints.add(point.name);
+        this._freePoints.add(point.id);
       });
     } else if (element instanceof ConnectionElement) {
       element.points.forEach((point) => {
-        this._freePoints.delete(point.name);
+        this._freePoints.delete(point.id);
       });
-      this._connections.add(element.name);
+      this._connections.add(element.id);
     }
   }
 
@@ -45,13 +45,13 @@ export class PointSnapFeature extends BaseSubscriber {
   ): void {
     if (element instanceof LinkageElement) {
       element.points.forEach((point) => {
-        this._freePoints.delete(point.name);
+        this._freePoints.delete(point.id);
       });
     } else if (element instanceof ConnectionElement) {
       element.points.forEach((point) => {
-        this._freePoints.add(point.name);
+        this._freePoints.add(point.id);
       });
-      this._connections.delete(element.name);
+      this._connections.delete(element.id);
     }
   }
 
@@ -62,7 +62,7 @@ export class PointSnapFeature extends BaseSubscriber {
     const entity = movePointEvent.entity;
     if (
       !(entity instanceof PointEntity) ||
-      !this._freePoints.has(movePointEvent.name)
+      !this._freePoints.has(movePointEvent.id)
     ) {
       return;
     }
@@ -77,7 +77,7 @@ export class PointSnapFeature extends BaseSubscriber {
         }
 
         if (
-          movePointEvent.name != point &&
+          movePointEvent.id != point &&
           this.distance(
             { x: entity.getElement().x, y: entity.getElement().y },
             {
@@ -86,7 +86,7 @@ export class PointSnapFeature extends BaseSubscriber {
             }
           ) < 20
         ) {
-          const p1 = painter.getPoint(movePointEvent.name);
+          const p1 = painter.getPoint(movePointEvent.id);
           const p2 = referencePoint;
 
           if (!p1) {
@@ -102,11 +102,11 @@ export class PointSnapFeature extends BaseSubscriber {
           added = true;
 
           painter.updatePointPosition({
-            name: p1.name,
-            source: newConnection.name,
+            id: p1.id,
+            source: newConnection.id,
             coordinate: { x: p2.x, y: p2.y },
           });
-          painter.setFocus(newConnection.name);
+          painter.setFocus(newConnection.id);
         }
       }
     });
@@ -115,13 +115,13 @@ export class PointSnapFeature extends BaseSubscriber {
       return;
     }
 
-    const toRemove: string[] = [];
+    const toRemove: number[] = [];
     this._connections.forEach((connection) => {
       if (added) {
         return;
       }
 
-      const connectionEntity = painter.getEntityByName(connection);
+      const connectionEntity = painter.getEntityById(connection);
 
       if (
         !connectionEntity ||
@@ -131,7 +131,7 @@ export class PointSnapFeature extends BaseSubscriber {
       }
 
       if (
-        movePointEvent.name != connection &&
+        movePointEvent.id != connection &&
         this.distance(
           { x: entity.getElement().x, y: entity.getElement().y },
           {
@@ -145,11 +145,11 @@ export class PointSnapFeature extends BaseSubscriber {
 
         painter.addPointToConnection(point, connectionEntity.getElement());
         added = true;
-        toRemove.push(point.name);
+        toRemove.push(point.id);
 
         painter.updatePointPosition({
-          name: point.name,
-          source: connectionEntity.getElement().name,
+          id: point.id,
+          source: connectionEntity.getElement().id,
           coordinate: { x: p2.x, y: p2.y },
         });
       }
@@ -163,7 +163,7 @@ export class PointSnapFeature extends BaseSubscriber {
     linkage: LinkageElement,
     point: Point
   ): void {
-    this._freePoints.add(point.name);
+    this._freePoints.add(point.id);
   }
 
   override handlePointRemoval(
@@ -171,7 +171,7 @@ export class PointSnapFeature extends BaseSubscriber {
     linkage: LinkageElement,
     point: Point
   ): void {
-    this._freePoints.delete(point.name);
+    this._freePoints.delete(point.id);
   }
 
   override handlePointDisconnection(
@@ -179,7 +179,7 @@ export class PointSnapFeature extends BaseSubscriber {
     _connection: ConnectionElement,
     point: Point
   ): void {
-    this._freePoints.add(point.name);
+    this._freePoints.add(point.id);
   }
 
   private distance(coordinate1: Coordinate, coordinate2: Coordinate) {

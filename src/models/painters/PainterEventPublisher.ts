@@ -29,20 +29,24 @@ export class PainterEventPublisher
     this._subscribers.push(subscriber);
   }
 
-  getEntityByName(name: string): CanvasEntity | undefined {
-    return this._painter.getEntityByName(name);
+  getEntityById(id: number): CanvasEntity | undefined {
+    return this._painter.getEntityById(id);
   }
 
   getAllEntityName(): string[] {
     return this._painter.getAllEntityName();
   }
 
+  getAllEntities(): CanvasEntity[] {
+    return this._painter.getAllEntities();
+  }
+
   getCanvasEntity(diagramElement: DiagramElement): CanvasEntity | undefined {
     return this._painter.getCanvasEntity(diagramElement);
   }
 
-  getPoint(pointName: string): Point | undefined {
-    return this._painter.getPoint(pointName);
+  getPoint(pointId: number): Point | undefined {
+    return this._painter.getPoint(pointId);
   }
 
   getLinkageFromPoint(point: Point): LinkageEntity | undefined {
@@ -53,8 +57,8 @@ export class PainterEventPublisher
     return this._painter.getCanvasCenter();
   }
 
-  setFocus(name: string): void {
-    return this._painter.setFocus(name);
+  setFocus(id: number): void {
+    return this._painter.setFocus(id);
   }
 
   clearFocus(): void {

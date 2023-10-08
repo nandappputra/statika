@@ -8,13 +8,11 @@ import { EntityKind, EntityPrefix } from "../../utils/Constants";
 export class PointEntity implements CanvasEntity {
   private _kind = EntityKind.POINT;
 
-  private _name: string;
   private _point: Point;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
 
   constructor(point: Point, eventMediator: EventMediator) {
-    this._name = point.name;
     this._point = point;
     this._eventMediator = eventMediator;
     this._icon = this._buildIcon(point);
@@ -34,7 +32,11 @@ export class PointEntity implements CanvasEntity {
   }
 
   get name() {
-    return this._name;
+    return this._point.name;
+  }
+
+  get id() {
+    return this._point.id;
   }
 
   get kind() {
@@ -59,7 +61,7 @@ export class PointEntity implements CanvasEntity {
       hasControls: false,
       data: {
         name: point.name,
-        pointName: point.name,
+        id: point.id,
         type: EntityPrefix.POINT,
       },
     });

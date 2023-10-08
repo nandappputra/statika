@@ -31,9 +31,9 @@ describe("Painter", () => {
 
   describe("addElement", () => {
     test("Should add the element and the points to the canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -46,10 +46,11 @@ describe("Painter", () => {
     });
 
     test("Should notify the features about the element addition", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.FIXED
       );
@@ -66,11 +67,12 @@ describe("Painter", () => {
     });
 
     test("Should make the pointEntity invisible when adding a connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.PIN_JOINT
       );
@@ -84,21 +86,20 @@ describe("Painter", () => {
       painter.addElement(linkage);
       painter.addElement(connection);
 
-      expect(painter.getEntityByName("P1")?.getObjectsToDraw().visible).toBe(
-        false
-      );
+      expect(painter.getEntityById(1)?.getObjectsToDraw().visible).toBe(false);
     });
 
     test("Should add all the external forces when adding a connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.PIN_JOINT
       );
-      const force = new ExternalForce("F1", 1, 2);
+      const force = new ExternalForce("F1", 5, 1, 2);
       connection.addExternalForce(force);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -117,17 +118,18 @@ describe("Painter", () => {
         painter
       );
 
-      expect(painter.getEntityByName("F1")).toStrictEqual(expectedEntity);
+      expect(painter.getEntityById(5)).toStrictEqual(expectedEntity);
     });
 
     test("Should not cause duplicate when merging a point with external force", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
-      const force = new ExternalForce("F1", 1, 2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
+      const force = new ExternalForce("F1", 4, 1, 2);
       point1.addExternalForce(force);
       const connection = new ConnectionElement(
         "C1",
+        5,
         [point1],
         ConnectionKind.PIN_JOINT
       );
@@ -148,9 +150,9 @@ describe("Painter", () => {
 
   describe("removeElement", () => {
     test("Should remove the element and the points from the canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -173,11 +175,12 @@ describe("Painter", () => {
     });
 
     test("Should make the pointEntity visible when removing a connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.PIN_JOINT
       );
@@ -192,17 +195,16 @@ describe("Painter", () => {
       painter.addElement(connection);
       painter.removeElement(connection);
 
-      expect(painter.getEntityByName("P1")?.getObjectsToDraw().visible).toBe(
-        true
-      );
+      expect(painter.getEntityById(1)?.getObjectsToDraw().visible).toBe(true);
     });
 
     test("Should notify point disconnection when removing a connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
@@ -236,11 +238,12 @@ describe("Painter", () => {
     });
 
     test("Should remove the boundary condition applied to the point when removing a connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.PIN_JOINT
       );
@@ -259,11 +262,12 @@ describe("Painter", () => {
     });
 
     test("Should remove the forces attached to a connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.PIN_JOINT
       );
@@ -279,7 +283,7 @@ describe("Painter", () => {
       painter.addElement(linkage);
       painter.addElement(connection);
 
-      const force = new ExternalForce("F1", 1, 2);
+      const force = new ExternalForce("F1", 5, 1, 2);
       painter.addExternalLoad(connection, force);
 
       painter.removeElement(connection);
@@ -288,9 +292,9 @@ describe("Painter", () => {
     });
 
     test("Should notify the feature after actually removing the element", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       let numberOfElement = 99;
 
       canvas.add = jest.fn();
@@ -312,9 +316,9 @@ describe("Painter", () => {
 
   describe("addExternalLoad", () => {
     test("Should add the force to the point and the canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -328,7 +332,7 @@ describe("Painter", () => {
       eventSubscriber.handleForceAddition = handleForceAddition;
       painter.addElement(linkage);
 
-      const force = new ExternalForce("F1", 20, 30);
+      const force = new ExternalForce("F1", 4, 20, 30);
 
       painter.addExternalLoad(point1, force);
 
@@ -339,9 +343,9 @@ describe("Painter", () => {
     });
 
     test("Should notify the features about the force addition", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -355,7 +359,7 @@ describe("Painter", () => {
       eventSubscriber.handleForceAddition = handleForceAddition;
       painter.addElement(linkage);
 
-      const force = new ExternalForce("F1", 20, 30);
+      const force = new ExternalForce("F1", 4, 20, 30);
 
       painter.addExternalLoad(point1, force);
 
@@ -365,9 +369,9 @@ describe("Painter", () => {
 
   describe("removeExternalLoad", () => {
     test("Should remove the force from the point and the canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -392,7 +396,7 @@ describe("Painter", () => {
       eventSubscriber.handleForceRemoval = handleForceRemoval;
       painter.addElement(linkage);
 
-      const force = new ExternalForce("F1", 20, 30);
+      const force = new ExternalForce("F1", 4, 20, 30);
 
       painter.addExternalLoad(point1, force);
 
@@ -404,9 +408,9 @@ describe("Painter", () => {
     });
 
     test("Should notify the features about the force removal", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -431,7 +435,7 @@ describe("Painter", () => {
       eventSubscriber.handleForceRemoval = handleForceRemoval;
       painter.addElement(linkage);
 
-      const force = new ExternalForce("F1", 20, 30);
+      const force = new ExternalForce("F1", 4, 20, 30);
 
       painter.addExternalLoad(point1, force);
 
@@ -441,9 +445,9 @@ describe("Painter", () => {
     });
 
     test("Should throw error when the force is not found", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
       canvas.add = addToCanvas;
@@ -468,8 +472,8 @@ describe("Painter", () => {
       eventSubscriber.handleForceRemoval = handleForceRemoval;
       painter.addElement(linkage);
 
-      const force1 = new ExternalForce("F1", 20, 30);
-      const force2 = new ExternalForce("F2", 20, 30);
+      const force1 = new ExternalForce("F1", 4, 20, 30);
+      const force2 = new ExternalForce("F2", 5, 20, 30);
 
       painter.addExternalLoad(point1, force1);
 
@@ -481,16 +485,17 @@ describe("Painter", () => {
 
   describe("addPointToConnection", () => {
     test("Should add the specified point to the connection element", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      const point3 = new Point("P3", 5, 6);
-      const point4 = new Point("P4", 7, 8);
-      const linkage = new LinkageElement("L1", point3, point4);
+      const point3 = new Point("P3", 4, 5, 6);
+      const point4 = new Point("P4", 5, 7, 8);
+      const linkage = new LinkageElement("L1", 6, point3, point4);
 
       eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
@@ -502,14 +507,15 @@ describe("Painter", () => {
     });
 
     test("Should throw error when the connection or point is not found", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 3, 5, 6);
 
       expect(() => painter.addPointToConnection(point3, connection)).toThrow(
         "failed to add point to connection: missing or invalid entity"
@@ -517,16 +523,17 @@ describe("Painter", () => {
     });
 
     test("Should mark the pointEntity as invisible", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      const point3 = new Point("P3", 5, 6);
-      const point4 = new Point("P4", 7, 8);
-      const linkage = new LinkageElement("L1", point3, point4);
+      const point3 = new Point("P3", 4, 5, 6);
+      const point4 = new Point("P4", 5, 7, 8);
+      const linkage = new LinkageElement("L1", 6, point3, point4);
 
       eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
@@ -534,24 +541,23 @@ describe("Painter", () => {
 
       painter.addPointToConnection(point3, connection);
 
-      expect(painter.getEntityByName("P3")?.getObjectsToDraw().visible).toBe(
-        false
-      );
+      expect(painter.getEntityById(4)?.getObjectsToDraw().visible).toBe(false);
     });
 
     test("Should move the forces in the point to the connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      const point3 = new Point("P3", 5, 6);
-      const point4 = new Point("P4", 7, 8);
-      const linkage = new LinkageElement("L1", point3, point4);
+      const point3 = new Point("P3", 4, 5, 6);
+      const point4 = new Point("P4", 5, 7, 8);
+      const linkage = new LinkageElement("L1", 6, point3, point4);
 
-      const force = new ExternalForce("F1", 1, 2);
+      const force = new ExternalForce("F1", 7, 1, 2);
 
       eventSubscriber.handleForceRemoval = jest.fn();
       eventSubscriber.handleForceAddition = jest.fn();
@@ -570,10 +576,11 @@ describe("Painter", () => {
 
   describe("removePointFromConnection", () => {
     test("Should remove the specified point from the connection element", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
@@ -587,14 +594,15 @@ describe("Painter", () => {
     });
 
     test("Should throw error when the connection is not found", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
 
       expect(() =>
         painter.removePointFromConnection(point3, connection)
@@ -604,10 +612,11 @@ describe("Painter", () => {
     });
 
     test("Should notify the features about the point disconnection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
@@ -629,9 +638,10 @@ describe("Painter", () => {
     });
 
     test("Should trigger connection deletion when there is no point left", () => {
-      const point1 = new Point("P1", 1, 2);
+      const point1 = new Point("P1", 1, 1, 2);
       const connection = new ConnectionElement(
         "C1",
+        2,
         [point1],
         ConnectionKind.HORIZONTAL_ROLLER
       );
@@ -654,16 +664,17 @@ describe("Painter", () => {
     });
 
     test("Should mark the pointEntity as visible", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.HORIZONTAL_ROLLER
       );
-      const point3 = new Point("P3", 5, 6);
-      const point4 = new Point("P4", 7, 8);
-      const linkage = new LinkageElement("L1", point3, point4);
+      const point3 = new Point("P3", 4, 5, 6);
+      const point4 = new Point("P4", 5, 7, 8);
+      const linkage = new LinkageElement("L1", 6, point3, point4);
 
       eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(connection);
@@ -671,17 +682,15 @@ describe("Painter", () => {
 
       painter.addPointToConnection(point3, connection);
 
-      expect(painter.getEntityByName("P3")?.getObjectsToDraw().visible).toBe(
-        false
-      );
+      expect(painter.getEntityById(4)?.getObjectsToDraw().visible).toBe(false);
     });
   });
 
   describe("addPointToLinkage", () => {
     test("Should add the specified point to the linkage element and canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       const addToCanvas =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -689,7 +698,7 @@ describe("Painter", () => {
       eventSubscriber.handleElementAddition = jest.fn();
       eventSubscriber.handlePointAddition = jest.fn();
       painter.addElement(linkage);
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
 
       painter.addPointToLinkage(point3, linkage);
 
@@ -699,9 +708,9 @@ describe("Painter", () => {
     });
 
     test("Should notify the features about the point addition", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       eventSubscriber.handleElementAddition = jest.fn();
       const handlePointAddition =
@@ -710,7 +719,7 @@ describe("Painter", () => {
         >();
       eventSubscriber.handlePointAddition = handlePointAddition;
       painter.addElement(linkage);
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
 
       painter.addPointToLinkage(point3, linkage);
 
@@ -719,11 +728,11 @@ describe("Painter", () => {
     });
 
     test("Should throw error when the linkage is not found", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
 
       expect(() => painter.addPointToLinkage(point3, linkage)).toThrow(
         "failed to add point to linkage: missing or invalid entity found"
@@ -733,13 +742,13 @@ describe("Painter", () => {
 
   describe("removePointFromLinkage", () => {
     test("Should throw error when the point is not found", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       eventSubscriber.handleElementAddition = jest.fn();
       painter.addElement(linkage);
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
 
       expect(() => painter.removePointFromLinkage(point3, linkage)).toThrow(
         "failed to remove point from linkage: unrecognized point"
@@ -747,9 +756,9 @@ describe("Painter", () => {
     });
 
     test("Should remove the point from the linkage and canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -759,7 +768,7 @@ describe("Painter", () => {
       eventSubscriber.handlePointRemoval = jest.fn();
       painter.addElement(linkage);
 
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
       painter.addPointToLinkage(point3, linkage);
 
       painter.removePointFromLinkage(point2, linkage);
@@ -770,9 +779,9 @@ describe("Painter", () => {
     });
 
     test("Should notify the feature about the point removal", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -786,7 +795,7 @@ describe("Painter", () => {
       eventSubscriber.handlePointRemoval = handlePointRemoval;
       painter.addElement(linkage);
 
-      const point3 = new Point("P3", 5, 6);
+      const point3 = new Point("P3", 4, 5, 6);
       painter.addPointToLinkage(point3, linkage);
 
       painter.removePointFromLinkage(point2, linkage);
@@ -795,9 +804,9 @@ describe("Painter", () => {
     });
 
     test("Should remove the point from the connection if the point is a member of connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -812,10 +821,11 @@ describe("Painter", () => {
       eventSubscriber.handlePointRemoval = handlePointRemoval;
       painter.addElement(linkage);
 
-      const point3 = new Point("P3", 5, 6);
-      const point4 = new Point("P4", 7, 8);
+      const point3 = new Point("P3", 4, 5, 6);
+      const point4 = new Point("P4", 5, 7, 8);
       const connection = new ConnectionElement(
         "C1",
+        6,
         [point3, point4],
         ConnectionKind.HORIZONTAL_ROLLER
       );
@@ -828,9 +838,9 @@ describe("Painter", () => {
     });
 
     test("Should remove force that is attached to the point", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       const remove =
         jest.fn<(...object: fabric.Object[]) => fabric.StaticCanvas>();
@@ -847,10 +857,10 @@ describe("Painter", () => {
       eventSubscriber.handlePointRemoval = handlePointRemoval;
       painter.addElement(linkage);
 
-      const point3 = new Point("P3", 4, 5);
+      const point3 = new Point("P3", 4, 4, 5);
       painter.addPointToLinkage(point3, linkage);
 
-      const force = new ExternalForce("F1", 100, 100);
+      const force = new ExternalForce("F1", 5, 100, 100);
       painter.addExternalLoad(point2, force);
 
       painter.removePointFromLinkage(point2, linkage);
@@ -859,9 +869,9 @@ describe("Painter", () => {
     });
 
     test("Should remove the linkage if there is only 1 point left", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       canvas.remove = jest.fn();
       eventSubscriber.handleElementAddition = jest.fn();
@@ -875,11 +885,12 @@ describe("Painter", () => {
     });
 
     test("Should be capable of deleting a connection that is connected to the linkage", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.FIXED
       );
@@ -900,9 +911,9 @@ describe("Painter", () => {
 
   describe("updatePointPosition", () => {
     test("Should update the position of the point", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       eventSubscriber.handlePointUpdate = jest.fn();
       eventSubscriber.handleElementAddition = jest.fn();
@@ -910,8 +921,8 @@ describe("Painter", () => {
       painter.addElement(linkage);
 
       const movePointEvent: MovePointEvent = {
-        name: "P1",
-        source: "user",
+        id: 1,
+        source: 0,
         coordinate: { x: 10, y: 20 },
       };
 
@@ -922,9 +933,9 @@ describe("Painter", () => {
     });
 
     test("Should update the position of the force within that point", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       eventSubscriber.handlePointUpdate = jest.fn();
       eventSubscriber.handleElementAddition = jest.fn();
@@ -933,24 +944,24 @@ describe("Painter", () => {
       painter.addElement(linkage);
 
       const movePointEvent: MovePointEvent = {
-        name: "P1",
-        source: "user",
+        id: 1,
+        source: 0,
         coordinate: { x: 10, y: 20 },
       };
 
-      const force = new ExternalForce("F1", 20, 30);
+      const force = new ExternalForce("F1", 4, 20, 30);
       painter.addExternalLoad(point1, force);
 
       painter.updatePointPosition(movePointEvent);
 
-      expect(painter.getEntityByName("F1")?.getObjectsToDraw().left).toBe(10);
-      expect(painter.getEntityByName("F1")?.getObjectsToDraw().top).toBe(20);
+      expect(painter.getEntityById(4)?.getObjectsToDraw().left).toBe(10);
+      expect(painter.getEntityById(4)?.getObjectsToDraw().top).toBe(20);
     });
 
     test("Should notify the subscriber about the update", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
 
       const handlePointUpdate =
         jest.fn<(painter: Painter, movePointEvent: MovePointEvent) => void>();
@@ -959,8 +970,8 @@ describe("Painter", () => {
       painter.addElement(linkage);
 
       const movePointEvent: MovePointEvent = {
-        name: "P1",
-        source: "user",
+        id: 1,
+        source: 0,
         coordinate: { x: 10, y: 20 },
       };
 
@@ -972,9 +983,9 @@ describe("Painter", () => {
 
   describe("setFocus", () => {
     test("Should set the active object of the canvas", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       canvas.add = jest.fn();
       eventSubscriber.handleElementAddition = jest.fn();
       const setActiveObject =
@@ -987,16 +998,16 @@ describe("Painter", () => {
 
       painter.addElement(linkage);
 
-      painter.setFocus(linkage.name);
+      painter.setFocus(linkage.id);
 
       expect(setActiveObject).toBeCalledTimes(1);
       expect(renderAll).toBeCalledTimes(1);
     });
 
     test("Should throw error when the object is not found", () => {
-      const point1 = new Point("P1", 1, 2);
+      const point1 = new Point("P1", 1, 1, 2);
 
-      expect(() => painter.setFocus(point1.name)).toThrow(
+      expect(() => painter.setFocus(point1.id)).toThrow(
         "failed to set focus: object not found"
       );
     });
@@ -1004,7 +1015,7 @@ describe("Painter", () => {
 
   describe("updateForce", () => {
     test("Should throw error when the force is not found", () => {
-      const externalForce = new ExternalForce("F1", 100, 200);
+      const externalForce = new ExternalForce("F1", 4, 100, 200);
 
       expect(() => painter.updateForce(externalForce, 20, 20)).toThrow(
         "failed to update force: missing or invalid force"
@@ -1012,14 +1023,14 @@ describe("Painter", () => {
     });
 
     test("Should update the components of the force", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       canvas.add = jest.fn();
       eventSubscriber.handleElementAddition = jest.fn();
       eventSubscriber.handleForceAddition = jest.fn();
       painter.addElement(linkage);
-      const force = new ExternalForce("F1", 20, 30);
+      const force = new ExternalForce("F1", 4, 20, 30);
       painter.addExternalLoad(point1, force);
 
       painter.updateForce(force, 1, 2);
@@ -1031,10 +1042,11 @@ describe("Painter", () => {
 
   describe("changeConnectionType", () => {
     test("Should throw error when the connection is not found", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.FIXED
       );
@@ -1047,10 +1059,11 @@ describe("Painter", () => {
     });
 
     test("Should change the type of the connection element", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
@@ -1067,10 +1080,11 @@ describe("Painter", () => {
     });
 
     test("Should replace the icon of the connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
       const connection = new ConnectionElement(
         "C1",
+        3,
         [point1, point2],
         ConnectionKind.PIN_JOINT
       );
@@ -1084,14 +1098,14 @@ describe("Painter", () => {
 
       painter.addElement(connection);
 
-      const before = painter.getEntityByName("C1")?.getObjectsToDraw();
+      const before = painter.getEntityById(3)?.getObjectsToDraw();
 
       painter.changeConnectionType(
         connection,
         ConnectionKind.HORIZONTAL_ROLLER
       );
 
-      const after = painter.getEntityByName("C1")?.getObjectsToDraw();
+      const after = painter.getEntityById(3)?.getObjectsToDraw();
 
       expect(remove).toBeCalledWith(before);
       expect(add).toBeCalledWith(after);
@@ -1100,11 +1114,12 @@ describe("Painter", () => {
 
   describe("buildStructure", () => {
     test("Should build a structure with all the linkages and connection", () => {
-      const point1 = new Point("P1", 1, 2);
-      const point2 = new Point("P2", 3, 4);
-      const linkage = new LinkageElement("L1", point1, point2);
+      const point1 = new Point("P1", 1, 1, 2);
+      const point2 = new Point("P2", 2, 3, 4);
+      const linkage = new LinkageElement("L1", 3, point1, point2);
       const connection = new ConnectionElement(
         "C1",
+        4,
         [point1],
         ConnectionKind.FIXED
       );

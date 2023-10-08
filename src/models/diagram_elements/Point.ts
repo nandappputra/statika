@@ -3,6 +3,7 @@ import { Variable } from "../Variable";
 
 export class Point {
   private _name: string;
+  private _id: number;
   private _positionX: number;
   private _positionY: number;
   private _externalForces: ExternalForce[];
@@ -11,8 +12,9 @@ export class Point {
   private _F_y: Variable;
   private _M_z: Variable;
 
-  constructor(name: string, positionX: number, positionY: number) {
+  constructor(name: string, id: number, positionX: number, positionY: number) {
     this._name = name;
+    this._id = id;
     this._positionX = positionX;
     this._positionY = positionY;
     this._externalForces = [];
@@ -62,6 +64,10 @@ export class Point {
     return this._name;
   }
 
+  get id() {
+    return this._id;
+  }
+
   get x() {
     return this._positionX;
   }
@@ -108,5 +114,33 @@ export class Point {
 
   get externalForces() {
     return this._externalForces;
+  }
+
+  static fromJson(obj: object, pointMap: Map<number, Point>) {
+    if (
+      !("_name" in obj && typeof obj._name === "string") ||
+      !("_id" in obj && typeof obj._id === "number") ||
+      !("_positionX" in obj && typeof obj._positionX === "number") ||
+      !("_positionY" in obj && typeof obj._positionY === "number")
+    ) {
+      throw new Error("Invalid JSON for Point");
+    }
+
+    const pointCache = pointMap.get(obj._id);
+    if (pointCache) {
+      return pointCache;
+    }
+
+    const point = new Point(obj._name, obj._id, obj._positionX, obj._positionY);
+
+    if ("_externalForces" in obj && Array.isArray(obj._externalForces)) {
+      obj._externalForces.forEach((force: object) => {
+        point.addExternalForce(ExternalForce.fromJson(force));
+      });
+    }
+
+    pointMap.set(point._id, point);
+
+    return point;
   }
 }

@@ -4,6 +4,7 @@ import { EntityKind } from "../../utils/Constants";
 
 export interface CanvasEntity {
   name: string;
+  id: number;
   kind: EntityKind;
 
   updatePosition(movePointEvent: MovePointEvent): void;

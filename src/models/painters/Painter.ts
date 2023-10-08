@@ -4,7 +4,7 @@ import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
-import { ConnectionKind, EntityPrefix, USER } from "../../utils/Constants";
+import { ConnectionKind, EntityPrefix, USER_ID } from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
@@ -18,10 +18,13 @@ import { Structure } from "../Structure";
 import { CanvasBinder } from "./CanvasBinder";
 import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
 import { CanvasPanController } from "./CanvasPanController";
+import { fabric } from "fabric";
 
-interface NamedObject {
+interface ValidCanvasEntity {
   name: string;
-  pointName: string;
+  id: number;
+  type: string;
+  pointId?: number;
 }
 
 export interface EntityConfig {
@@ -32,17 +35,17 @@ export interface EntityConfig {
 export class Painter implements EventMediator, CanvasBinder {
   private _canvas: fabric.Canvas;
   private _eventSubscribers: CanvasEventSubscriber[];
-  private _entityNameToEntity: Map<string, CanvasEntity>;
-  private _pointNameToPoint: Map<string, Point>;
+  private _entityIdToEntity: Map<number, CanvasEntity>;
+  private _pointIdToPoint: Map<number, Point>;
   private _entityConfig: EntityConfig;
 
-  private _pointNameToLinkageEntity: Map<string, LinkageEntity>;
-  private _pointNameToConnectionEntity: Map<string, ConnectionEntity>;
-  private _locationNameToExternalForceEntity: Map<
-    string,
+  private _pointIdToLinkageEntity: Map<number, LinkageEntity>;
+  private _pointIdToConnectionEntity: Map<number, ConnectionEntity>;
+  private _locationIdToExternalForceEntity: Map<
+    number,
     Set<ExternalForceEntity>
   >;
-  private _pointNameToPointEntity: Map<string, PointEntity>;
+  private _pointIdToPointEntity: Map<number, PointEntity>;
   private _canvasPanController: CanvasPanController;
 
   private _isDragging = false;
@@ -54,24 +57,52 @@ export class Painter implements EventMediator, CanvasBinder {
   ) {
     this._canvas = canvas;
     this._eventSubscribers = eventSubscriber;
-    this._entityNameToEntity = new Map<string, CanvasEntity>();
-    this._pointNameToPoint = new Map<string, Point>();
+    this._entityIdToEntity = new Map<number, CanvasEntity>();
+    this._pointIdToPoint = new Map<number, Point>();
     this._entityConfig = entityConfig;
 
-    this._pointNameToLinkageEntity = new Map<string, LinkageEntity>();
-    this._pointNameToConnectionEntity = new Map<string, ConnectionEntity>();
-    this._locationNameToExternalForceEntity = new Map<
-      string,
+    this._pointIdToLinkageEntity = new Map<number, LinkageEntity>();
+    this._pointIdToConnectionEntity = new Map<number, ConnectionEntity>();
+    this._locationIdToExternalForceEntity = new Map<
+      number,
       Set<ExternalForceEntity>
     >();
-    this._pointNameToPointEntity = new Map<string, PointEntity>();
+    this._pointIdToPointEntity = new Map<number, PointEntity>();
     this._setupEventHandler();
     this._canvasPanController = new CanvasPanController(canvas, () =>
       this._setupEventHandler()
     );
   }
 
+  private _isValidCanvasEntity(
+    canvasObjectData: unknown
+  ): canvasObjectData is ValidCanvasEntity {
+    if (!canvasObjectData || typeof canvasObjectData !== "object") {
+      return false;
+    }
+
+    if (
+      !("name" in canvasObjectData) ||
+      !("id" in canvasObjectData) ||
+      !("type" in canvasObjectData)
+    ) {
+      return false;
+    }
+
+    if (
+      !(typeof canvasObjectData.name === "string") ||
+      !(typeof canvasObjectData.id === "number") ||
+      !(typeof canvasObjectData.type === "string") ||
+      !Object.values<string>(EntityPrefix).includes(canvasObjectData.type)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   private _setupEventHandler() {
+    this._canvas.off();
     this._canvas.on("object:moving", (event) =>
       this._handleObjectMotionEvent(event)
     );
@@ -89,53 +120,45 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   private _handleMouseUpEvent(_event: IEvent<MouseEvent>) {
-    if (this._isDragging) {
-      const name: unknown = this._canvas.getActiveObject()?.data?.name;
-      const elementType: unknown = this._canvas.getActiveObject()?.data?.type;
-
-      if (
-        !(typeof name === "string") ||
-        !(typeof elementType === "string") ||
-        !Object.values<string>(EntityPrefix).includes(elementType)
-      ) {
-        return;
-      }
-
-      const canvasEntity = this._entityNameToEntity.get(name);
-      if (!canvasEntity) {
-        return;
-      }
-
-      this._eventSubscribers.forEach((feature) =>
-        feature.handleObjectDrop(this, {
-          name,
-          entity: canvasEntity,
-        })
-      );
-      this._isDragging = false;
-    }
-  }
-
-  private _handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
-    const name: unknown = this._canvas.getActiveObject()?.data?.name;
-    const elementType: unknown = this._canvas.getActiveObject()?.data?.type;
-
-    if (
-      !(typeof name === "string") ||
-      !(typeof elementType === "string") ||
-      !Object.values<string>(EntityPrefix).includes(elementType)
-    ) {
+    if (!this._isDragging) {
       return;
     }
 
-    const canvasEntity = this._entityNameToEntity.get(name);
+    const activeObjectData = this._canvas.getActiveObject()?.data as unknown;
+    if (!this._isValidCanvasEntity(activeObjectData)) {
+      return;
+    }
+
+    const id = activeObjectData.id;
+    const canvasEntity = this._entityIdToEntity.get(id);
+    if (!canvasEntity) {
+      return;
+    }
+
+    this._eventSubscribers.forEach((feature) =>
+      feature.handleObjectDrop(this, {
+        id,
+        entity: canvasEntity,
+      })
+    );
+    this._isDragging = false;
+  }
+
+  private _handleObjectSelectionEvent(_event: IEvent<MouseEvent>) {
+    const activeObjectData = this._canvas.getActiveObject()?.data as unknown;
+    if (!this._isValidCanvasEntity(activeObjectData)) {
+      return;
+    }
+
+    const id = activeObjectData.id;
+    const canvasEntity = this._entityIdToEntity.get(id);
     if (!canvasEntity) {
       return;
     }
 
     this._eventSubscribers.forEach((subscriber) => {
       subscriber.handleObjectSelectionEvent({
-        name,
+        id,
         entity: canvasEntity,
       });
     });
@@ -161,15 +184,19 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public getAllEntityName() {
-    return [...this._entityNameToEntity.keys()];
+    return [...this._entityIdToEntity.values()].map((entity) => entity.name);
   }
 
-  public getEntityByName(name: string) {
-    return this._entityNameToEntity.get(name);
+  public getAllEntities() {
+    return [...this._entityIdToEntity.values()];
   }
 
-  public setFocus(name: string) {
-    const entity = this._entityNameToEntity.get(name);
+  public getEntityById(id: number) {
+    return this._entityIdToEntity.get(id);
+  }
+
+  public setFocus(id: number) {
+    const entity = this._entityIdToEntity.get(id);
     if (!entity) {
       throw new Error("failed to set focus: object not found");
     }
@@ -187,13 +214,13 @@ export class Painter implements EventMediator, CanvasBinder {
       return;
     }
 
-    if (!this._isNamedObject(metadata)) {
+    if (!this._isValidCanvasEntity(metadata)) {
       return;
     }
 
     this.updatePointPosition({
-      name: metadata.pointName,
-      source: USER,
+      id: metadata.pointId || metadata.id,
+      source: USER_ID,
       coordinate: {
         x: coordinate.x,
         y: coordinate.y,
@@ -201,20 +228,11 @@ export class Painter implements EventMediator, CanvasBinder {
     });
   }
 
-  private _isNamedObject(metadata: unknown): metadata is NamedObject {
-    return (
-      metadata !== null &&
-      typeof metadata === "object" &&
-      "name" in metadata &&
-      "pointName" in metadata
-    );
-  }
-
-  private _addCanvasEntityToMap(key: string, canvasEntity: CanvasEntity) {
+  private _addCanvasEntityToMap(key: number, canvasEntity: CanvasEntity) {
     if (canvasEntity instanceof LinkageEntity) {
-      this._pointNameToLinkageEntity.set(key, canvasEntity);
+      this._pointIdToLinkageEntity.set(key, canvasEntity);
     } else if (canvasEntity instanceof ConnectionEntity) {
-      this._pointNameToConnectionEntity.set(key, canvasEntity);
+      this._pointIdToConnectionEntity.set(key, canvasEntity);
     }
   }
 
@@ -229,20 +247,18 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   private _updateCanvasEntity(movePointEvent: MovePointEvent) {
-    const linkageEntity = this._pointNameToLinkageEntity.get(
-      movePointEvent.name
-    );
-    if (linkageEntity && movePointEvent.source != linkageEntity.name) {
+    const linkageEntity = this._pointIdToLinkageEntity.get(movePointEvent.id);
+    if (linkageEntity && movePointEvent.source != linkageEntity.id) {
       linkageEntity.updatePosition(movePointEvent);
     }
 
-    const pointEntity = this._pointNameToPointEntity.get(movePointEvent.name);
-    if (pointEntity && movePointEvent.source != pointEntity.name) {
+    const pointEntity = this._pointIdToPointEntity.get(movePointEvent.id);
+    if (pointEntity && movePointEvent.source != pointEntity.id) {
       pointEntity.updatePosition(movePointEvent);
     }
 
-    const forceEntitySet = this._locationNameToExternalForceEntity.get(
-      movePointEvent.name
+    const forceEntitySet = this._locationIdToExternalForceEntity.get(
+      movePointEvent.id
     );
     if (forceEntitySet) {
       forceEntitySet.forEach((force) => {
@@ -250,10 +266,8 @@ export class Painter implements EventMediator, CanvasBinder {
       });
     }
 
-    const connection = this._pointNameToConnectionEntity.get(
-      movePointEvent.name
-    );
-    if (connection && movePointEvent.source != connection.name) {
+    const connection = this._pointIdToConnectionEntity.get(movePointEvent.id);
+    if (connection && movePointEvent.source != connection.id) {
       connection.updatePosition(movePointEvent);
     }
   }
@@ -262,24 +276,24 @@ export class Painter implements EventMediator, CanvasBinder {
     location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
-    let externalForce = this._entityNameToEntity.get(
-      externalLoad.name
+    let externalForce = this._entityIdToEntity.get(
+      externalLoad.id
     ) as ExternalForceEntity;
     if (externalForce === undefined) {
       externalForce = new ExternalForceEntity(externalLoad, location, this);
       this._canvas.add(externalForce.getObjectsToDraw());
     }
 
-    this._entityNameToEntity.set(externalForce.name, externalForce);
+    this._entityIdToEntity.set(externalForce.id, externalForce);
 
     externalForce.location = location;
-    const affectedForces = this._locationNameToExternalForceEntity.get(
-      location.name
+    const affectedForces = this._locationIdToExternalForceEntity.get(
+      location.id
     );
     if (!affectedForces || affectedForces.size == 0) {
       const forceSet = new Set<ExternalForceEntity>();
       forceSet.add(externalForce);
-      this._locationNameToExternalForceEntity.set(location.name, forceSet);
+      this._locationIdToExternalForceEntity.set(location.id, forceSet);
     } else {
       affectedForces.add(externalForce);
     }
@@ -295,17 +309,17 @@ export class Painter implements EventMediator, CanvasBinder {
     location: Point | ConnectionElement,
     externalLoad: ExternalForce
   ) {
-    const entity = this._entityNameToEntity.get(externalLoad.name);
-    const affectedForce = this._locationNameToExternalForceEntity.get(
-      location.name
+    const entity = this._entityIdToEntity.get(externalLoad.id);
+    const affectedForce = this._locationIdToExternalForceEntity.get(
+      location.id
     );
     if (!affectedForce || !entity) {
       throw new Error("failed to remove force: unrecognized force or location");
     }
 
-    this._entityNameToEntity.delete(externalLoad.name);
-    this._locationNameToExternalForceEntity
-      .get(location.name)
+    this._entityIdToEntity.delete(externalLoad.id);
+    this._locationIdToExternalForceEntity
+      .get(location.id)
       ?.delete(entity as ExternalForceEntity);
     this._canvas.remove(entity.getObjectsToDraw());
     location.removeExternalForce(externalLoad);
@@ -332,23 +346,23 @@ export class Painter implements EventMediator, CanvasBinder {
       throw new Error("unknown type of element");
     }
 
-    this._entityNameToEntity.set(diagramElement.name, entity);
+    this._entityIdToEntity.set(diagramElement.id, entity);
     this._canvas.add(entity.getObjectsToDraw());
 
     diagramElement.points.forEach((point) => {
-      this._addCanvasEntityToMap(point.name, entity);
-      this._pointNameToPoint.set(point.name, point);
+      this._addCanvasEntityToMap(point.id, entity);
+      this._pointIdToPoint.set(point.id, point);
 
-      if (!this._pointNameToPointEntity.get(point.name)) {
+      if (!this._pointIdToPointEntity.get(point.id)) {
         const newPoint = new PointEntity(point, this);
-        this._pointNameToPointEntity.set(point.name, newPoint);
-        this._entityNameToEntity.set(point.name, newPoint);
+        this._pointIdToPointEntity.set(point.id, newPoint);
+        this._entityIdToEntity.set(point.id, newPoint);
 
         this._canvas.add(newPoint.getObjectsToDraw());
       }
 
       if (diagramElement instanceof ConnectionElement) {
-        this._pointNameToPointEntity.get(point.name)?.setVisible(false);
+        this._pointIdToPointEntity.get(point.id)?.setVisible(false);
       }
     });
 
@@ -368,7 +382,7 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public removeElement(diagramElement: DiagramElement) {
-    const entity = this._entityNameToEntity.get(diagramElement.name);
+    const entity = this._entityIdToEntity.get(diagramElement.id);
     if (!entity) {
       throw new Error("no such entity");
     }
@@ -383,14 +397,14 @@ export class Painter implements EventMediator, CanvasBinder {
     const points = [...diagramElement.points];
 
     points.forEach((point) => {
-      const pointEntity = this._pointNameToPointEntity.get(point.name);
+      const pointEntity = this._pointIdToPointEntity.get(point.id);
       if (!pointEntity) {
         return;
       }
 
       if (entity instanceof LinkageEntity) {
-        const affectedConnection = this._pointNameToConnectionEntity.get(
-          point.name
+        const affectedConnection = this._pointIdToConnectionEntity.get(
+          point.id
         );
         if (affectedConnection) {
           this.removePointFromConnection(
@@ -398,27 +412,27 @@ export class Painter implements EventMediator, CanvasBinder {
             affectedConnection.getElement()
           );
         }
-        const affectedForce = this._locationNameToExternalForceEntity.get(
-          point.name
+        const affectedForce = this._locationIdToExternalForceEntity.get(
+          point.id
         );
         affectedForce?.forEach((force) =>
           this.removeExternalLoad(point, force.getElement())
         );
 
-        this._pointNameToLinkageEntity.delete(point.name);
+        this._pointIdToLinkageEntity.delete(point.id);
 
         this._canvas.remove(pointEntity.getObjectsToDraw());
 
-        this._pointNameToLinkageEntity.delete(point.name);
-        this._entityNameToEntity.delete(point.name);
-        this._pointNameToPointEntity.delete(point.name);
+        this._pointIdToLinkageEntity.delete(point.id);
+        this._entityIdToEntity.delete(point.id);
+        this._pointIdToPointEntity.delete(point.id);
       } else if (entity instanceof ConnectionEntity) {
-        this._pointNameToConnectionEntity.delete(point.name);
+        this._pointIdToConnectionEntity.delete(point.id);
         this.removePointFromConnection(point, entity.getElement());
       }
     });
 
-    this._entityNameToEntity.delete(diagramElement.name);
+    this._entityIdToEntity.delete(diagramElement.id);
     this._canvas.remove(entity.getObjectsToDraw());
 
     this._eventSubscribers.forEach((subscriber) => {
@@ -429,29 +443,29 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public getCanvasEntity(diagramElement: DiagramElement) {
-    return this._entityNameToEntity.get(diagramElement.name);
+    return this._entityIdToEntity.get(diagramElement.id);
   }
 
-  public getPoint(pointName: string) {
-    return this._pointNameToPoint.get(pointName);
+  public getPoint(pointId: number) {
+    return this._pointIdToPoint.get(pointId);
   }
 
   public addPointToLinkage(point: Point, linkage: LinkageElement) {
-    const entity = this._entityNameToEntity.get(linkage.name);
+    const entity = this._entityIdToEntity.get(linkage.id);
     if (!entity || !(entity instanceof LinkageEntity)) {
       throw new Error(
         "failed to add point to linkage: missing or invalid entity found"
       );
     }
 
-    this._pointNameToPoint.set(point.name, point);
-    this._pointNameToLinkageEntity.set(point.name, entity);
+    this._pointIdToPoint.set(point.id, point);
+    this._pointIdToLinkageEntity.set(point.id, entity);
     entity.addPoint(point);
 
     const pointEntity = new PointEntity(point, this);
     this._canvas.add(pointEntity.getObjectsToDraw());
-    this._pointNameToPointEntity.set(point.name, pointEntity);
-    this._entityNameToEntity.set(point.name, pointEntity);
+    this._pointIdToPointEntity.set(point.id, pointEntity);
+    this._entityIdToEntity.set(point.id, pointEntity);
 
     this._eventSubscribers.forEach((subscriber) =>
       subscriber.handlePointAddition(this, linkage, point)
@@ -459,32 +473,28 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public removePointFromLinkage(point: Point, linkage: LinkageElement) {
-    const affectedPoint = this._pointNameToPointEntity.get(point.name);
+    const affectedPoint = this._pointIdToPointEntity.get(point.id);
     if (!affectedPoint) {
       throw new Error(
         "failed to remove point from linkage: unrecognized point"
       );
     }
 
-    const affectedConnection = this._pointNameToConnectionEntity.get(
-      point.name
-    );
+    const affectedConnection = this._pointIdToConnectionEntity.get(point.id);
     if (affectedConnection) {
       this.removePointFromConnection(point, affectedConnection.getElement());
     }
 
-    this._entityNameToEntity.delete(point.name);
-    this._pointNameToPointEntity.delete(point.name);
+    this._entityIdToEntity.delete(point.id);
+    this._pointIdToPointEntity.delete(point.id);
     this._canvas.remove(affectedPoint.getObjectsToDraw());
 
-    this._pointNameToPoint.delete(point.name);
+    this._pointIdToPoint.delete(point.id);
 
-    const targetLinkage = this._pointNameToLinkageEntity.get(point.name);
+    const targetLinkage = this._pointIdToLinkageEntity.get(point.id);
     targetLinkage?.deletePoint(point);
 
-    const affectedForce = this._locationNameToExternalForceEntity.get(
-      point.name
-    );
+    const affectedForce = this._locationIdToExternalForceEntity.get(point.id);
     affectedForce?.forEach((force) =>
       this.removeExternalLoad(point, force.getElement())
     );
@@ -499,7 +509,7 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public addPointToConnection(point: Point, connection: ConnectionElement) {
-    const affectedPoint = this.getEntityByName(point.name);
+    const affectedPoint = this.getEntityById(point.id);
     const affectedConnection = this.getCanvasEntity(connection);
     if (
       !(affectedConnection instanceof ConnectionEntity) ||
@@ -511,7 +521,7 @@ export class Painter implements EventMediator, CanvasBinder {
     }
 
     affectedPoint.setVisible(false);
-    this._pointNameToConnectionEntity.set(point.name, affectedConnection);
+    this._pointIdToConnectionEntity.set(point.id, affectedConnection);
     affectedConnection.addPoint(point);
 
     const forces = affectedPoint.getElement().externalForces;
@@ -527,7 +537,7 @@ export class Painter implements EventMediator, CanvasBinder {
     point: Point,
     connection: ConnectionElement
   ) {
-    const affectedPoint = this.getEntityByName(point.name);
+    const affectedPoint = this.getEntityById(point.id);
     const affectedConnection = this.getCanvasEntity(connection);
     if (
       !(affectedConnection instanceof ConnectionEntity) ||
@@ -540,7 +550,7 @@ export class Painter implements EventMediator, CanvasBinder {
 
     affectedPoint.setVisible(true);
 
-    this._pointNameToConnectionEntity.delete(point.name);
+    this._pointIdToConnectionEntity.delete(point.id);
     affectedConnection.deletePoint(point);
     if (affectedConnection.getAllPoints().length === 0) {
       this.removeElement(connection);
@@ -551,7 +561,7 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public getLinkageFromPoint(point: Point) {
-    return this._pointNameToLinkageEntity.get(point.name);
+    return this._pointIdToLinkageEntity.get(point.id);
   }
 
   public getCanvasCenter() {
@@ -559,9 +569,7 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   public updateForce(externalForce: ExternalForce, F_x: number, F_y: number) {
-    const externalForceEntity = this._entityNameToEntity.get(
-      externalForce.name
-    );
+    const externalForceEntity = this._entityIdToEntity.get(externalForce.id);
     if (!(externalForceEntity instanceof ExternalForceEntity)) {
       throw new Error("failed to update force: missing or invalid force");
     }
@@ -574,7 +582,7 @@ export class Painter implements EventMediator, CanvasBinder {
     connection: ConnectionElement,
     connectionType: ConnectionKind
   ) {
-    const connectionEntity = this._entityNameToEntity.get(connection.name);
+    const connectionEntity = this._entityIdToEntity.get(connection.id);
     if (!connectionEntity || !(connectionEntity instanceof ConnectionEntity)) {
       throw new Error(
         "failed to add change connection type: missing or invalid entity found"
@@ -594,7 +602,7 @@ export class Painter implements EventMediator, CanvasBinder {
     const linkages: LinkageElement[] = [];
     const connections: ConnectionElement[] = [];
 
-    this._entityNameToEntity.forEach((entity) => {
+    this._entityIdToEntity.forEach((entity) => {
       if (entity instanceof LinkageEntity) {
         linkages.push(entity.getElement());
       } else if (entity instanceof ConnectionEntity) {
@@ -605,11 +613,79 @@ export class Painter implements EventMediator, CanvasBinder {
     return new Structure(linkages, connections);
   }
 
+  public reset() {
+    this._canvas.clear();
+    this._entityIdToEntity = new Map<number, CanvasEntity>();
+    this._pointIdToPoint = new Map<number, Point>();
+
+    this._pointIdToLinkageEntity = new Map<number, LinkageEntity>();
+    this._pointIdToConnectionEntity = new Map<number, ConnectionEntity>();
+    this._locationIdToExternalForceEntity = new Map<
+      number,
+      Set<ExternalForceEntity>
+    >();
+    this._pointIdToPointEntity = new Map<number, PointEntity>();
+    this._setupEventHandler();
+    this._canvasPanController = new CanvasPanController(this._canvas, () =>
+      this._setupEventHandler()
+    );
+  }
+
+  public loadStructure(structure: Structure) {
+    this.reset();
+
+    const linkages = structure.linkages;
+    linkages.forEach((linkage) => this.addElement(linkage));
+
+    const connections = structure.connections;
+    connections.forEach((linkage) => this.addElement(linkage));
+  }
+
   public clearFocus() {
     this._canvas.discardActiveObject();
   }
 
   public setPanningMode(isActive: boolean) {
     this._canvasPanController.togglePanMode(isActive);
+  }
+
+  // public toDataURI() {
+  //   const dataUrl = this._canvas.toDataURL({
+  //     format: "png",
+  //     multiplier: 0.5,
+  //     withoutTransform: true,
+  //   });
+
+  //   return this._flipY(dataUrl);
+  // }
+
+  public async toDataURI() {
+    const dataUrl = this._canvas.toDataURL({
+      format: "png",
+      multiplier: 0.5,
+      withoutTransform: true,
+    });
+
+    return await this._flipY(dataUrl);
+  }
+
+  private _flipY(dataUrl: string) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const image = new Image();
+
+    const promise = new Promise<string>((resolve) => {
+      image.onload = function () {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.scale(1, -1);
+        ctx.drawImage(image, 0, -image.height);
+        resolve(canvas.toDataURL());
+      };
+    });
+
+    image.src = dataUrl;
+
+    return promise;
   }
 }

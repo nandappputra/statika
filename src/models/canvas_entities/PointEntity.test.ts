@@ -20,12 +20,13 @@ describe("PointEntity", () => {
   describe("getObjectsToDraw", () => {
     test("Should return an array of Fabric Object with name, pointName, and type in its data", () => {
       setMockProperty(point, "name", "p1");
+      setMockProperty(point, "id", 1);
       pointEntity = new PointEntity(point, eventMediator);
 
       const actualObjects = pointEntity.getObjectsToDraw();
       const expectedObject = {
         name: "p1",
-        pointName: "p1",
+        id: 1,
         type: EntityPrefix.POINT,
       };
 
@@ -39,8 +40,8 @@ describe("PointEntity", () => {
       pointEntity = new PointEntity(point, eventMediator);
 
       const movePointEvent: MovePointEvent = {
-        name: "p1",
-        source: "user",
+        id: 1,
+        source: 0,
         coordinate: { x: 20, y: 10 },
       };
 
@@ -59,8 +60,8 @@ describe("PointEntity", () => {
       pointEntity = new PointEntity(point, eventMediator);
 
       const movePointEvent: MovePointEvent = {
-        name: "p1",
-        source: "user",
+        id: 1,
+        source: 0,
         coordinate: { x: 30, y: 10 },
       };
 

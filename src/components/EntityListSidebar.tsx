@@ -6,11 +6,12 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
 import ModeIcon from "@mui/icons-material/Mode";
+import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
 
 type Props = {
   buildLinkage: () => void;
-  entityList: string[];
-  handleSelection: (entity: string) => void;
+  entityList: CanvasEntity[];
+  handleSelection: (entity: number) => void;
   togglePanningMode: (isActive: boolean) => void;
 };
 
