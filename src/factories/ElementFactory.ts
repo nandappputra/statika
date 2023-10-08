@@ -72,7 +72,17 @@ export class ElementFactory {
     this._idCounter = 1;
   }
 
-  public set(
+  public getState() {
+    return {
+      linkageCounter: this._linkageCounter,
+      connectionCounter: this._connectionCounter,
+      externalForceCounter: this._externalForceCounter,
+      pointCounter: this._pointCounter,
+      idCounter: this._idCounter,
+    };
+  }
+
+  private _set(
     linkageCounter: number,
     connectionCounter: number,
     externalForceCounter: number,
@@ -84,5 +94,31 @@ export class ElementFactory {
     this._externalForceCounter = externalForceCounter;
     this._pointCounter = pointCounter;
     this._idCounter = idCounter;
+  }
+
+  public loadStateFromJson(obj: object) {
+    if (
+      !("_linkageCounter" in obj && typeof obj._linkageCounter === "number") ||
+      !(
+        "_connectionCounter" in obj &&
+        typeof obj._connectionCounter === "number"
+      ) ||
+      !(
+        "_externalForceCounter" in obj &&
+        typeof obj._externalForceCounter === "number"
+      ) ||
+      !("_pointCounter" in obj && typeof obj._pointCounter === "number") ||
+      !("_idCounter" in obj && typeof obj._idCounter === "number")
+    ) {
+      throw new Error("invalid JSON for ElementFactory");
+    }
+
+    this._set(
+      obj._linkageCounter,
+      obj._connectionCounter,
+      obj._externalForceCounter,
+      obj._pointCounter,
+      obj._idCounter
+    );
   }
 }

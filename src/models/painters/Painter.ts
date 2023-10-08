@@ -648,4 +648,8 @@ export class Painter implements EventMediator, CanvasBinder {
   public setPanningMode(isActive: boolean) {
     this._canvasPanController.togglePanMode(isActive);
   }
+
+  public toDataURI() {
+    return this._canvas.toDataURL({ format: "png" });
+  }
 }
