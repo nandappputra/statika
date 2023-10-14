@@ -18,11 +18,27 @@ export class ConnectionEntity implements CanvasEntity {
   private _connection: ConnectionElement;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
+  private _canvas: fabric.Canvas;
+  private _lastIndex = 0;
 
-  constructor(connection: ConnectionElement, eventMediator: EventMediator) {
+  constructor(
+    connection: ConnectionElement,
+    eventMediator: EventMediator,
+    canvas: fabric.Canvas
+  ) {
     this._connection = connection;
     this._eventMediator = eventMediator;
     this._icon = this.buildIcon(connection, connection.kind);
+    this._canvas = canvas;
+  }
+  
+  moveToFront(): void {
+    this._lastIndex = this._canvas.getObjects().indexOf(this._icon);
+    this._icon.bringToFront();
+  }
+
+  returnToOriginalPosition(): void {
+    this._icon.moveTo(this._lastIndex);
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {

@@ -11,11 +11,31 @@ export class PointEntity implements CanvasEntity {
   private _point: Point;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
+  private _canvas: fabric.Canvas;
+  private _lastIndex = 0;
+  private _lastVisibility: boolean | undefined = true;
 
-  constructor(point: Point, eventMediator: EventMediator) {
+  constructor(
+    point: Point,
+    eventMediator: EventMediator,
+    canvas: fabric.Canvas
+  ) {
     this._point = point;
     this._eventMediator = eventMediator;
     this._icon = this._buildIcon(point);
+    this._canvas = canvas;
+  }
+
+  moveToFront(): void {
+    this._lastIndex = this._canvas.getObjects().indexOf(this._icon);
+    this._lastVisibility = this._icon.visible;
+    this.setVisible(true);
+    this._icon.bringToFront();
+  }
+
+  returnToOriginalPosition(): void {
+    this._icon.moveTo(this._lastIndex);
+    this._icon.visible = this._lastVisibility;
   }
 
   public updatePosition(movePointEvent: MovePointEvent): void {

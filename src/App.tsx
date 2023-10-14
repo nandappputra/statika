@@ -371,6 +371,7 @@ function App() {
         )
       );
       const variableValues = solver.solve(structure);
+      painterState?.toggleFocusMode(true);
 
       setSolved(true);
       setSolution(variableValues);
@@ -398,6 +399,10 @@ function App() {
     return;
   };
 
+  const saveCanvas = () => {
+    void save();
+  };
+
   const load = (dataURI: string) => {
     if (!painterState) {
       return;
@@ -417,7 +422,7 @@ function App() {
   return (
     <div>
       <TitleBar
-        save={save}
+        save={saveCanvas}
         setLoadOpen={setLoadOpen}
         setAboutOpen={setAboutOpen}
         setTutorialOpen={setTutorialOpen}

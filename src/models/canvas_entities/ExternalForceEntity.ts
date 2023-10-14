@@ -20,16 +20,29 @@ export class ExternalForceEntity implements CanvasEntity {
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
   private _location: Point | ConnectionElement;
+  private _canvas: fabric.Canvas;
+  private _lastIndex = 0;
 
   constructor(
     externalForce: ExternalForce,
     location: Point | ConnectionElement,
-    eventMediator: EventMediator
+    eventMediator: EventMediator,
+    canvas: fabric.Canvas
   ) {
     this._externalForce = externalForce;
     this._eventMediator = eventMediator;
     this._icon = this._buildIcon(externalForce, location);
     this._location = location;
+    this._canvas = canvas;
+  }
+
+  moveToFront(): void {
+    this._lastIndex = this._canvas.getObjects().indexOf(this._icon);
+    this._icon.bringToFront();
+  }
+
+  returnToOriginalPosition(): void {
+    this._icon.moveTo(this._lastIndex);
   }
 
   public updatePosition(movePointEvent: MovePointEvent): void {

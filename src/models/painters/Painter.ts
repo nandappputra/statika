@@ -19,6 +19,7 @@ import { CanvasBinder } from "./CanvasBinder";
 import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
 import { CanvasPanController } from "./CanvasPanController";
 import { fabric } from "fabric";
+import { CanvasFocusController } from "./CanvasFocusController";
 
 interface ValidCanvasEntity {
   name: string;
@@ -46,7 +47,9 @@ export class Painter implements EventMediator, CanvasBinder {
     Set<ExternalForceEntity>
   >;
   private _pointIdToPointEntity: Map<number, PointEntity>;
+
   private _canvasPanController: CanvasPanController;
+  private _canvasFocusController: CanvasFocusController;
 
   private _isDragging = false;
 
@@ -71,6 +74,11 @@ export class Painter implements EventMediator, CanvasBinder {
     this._setupEventHandler();
     this._canvasPanController = new CanvasPanController(canvas, () =>
       this._setupEventHandler()
+    );
+    this._canvasFocusController = new CanvasFocusController(
+      canvas,
+      () => this._setupEventHandler(),
+      this._entityIdToEntity
     );
   }
 
@@ -280,7 +288,12 @@ export class Painter implements EventMediator, CanvasBinder {
       externalLoad.id
     ) as ExternalForceEntity;
     if (externalForce === undefined) {
-      externalForce = new ExternalForceEntity(externalLoad, location, this);
+      externalForce = new ExternalForceEntity(
+        externalLoad,
+        location,
+        this,
+        this._canvas
+      );
       this._canvas.add(externalForce.getObjectsToDraw());
     }
 
@@ -338,10 +351,11 @@ export class Painter implements EventMediator, CanvasBinder {
       entity = new LinkageEntity(
         diagramElement,
         this,
-        this._entityConfig.linkageConfig
+        this._entityConfig.linkageConfig,
+        this._canvas
       );
     } else if (diagramElement instanceof ConnectionElement) {
-      entity = new ConnectionEntity(diagramElement, this);
+      entity = new ConnectionEntity(diagramElement, this, this._canvas);
     } else {
       throw new Error("unknown type of element");
     }
@@ -354,7 +368,7 @@ export class Painter implements EventMediator, CanvasBinder {
       this._pointIdToPoint.set(point.id, point);
 
       if (!this._pointIdToPointEntity.get(point.id)) {
-        const newPoint = new PointEntity(point, this);
+        const newPoint = new PointEntity(point, this, this._canvas);
         this._pointIdToPointEntity.set(point.id, newPoint);
         this._entityIdToEntity.set(point.id, newPoint);
 
@@ -462,7 +476,7 @@ export class Painter implements EventMediator, CanvasBinder {
     this._pointIdToLinkageEntity.set(point.id, entity);
     entity.addPoint(point);
 
-    const pointEntity = new PointEntity(point, this);
+    const pointEntity = new PointEntity(point, this, this._canvas);
     this._canvas.add(pointEntity.getObjectsToDraw());
     this._pointIdToPointEntity.set(point.id, pointEntity);
     this._entityIdToEntity.set(point.id, pointEntity);
@@ -649,15 +663,9 @@ export class Painter implements EventMediator, CanvasBinder {
     this._canvasPanController.togglePanMode(isActive);
   }
 
-  // public toDataURI() {
-  //   const dataUrl = this._canvas.toDataURL({
-  //     format: "png",
-  //     multiplier: 0.5,
-  //     withoutTransform: true,
-  //   });
-
-  //   return this._flipY(dataUrl);
-  // }
+  public toggleFocusMode(isActive: boolean) {
+    this._canvasFocusController.toggle(isActive);
+  }
 
   public async toDataURI() {
     const dataUrl = this._canvas.toDataURL({
