@@ -12,6 +12,10 @@ export class Point {
   private _F_y: Variable;
   private _M_z: Variable;
 
+  private _original_F_x: Variable | undefined;
+  private _original_F_y: Variable | undefined;
+  private _original_M_z: Variable | undefined;
+
   constructor(name: string, id: number, positionX: number, positionY: number) {
     this._name = name;
     this._id = id;
@@ -28,12 +32,24 @@ export class Point {
     this._F_x.value = value;
   }
 
+  get F_x() {
+    return this._F_x.value;
+  }
+
   set F_y(value: number) {
     this._F_y.value = value;
   }
 
+  get F_y() {
+    return this._F_y.value;
+  }
+
   set M_z(value: number) {
     this._M_z.value = value;
+  }
+
+  get M_z() {
+    return this._M_z.value;
   }
 
   get symbolF_x(): string {
@@ -96,6 +112,26 @@ export class Point {
     this.F_x = 0;
     this.F_y = 0;
     this.M_z = 0;
+  }
+
+  loadSolution(solutionMap: Map<string, number>) {
+    this._original_F_x = this._F_x.clone();
+    this._original_F_y = this._F_y.clone();
+    this._original_M_z = this._M_z.clone();
+
+    this.F_x = solutionMap.get(this._F_x.symbol) || 0;
+    this.F_y = solutionMap.get(this._F_y.symbol) || 0;
+    this.M_z = solutionMap.get(this._M_z.symbol) || 0;
+  }
+
+  clearSolution() {
+    if (!this._original_F_x || !this._original_F_y || !this._original_M_z) {
+      return;
+    }
+
+    this._F_x = this._original_F_x;
+    this._F_y = this._original_F_y;
+    this._M_z = this._original_M_z;
   }
 
   removeExternalForce(externalForce: ExternalForce) {

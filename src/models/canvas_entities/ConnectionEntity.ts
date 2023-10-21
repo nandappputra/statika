@@ -8,9 +8,13 @@ import {
   ConnectionKind,
   EntityKind,
   EntityPrefix,
+  USER_ID,
 } from "../../utils/Constants";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { IGroupOptions } from "fabric/fabric-impl";
+import { ExternalForceEntity } from "./ExternalForceEntity";
+import { Moment } from "../diagram_elements/Moment";
+import { MomentEntity } from "./MomentEntity";
 
 export class ConnectionEntity implements CanvasEntity {
   private _kind = EntityKind.CONNECTION;
@@ -20,6 +24,7 @@ export class ConnectionEntity implements CanvasEntity {
   private _icon: fabric.Object;
   private _canvas: fabric.Canvas;
   private _lastIndex = 0;
+  private _internalReactions: fabric.Object[] = [];
 
   constructor(
     connection: ConnectionElement,
@@ -31,7 +36,7 @@ export class ConnectionEntity implements CanvasEntity {
     this._icon = this.buildIcon(connection, connection.kind);
     this._canvas = canvas;
   }
-  
+
   moveToFront(): void {
     this._lastIndex = this._canvas.getObjects().indexOf(this._icon);
     this._icon.bringToFront();
@@ -144,6 +149,61 @@ export class ConnectionEntity implements CanvasEntity {
       case ConnectionKind.PIN:
         return this.buildPinIcon(connection);
     }
+  }
+
+  buildBoundaryCondition() {
+    const boundaryCondition = this._connection.boundaryCondition;
+    if (!boundaryCondition) {
+      return;
+    }
+
+    const F_x = -boundaryCondition.F_x;
+    const F_y = -boundaryCondition.F_y;
+    const M_z = -boundaryCondition.M_z;
+
+    this.buildInternalForces(F_x, F_y);
+    this.buildInternalMoment(M_z);
+  }
+
+  private buildInternalForces(F_x: number, F_y: number) {
+    if (F_x === 0 && F_y === 0) {
+      return;
+    }
+
+    const force = new ExternalForce("internal", USER_ID, F_x, F_y);
+    const reactionForce = new ExternalForceEntity(
+      force,
+      this._connection,
+      this._eventMediator,
+      this._canvas,
+      false,
+      "grey"
+    );
+    this._canvas.add(reactionForce.getObjectsToDraw());
+    this._internalReactions.push(reactionForce.getObjectsToDraw());
+  }
+
+  private buildInternalMoment(M_z: number) {
+    if (M_z === 0) {
+      return;
+    }
+
+    const moment = new Moment("internal", USER_ID, M_z);
+    const reactionMoment = new MomentEntity(
+      moment,
+      this._connection,
+      this._eventMediator,
+      this._canvas,
+      false,
+      "grey"
+    );
+
+    this._canvas.add(reactionMoment.getObjectsToDraw());
+    this._internalReactions.push(reactionMoment.getObjectsToDraw());
+  }
+
+  removeBoundaryCondition() {
+    this._canvas.remove(...this._internalReactions);
   }
 
   private buildFixedIcon(connection: ConnectionElement) {

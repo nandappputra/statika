@@ -1,11 +1,10 @@
 import { inv, multiply } from "mathjs";
 import { Structure } from "../../models/Structure";
-import { Variable } from "../../models/Variable";
 import { expressEquationsInMatrixMultiplication } from "../../utils/SolverUtils";
 import { SolverService } from "./SolverService";
 
 export class MatrixSolverService implements SolverService {
-  solve(structure: Structure): Variable[] {
+  solve(structure: Structure): Map<string, number> {
     const matrixExpression = expressEquationsInMatrixMultiplication(
       structure.generateAllEquilibirum()
     );
@@ -15,8 +14,12 @@ export class MatrixSolverService implements SolverService {
       matrixExpression.constants
     );
 
-    return matrixExpression.variables.map(
-      (variable, index) => new Variable(variable, solution[index])
+    const results = new Map<string, number>();
+
+    matrixExpression.variables.forEach((variable, index) =>
+      results.set(variable, solution[index])
     );
+
+    return results;
   }
 }

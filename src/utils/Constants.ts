@@ -8,6 +8,7 @@ export const METADATA_FACTORY = "factory";
 export enum EntityPrefix {
   LINKAGE = "L",
   CONNECTION = "C",
+  MOMENT = "M",
   POINT = "P",
   FORCE = "F",
   NONE = "",
@@ -18,6 +19,7 @@ export enum EntityKind {
   CONNECTION = "Connection",
   POINT = "Point",
   FORCE = "Force",
+  MOMENT = "Moment",
 }
 
 export enum ConnectionKind {

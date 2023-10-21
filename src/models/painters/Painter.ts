@@ -643,6 +643,11 @@ export class Painter implements EventMediator, CanvasBinder {
     this._canvasPanController = new CanvasPanController(this._canvas, () =>
       this._setupEventHandler()
     );
+    this._canvasFocusController = new CanvasFocusController(
+      this._canvas,
+      () => this._setupEventHandler(),
+      this._entityIdToEntity
+    );
   }
 
   public loadStructure(structure: Structure) {

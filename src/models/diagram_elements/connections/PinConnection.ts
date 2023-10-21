@@ -26,10 +26,10 @@ export class PinConnection implements Connection {
   }
 
   getF_x(name: string): string {
-    return `1*F_${name}x_ground`;
+    return `-1*F_${name}x_ground`;
   }
   getF_y(name: string): string {
-    return `1*F_${name}y_ground`;
+    return `-1*F_${name}y_ground`;
   }
   getM_z(_name: string): string {
     return "0";

@@ -33,6 +33,26 @@ export class Structure {
     return this._connections;
   }
 
+  loadSolution(solution: Map<string, number>) {
+    this._linkages.forEach((linkage) => {
+      linkage.points.forEach((point) => {
+        point.loadSolution(solution);
+      });
+    });
+
+    this._connections.forEach((connection) =>
+      connection.loadSolution(solution)
+    );
+  }
+
+  clearSolution() {
+    this._linkages.forEach((linkage) => {
+      linkage.points.forEach((point) => {
+        point.clearSolution();
+      });
+    });
+  }
+
   static fromJson(obj: object) {
     const pointMap: Map<number, Point> = new Map<number, Point>();
 

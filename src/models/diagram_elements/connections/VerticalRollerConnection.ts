@@ -26,7 +26,7 @@ export class VerticalRoller implements Connection {
   }
 
   getF_x(name: string): string {
-    return `1*F_${name}x_ground`;
+    return `-1*F_${name}x_ground`;
   }
 
   getF_y(_name: string): string {

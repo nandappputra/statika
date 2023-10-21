@@ -371,10 +371,17 @@ function App() {
         )
       );
       const variableValues = solver.solve(structure);
+      structure.loadSolution(variableValues);
       painterState?.toggleFocusMode(true);
 
+      const variableList: Variable[] = [];
+
+      for (const [key, value] of variableValues.entries()) {
+        variableList.push(new Variable(key, value));
+      }
+
       setSolved(true);
-      setSolution(variableValues);
+      setSolution(variableList);
     } catch (error: unknown) {
       console.log("unable to solve");
       setSolved(false);

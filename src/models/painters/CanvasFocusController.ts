@@ -2,6 +2,8 @@ import { IEvent } from "fabric/fabric-impl";
 import { fabric } from "fabric";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { LinkageEntity } from "../canvas_entities/LinkageEntity";
+import { PointEntity } from "../canvas_entities/PointEntity";
+import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 
 export class CanvasFocusController {
   private _canvas: fabric.Canvas;
@@ -36,9 +38,10 @@ export class CanvasFocusController {
       element.lockMovementY = true;
     });
 
-    this._canvas.on("selection:updated", (event) =>
-      this._handleObjectSelectionEvent(event)
-    );
+    this._canvas.on("selection:updated", (event) => {
+      this._handleObjectSelectionClearEvent();
+      this._handleObjectSelectionEvent(event);
+    });
     this._canvas.on("selection:created", (event) =>
       this._handleObjectSelectionEvent(event)
     );
@@ -53,8 +56,6 @@ export class CanvasFocusController {
       return;
     }
 
-    console.log("EVENT", event.selected?.[0].data?.id);
-    console.log("BUILDING SHADE");
     this._buildShadeAtCurrentScreen();
 
     const entity = this._entityIdToEntity.get(id);
@@ -66,12 +67,57 @@ export class CanvasFocusController {
       const pointIds = entity.getAllPoints().map((point) => point.id);
       pointIds.forEach((pointId) => {
         const pointEntity = this._entityIdToEntity.get(pointId);
-        if (!pointEntity) {
+        if (!pointEntity || !(pointEntity instanceof PointEntity)) {
           return;
         }
 
+        pointEntity.getElement().externalForces.forEach((force) => {
+          const forceId = force.id;
+          const forceEntity = this._entityIdToEntity.get(forceId);
+          if (!forceEntity) {
+            return;
+          }
+          forceEntity.moveToFront();
+          this._lastSelected.push(forceEntity);
+        });
+
         this._lastSelected.push(pointEntity);
         pointEntity.moveToFront();
+        pointEntity.buildInternalReactions();
+      });
+    } else if (entity instanceof ConnectionEntity) {
+      entity.buildBoundaryCondition();
+      this._lastSelected.push(entity);
+
+      const pointIds = entity.getAllPoints().map((point) => point.id);
+      pointIds.forEach((pointId) => {
+        const pointEntity = this._entityIdToEntity.get(pointId);
+        if (!pointEntity || !(pointEntity instanceof PointEntity)) {
+          return;
+        }
+
+        pointEntity.getElement().externalForces.forEach((force) => {
+          const forceId = force.id;
+          const forceEntity = this._entityIdToEntity.get(forceId);
+          if (!forceEntity) {
+            return;
+          }
+          forceEntity.moveToFront();
+          this._lastSelected.push(forceEntity);
+        });
+
+        this._lastSelected.push(pointEntity);
+        pointEntity.buildInvertedInternalReactions();
+      });
+
+      entity.getElement().externalForces.forEach((force) => {
+        const forceId = force.id;
+        const forceEntity = this._entityIdToEntity.get(forceId);
+        if (!forceEntity) {
+          return;
+        }
+        forceEntity.moveToFront();
+        this._lastSelected.push(forceEntity);
       });
     }
 
@@ -79,9 +125,16 @@ export class CanvasFocusController {
   }
 
   private _handleObjectSelectionClearEvent(): void {
-    console.log("FOCUS CLEARED");
     this._setShadeVisibility(false);
-    this._lastSelected.forEach((entity) => entity.returnToOriginalPosition());
+    this._lastSelected.forEach((entity) => {
+      entity.returnToOriginalPosition();
+
+      if (entity instanceof PointEntity) {
+        entity.removeInternalReactions();
+      } else if (entity instanceof ConnectionEntity) {
+        entity.removeBoundaryCondition();
+      }
+    });
     this._lastSelected = [];
     this._canvas.renderAll();
   }
