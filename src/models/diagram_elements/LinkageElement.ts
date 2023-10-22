@@ -98,7 +98,7 @@ export class LinkageElement implements DiagramElement {
         linkage.addPoint(points[i]);
       }
     }
-
+    
     return linkage;
   }
 }

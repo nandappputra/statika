@@ -29,3 +29,9 @@ export enum ConnectionKind {
   HORIZONTAL_ROLLER = "Horizontal Roller",
   VERTICAL_ROLLER = "Vertical Roller",
 }
+
+export enum CanvasModes {
+  DEFAULT = "DEFAULT",
+  FOCUS = "FOCUS",
+  PAN = "PAN",
+}

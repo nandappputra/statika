@@ -4,7 +4,12 @@ import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
 import { IEvent } from "fabric/fabric-impl";
-import { ConnectionKind, EntityPrefix, USER_ID } from "../../utils/Constants";
+import {
+  CanvasModes,
+  ConnectionKind,
+  EntityPrefix,
+  USER_ID,
+} from "../../utils/Constants";
 import { DiagramElement } from "../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../canvas_entities/CanvasEntity";
 import { EventMediator } from "./EventMediator";
@@ -17,9 +22,11 @@ import { PointEntity } from "../canvas_entities/PointEntity";
 import { Structure } from "../Structure";
 import { CanvasBinder } from "./CanvasBinder";
 import { CanvasEventSubscriber } from "./canvas_event_subscribers/CanvasEventSubscriber";
-import { CanvasPanController } from "./CanvasPanController";
+import { CanvasPanMode } from "./modes/CanvasPanMode";
 import { fabric } from "fabric";
-import { CanvasFocusController } from "./CanvasFocusController";
+import { CanvasFocusMode } from "./modes/CanvasFocusMode";
+import { CanvasMode } from "./modes/CanvasMode";
+import { CanvasDefaultMode } from "./modes/CanvasDefaultMode";
 
 interface ValidCanvasEntity {
   name: string;
@@ -48,8 +55,8 @@ export class Painter implements EventMediator, CanvasBinder {
   >;
   private _pointIdToPointEntity: Map<number, PointEntity>;
 
-  private _canvasPanController: CanvasPanController;
-  private _canvasFocusController: CanvasFocusController;
+  private _canvasMode: Map<CanvasModes, CanvasMode>;
+  private _currentMode: CanvasModes;
 
   private _isDragging = false;
 
@@ -72,16 +79,31 @@ export class Painter implements EventMediator, CanvasBinder {
     >();
     this._pointIdToPointEntity = new Map<number, PointEntity>();
     this._setupEventHandler();
-    this._canvasPanController = new CanvasPanController(canvas, () =>
-      this._setupEventHandler()
-    );
-    this._canvasFocusController = new CanvasFocusController(
-      canvas,
-      () => this._setupEventHandler(),
-      this._entityIdToEntity
-    );
+    this._canvasMode = this._buildCanvasModes();
+    this._currentMode = CanvasModes.DEFAULT;
   }
 
+  private _buildCanvasModes() {
+    const modeMap = new Map<CanvasModes, CanvasMode>();
+    modeMap.set(
+      CanvasModes.PAN,
+      new CanvasPanMode(this._canvas, () => this._setupEventHandler())
+    );
+    modeMap.set(
+      CanvasModes.FOCUS,
+      new CanvasFocusMode(
+        this._canvas,
+        () => this._setupEventHandler(),
+        this._entityIdToEntity
+      )
+    );
+    modeMap.set(
+      CanvasModes.DEFAULT,
+      new CanvasDefaultMode(this._canvas, () => this._setupEventHandler())
+    );
+
+    return modeMap;
+  }
   private _isValidCanvasEntity(
     canvasObjectData: unknown
   ): canvasObjectData is ValidCanvasEntity {
@@ -372,6 +394,10 @@ export class Painter implements EventMediator, CanvasBinder {
         this._pointIdToPointEntity.set(point.id, newPoint);
         this._entityIdToEntity.set(point.id, newPoint);
 
+        point.externalForces.forEach((force) => {
+          this.addExternalLoad(point, force);
+        });
+
         this._canvas.add(newPoint.getObjectsToDraw());
       }
 
@@ -640,14 +666,8 @@ export class Painter implements EventMediator, CanvasBinder {
     >();
     this._pointIdToPointEntity = new Map<number, PointEntity>();
     this._setupEventHandler();
-    this._canvasPanController = new CanvasPanController(this._canvas, () =>
-      this._setupEventHandler()
-    );
-    this._canvasFocusController = new CanvasFocusController(
-      this._canvas,
-      () => this._setupEventHandler(),
-      this._entityIdToEntity
-    );
+    this._currentMode = CanvasModes.DEFAULT;
+    this._canvasMode = this._buildCanvasModes();
   }
 
   public loadStructure(structure: Structure) {
@@ -664,12 +684,13 @@ export class Painter implements EventMediator, CanvasBinder {
     this._canvas.discardActiveObject();
   }
 
-  public setPanningMode(isActive: boolean) {
-    this._canvasPanController.togglePanMode(isActive);
-  }
+  public setMode(mode: CanvasModes) {
+    const currentMode = this._canvasMode.get(this._currentMode);
+    currentMode?.disable();
 
-  public toggleFocusMode(isActive: boolean) {
-    this._canvasFocusController.toggle(isActive);
+    const selectedMode = this._canvasMode.get(mode);
+    selectedMode?.activate();
+    this._currentMode = mode;
   }
 
   public async toDataURI() {

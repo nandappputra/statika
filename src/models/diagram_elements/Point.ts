@@ -174,7 +174,7 @@ export class Point {
         point.addExternalForce(ExternalForce.fromJson(force));
       });
     }
-
+    
     pointMap.set(point._id, point);
 
     return point;

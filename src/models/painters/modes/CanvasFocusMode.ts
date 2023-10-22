@@ -1,11 +1,12 @@
 import { IEvent } from "fabric/fabric-impl";
 import { fabric } from "fabric";
-import { CanvasEntity } from "../canvas_entities/CanvasEntity";
-import { LinkageEntity } from "../canvas_entities/LinkageEntity";
-import { PointEntity } from "../canvas_entities/PointEntity";
-import { ConnectionEntity } from "../canvas_entities/ConnectionEntity";
+import { CanvasEntity } from "../../canvas_entities/CanvasEntity";
+import { LinkageEntity } from "../../canvas_entities/LinkageEntity";
+import { PointEntity } from "../../canvas_entities/PointEntity";
+import { ConnectionEntity } from "../../canvas_entities/ConnectionEntity";
+import { CanvasMode } from "./CanvasMode";
 
-export class CanvasFocusController {
+export class CanvasFocusMode implements CanvasMode {
   private _canvas: fabric.Canvas;
   private _reconstructEventListener: () => void;
   private _shade: fabric.Object;
@@ -23,15 +24,7 @@ export class CanvasFocusController {
     this._entityIdToEntity = entityIdToEntity;
   }
 
-  public toggle(isActive: boolean) {
-    if (isActive) {
-      this._activateFocusMode();
-    } else {
-      this._disableFocusMode();
-    }
-  }
-
-  private _activateFocusMode() {
+  public activate() {
     this._canvas.off();
     this._canvas.forEachObject((element) => {
       element.lockMovementX = true;
@@ -48,6 +41,7 @@ export class CanvasFocusController {
     this._canvas.on("selection:cleared", () =>
       this._handleObjectSelectionClearEvent()
     );
+    this._canvas.on("mouse:wheel", (event) => this._handleMouseScroll(event));
   }
 
   private _handleObjectSelectionEvent(event: IEvent<MouseEvent>): void {
@@ -139,8 +133,30 @@ export class CanvasFocusController {
     this._canvas.renderAll();
   }
 
-  private _disableFocusMode() {
+  private _handleMouseScroll(event: IEvent<WheelEvent>) {
+    if (!this._canvas.viewportTransform) {
+      return;
+    }
+
+    const viewportTransform = this._canvas.viewportTransform.slice();
+    viewportTransform[4] -= event.e.deltaX;
+    viewportTransform[5] -= event.e.deltaY;
+
+    this._shade.left = (this._shade.left || 0) + event.e.deltaX;
+    this._shade.top = (this._shade.top || 0) - event.e.deltaY;
+
+    this._canvas.setViewportTransform(viewportTransform);
+  }
+
+  public disable() {
     this._canvas.off();
+
+    for (const [, entity] of this._entityIdToEntity) {
+      if (entity instanceof PointEntity) {
+        entity.getElement().clearSolution();
+      }
+    }
+
     this._reconstructEventListener();
   }
 

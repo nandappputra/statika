@@ -10,7 +10,11 @@ export class Variable {
   }
 
   clone(): Variable {
-    return new Variable(this._symbol, this._value);
+    if (this._known) {
+      return new Variable(this._symbol, this._value);
+    }
+
+    return new Variable(this._symbol);
   }
 
   get symbol(): string {

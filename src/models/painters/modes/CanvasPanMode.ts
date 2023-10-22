@@ -1,6 +1,7 @@
 import { IEvent } from "fabric/fabric-impl";
+import { CanvasMode } from "./CanvasMode";
 
-export class CanvasPanController {
+export class CanvasPanMode implements CanvasMode {
   private _canvas: fabric.Canvas;
   private _reconstructEventListener: () => void;
   private _isDragging = false;
@@ -12,15 +13,7 @@ export class CanvasPanController {
     this._reconstructEventListener = reconstructEventListener;
   }
 
-  public togglePanMode(isActive: boolean) {
-    if (isActive) {
-      this._activatePanMode();
-    } else {
-      this._disablePanMode();
-    }
-  }
-
-  private _activatePanMode() {
+  public activate() {
     this._canvas.off();
     this._canvas.forEachObject((element) => (element.selectable = false));
 
@@ -30,7 +23,7 @@ export class CanvasPanController {
     this._canvas.defaultCursor = "move";
   }
 
-  private _disablePanMode() {
+  public disable() {
     this._canvas.off();
     this._canvas.forEachObject((element) => (element.selectable = true));
     this._reconstructEventListener();

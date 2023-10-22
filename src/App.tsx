@@ -6,7 +6,12 @@ import { MovePointEvent, ObjectSelectionEvent } from "./models/Event";
 import { EntityConfig, Painter } from "./models/painters/Painter";
 import { useEffect, useState } from "react";
 import { ElementFactory } from "./factories/ElementFactory";
-import { CANVAS_ID, ConnectionKind, USER_ID } from "./utils/Constants";
+import {
+  CANVAS_ID,
+  CanvasModes,
+  ConnectionKind,
+  USER_ID,
+} from "./utils/Constants";
 import SelectedEntity from "./components/SelectedEntity";
 import { LinkageEntity } from "./models/canvas_entities/LinkageEntity";
 import { ConnectionEntity } from "./models/canvas_entities/ConnectionEntity";
@@ -54,9 +59,17 @@ function App() {
   const [solution, setSolution] = useState<Variable[]>([]);
 
   const [painterState, setPainterState] = useState<Painter | undefined>();
+  const [currentCanvasMode, setCurrentCanvasMode] = useState<CanvasModes>(
+    CanvasModes.DEFAULT
+  );
   const [elementFactoryState] = useState<ElementFactory>(
     ElementFactory.getInstance()
   );
+
+  const changeCanvasMode = (canvasMode: CanvasModes) => {
+    painterState?.setMode(canvasMode);
+    setCurrentCanvasMode(canvasMode);
+  };
 
   useEffect(() => {
     if (!canvasRendered) {
@@ -202,6 +215,7 @@ function App() {
   };
 
   const buildLinkage = (): void => {
+    changeCanvasMode(CanvasModes.DEFAULT);
     const centerCoordinate = painterState?.getCanvasCenter();
     if (!centerCoordinate || !elementFactoryState) {
       return;
@@ -351,10 +365,18 @@ function App() {
   };
 
   const handlePanningMode = (isActive: boolean) => {
-    painterState?.setPanningMode(isActive);
+    if (isActive) {
+      changeCanvasMode(CanvasModes.PAN);
+    } else {
+      changeCanvasMode(CanvasModes.DEFAULT);
+    }
   };
 
   const solveStructure = () => {
+    if (currentCanvasMode === CanvasModes.FOCUS) {
+      changeCanvasMode(CanvasModes.DEFAULT);
+      return;
+    }
     setSolutionOpen(true);
 
     painterState?.clearFocus();
@@ -372,7 +394,7 @@ function App() {
       );
       const variableValues = solver.solve(structure);
       structure.loadSolution(variableValues);
-      painterState?.toggleFocusMode(true);
+      changeCanvasMode(CanvasModes.FOCUS);
 
       const variableList: Variable[] = [];
 
@@ -439,6 +461,7 @@ function App() {
         entityList={entityList}
         handleSelection={handleSelection}
         togglePanningMode={handlePanningMode}
+        canvasMode={currentCanvasMode}
       />
       <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
         <About open={aboutOpen} handleClose={closeAllDialogs} />
