@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { describe, expect, test } from "@jest/globals";
 import { Painter } from "../../models/painters/Painter";
 import { ElementFactory } from "../../factories/ElementFactory";

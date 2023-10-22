@@ -7,17 +7,20 @@ import { setMockProperty } from "../../utils/TestUtils";
 import { EntityPrefix } from "../../utils/Constants";
 import { Point } from "../diagram_elements/Point";
 import { MovePointEvent } from "../Event";
+import { fabric } from "fabric";
 
 describe("LinkageEntity", () => {
   let linkage: MockedObject<LinkageElement>;
   let eventMediator: MockedObject<Painter>;
   let linkageEntity: LinkageEntity;
+  let canvas: MockedObject<fabric.Canvas>;
 
   beforeEach(() => {
     linkage = jest.createMockFromModule<LinkageElement>(
       "../diagram_elements/LinkageElement"
     );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
+    canvas = jest.mocked(new fabric.Canvas(null));
   });
 
   describe("getObjectsToDraw", () => {
@@ -27,7 +30,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "id", 3);
       setMockProperty(linkage, "points", [p1, p2]);
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const actualObjects = linkageEntity.getObjectsToDraw();
       const expectedObject = {
@@ -47,7 +55,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "id", 3);
       setMockProperty(linkage, "points", [p1, p2]);
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const movePointEvent: MovePointEvent = {
         id: 1,
@@ -69,7 +82,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "id", 3);
       setMockProperty(linkage, "points", [p1, p2]);
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const movePointEvent: MovePointEvent = {
         id: 4,
@@ -90,7 +108,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2]);
       linkage.addPoint = jest.fn();
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const p3 = new Point("P3", 3, 3, 3);
       linkageEntity.addPoint(p3);
@@ -105,7 +128,12 @@ describe("LinkageEntity", () => {
       const p2 = new Point("P2", 2, 2, 2);
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2]);
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const pointAddition = jest.fn<(point: Point) => void>();
       linkage.addPoint = pointAddition;
@@ -123,7 +151,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2]);
       linkage.addPoint = jest.fn();
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const p3 = new Point("P3", 3, 3, 3);
       linkageEntity.addPoint(p3);
@@ -159,7 +192,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2, p3]);
       linkage.removePoint = jest.fn();
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       linkageEntity.deletePoint(p3);
 
@@ -173,7 +211,12 @@ describe("LinkageEntity", () => {
       const p2 = new Point("P2", 2, 2, 2);
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2]);
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       const pointRemoval = jest.fn<(point: Point) => void>();
       linkage.removePoint = pointRemoval;
@@ -191,7 +234,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2, p3]);
       linkage.removePoint = jest.fn();
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       linkageEntity.deletePoint(p1);
 
@@ -221,7 +269,12 @@ describe("LinkageEntity", () => {
       setMockProperty(linkage, "name", "L1");
       setMockProperty(linkage, "points", [p1, p2]);
       linkage.removePoint = jest.fn();
-      linkageEntity = new LinkageEntity(linkage, eventMediator, undefined);
+      linkageEntity = new LinkageEntity(
+        linkage,
+        eventMediator,
+        undefined,
+        canvas
+      );
 
       expect(() => linkageEntity.deletePoint(p3)).toThrow(
         "failed to delete point: point not found in polygon"
