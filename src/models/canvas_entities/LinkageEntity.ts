@@ -19,11 +19,14 @@ export class LinkageEntity implements CanvasEntity {
   private _polygon: fabric.Polygon;
   private _eventMediator: EventMediator;
   private _linkage: LinkageElement;
+  private _canvas: fabric.Canvas;
+  private _lastIndex = 0;
 
   constructor(
     linkage: LinkageElement,
     eventMediator: EventMediator,
-    options: fabric.IPolylineOptions | undefined
+    options: fabric.IPolylineOptions | undefined,
+    canvas: fabric.Canvas
   ) {
     this._linkage = linkage;
     this._idToIndexMap = new Map<number, number>();
@@ -47,6 +50,16 @@ export class LinkageEntity implements CanvasEntity {
     this._polygon.hasControls = false;
     this._polygon.lockMovementX = true;
     this._polygon.lockMovementY = true;
+    this._canvas = canvas;
+  }
+
+  moveToFront(): void {
+    this._lastIndex = this._canvas.getObjects().indexOf(this._polygon);
+    this._polygon.bringToFront();
+  }
+
+  returnToOriginalPosition(): void {
+    this._polygon.moveTo(this._lastIndex);
   }
 
   public updatePosition(movePointEvent: MovePointEvent) {

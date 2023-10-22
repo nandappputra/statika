@@ -61,7 +61,7 @@ function EntityList(props: Props) {
                 }}
               >
                 <ListItemButton onClick={() => props.onClick(entity.id)}>
-                  <ListItemText primary={entity.name} secondary={entity.id} />
+                  <ListItemText primary={entity.name} secondary={entity.kind} />
                 </ListItemButton>
               </ListItem>
             );

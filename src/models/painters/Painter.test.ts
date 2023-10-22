@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { jest, describe, expect, test } from "@jest/globals";
 import { MockedObject } from "jest-mock";
 import { LinkageElement } from "../diagram_elements/LinkageElement";
@@ -115,7 +119,8 @@ describe("Painter", () => {
       const expectedEntity = new ExternalForceEntity(
         force,
         connection,
-        painter
+        painter,
+        canvas
       );
 
       expect(painter.getEntityById(5)).toStrictEqual(expectedEntity);

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { ElementFactory } from "../factories/ElementFactory";
 import { describe, expect, test } from "@jest/globals";
 import { fabric } from "fabric";
@@ -6,7 +10,6 @@ import { Painter } from "../models/painters/Painter";
 import { ConnectionKind } from "../utils/Constants";
 import { MatrixSolverService } from "../services/solvers/MatrixSolverService";
 import { SolverService } from "../services/solvers/SolverService";
-import { Variable } from "../models/Variable";
 import { ConnectionElement } from "../models/diagram_elements/ConnectionElement";
 import { Point } from "../models/diagram_elements/Point";
 
@@ -56,15 +59,14 @@ describe("Statika", () => {
     const structure = painter.buildStructure();
 
     const actualSolution = solver.solve(structure);
-    const expectedSolution = [
-      new Variable("F_P1x", -10),
-      new Variable("F_P2x", 0),
-      new Variable("F_P1y", -2.5),
-      new Variable("F_P2y", -2.5),
-      new Variable("F_C1x_ground", -10),
-      new Variable("F_C1y_ground", -2.5),
-      new Variable("F_C2y_ground", -2.5),
-    ];
+    const expectedSolution = new Map<string, number>();
+    expectedSolution.set("F_P1x", -10);
+    expectedSolution.set("F_P2x", 0);
+    expectedSolution.set("F_P1y", -2.5);
+    expectedSolution.set("F_P2y", -2.5);
+    expectedSolution.set("F_C1x_ground", 10);
+    expectedSolution.set("F_C1y_ground", 2.5);
+    expectedSolution.set("F_C2y_ground", 2.5);
 
     expect(actualSolution).toStrictEqual(expectedSolution);
   });
@@ -87,14 +89,13 @@ describe("Statika", () => {
     const structure = painter.buildStructure();
 
     const actualSolution = solver.solve(structure);
-    const expectedSolution = [
-      new Variable("F_P1x", 0),
-      new Variable("F_P1y", -100),
-      new Variable("M_P1z", -10000),
-      new Variable("F_C1x_ground", 0),
-      new Variable("F_C1y_ground", -100),
-      new Variable("M_C1z_ground", -10000),
-    ];
+    const expectedSolution = new Map<string, number>();
+    expectedSolution.set("F_P1x", 0);
+    expectedSolution.set("F_P1y", -100);
+    expectedSolution.set("M_P1z", -10000);
+    expectedSolution.set("F_C1x_ground", 0);
+    expectedSolution.set("F_C1y_ground", 100);
+    expectedSolution.set("M_C1z_ground", 10000);
 
     expect(actualSolution).toStrictEqual(expectedSolution);
   });
@@ -137,23 +138,22 @@ describe("Statika", () => {
     const structure = painter.buildStructure();
 
     const actualSolution = solver.solve(structure);
-    const expectedSolution = [
-      new Variable("F_P1x", -10),
-      new Variable("F_P2x", 10),
-      new Variable("F_P1y", 0),
-      new Variable("F_P2y", 0),
-      new Variable("F_P3x", 0),
-      new Variable("F_P4x", 0),
-      new Variable("F_P3y", -30),
-      new Variable("F_P4y", 30),
-      new Variable("F_P5x", -10),
-      new Variable("F_P6x", 10),
-      new Variable("F_P5y", 10),
-      new Variable("F_P6y", -10),
-      new Variable("F_C1x_ground", -10),
-      new Variable("F_C1y_ground", -30),
-      new Variable("F_C2y_ground", 10),
-    ];
+    const expectedSolution = new Map<string, number>();
+    expectedSolution.set("F_P1x", -10);
+    expectedSolution.set("F_P2x", 10);
+    expectedSolution.set("F_P1y", 0);
+    expectedSolution.set("F_P2y", 0);
+    expectedSolution.set("F_P3x", 0);
+    expectedSolution.set("F_P4x", 0);
+    expectedSolution.set("F_P3y", -30);
+    expectedSolution.set("F_P4y", 30);
+    expectedSolution.set("F_P5x", -10);
+    expectedSolution.set("F_P6x", 10);
+    expectedSolution.set("F_P5y", 10);
+    expectedSolution.set("F_P6y", -10);
+    expectedSolution.set("F_C1x_ground", 10);
+    expectedSolution.set("F_C1y_ground", 30);
+    expectedSolution.set("F_C2y_ground", -10);
 
     expect(actualSolution).toStrictEqual(expectedSolution);
   });

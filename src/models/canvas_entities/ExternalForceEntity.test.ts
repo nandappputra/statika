@@ -7,12 +7,14 @@ import { Painter } from "../painters/Painter";
 import { EntityPrefix } from "../../utils/Constants";
 import { setMockProperty } from "../../utils/TestUtils";
 import { MovePointEvent } from "../Event";
+import { fabric } from "fabric";
 
 describe("ExternalForceEntity", () => {
   let point: MockedObject<Point>;
   let externalForce: MockedObject<ExternalForce>;
   let eventMediator: MockedObject<Painter>;
   let externalForceEntity: ExternalForceEntity;
+  let canvas: MockedObject<fabric.Canvas>;
 
   beforeEach(() => {
     point = jest.createMockFromModule<Point>("../diagram_elements/Point");
@@ -20,6 +22,7 @@ describe("ExternalForceEntity", () => {
       "../diagram_elements/ExternalForce"
     );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
+    canvas = jest.mocked(new fabric.Canvas(null));
   });
 
   describe("getObjectsToDraw", () => {
@@ -30,7 +33,8 @@ describe("ExternalForceEntity", () => {
       externalForceEntity = new ExternalForceEntity(
         externalForce,
         point,
-        eventMediator
+        eventMediator,
+        canvas
       );
 
       const actualObjects = externalForceEntity.getObjectsToDraw();
@@ -51,7 +55,8 @@ describe("ExternalForceEntity", () => {
       externalForceEntity = new ExternalForceEntity(
         externalForce,
         point,
-        eventMediator
+        eventMediator,
+        canvas
       );
 
       const movePointEvent: MovePointEvent = {
@@ -75,7 +80,8 @@ describe("ExternalForceEntity", () => {
       externalForceEntity = new ExternalForceEntity(
         externalForce,
         point,
-        eventMediator
+        eventMediator,
+        canvas
       );
 
       externalForceEntity.setForceComponents(100, 0);
@@ -93,7 +99,8 @@ describe("ExternalForceEntity", () => {
       externalForceEntity = new ExternalForceEntity(
         externalForce,
         point,
-        eventMediator
+        eventMediator,
+        canvas
       );
 
       externalForceEntity.setForceComponents(100, 0);

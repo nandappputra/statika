@@ -8,10 +8,12 @@ import { ConnectionElement } from "../diagram_elements/ConnectionElement";
 import { ConnectionEntity } from "./ConnectionEntity";
 import { MovePointEvent } from "../Event";
 import { ExternalForce } from "../diagram_elements/ExternalForce";
+import { fabric } from "fabric";
 
 describe("ConnectionEntity", () => {
   let connection: MockedObject<ConnectionElement>;
   let eventMediator: MockedObject<Painter>;
+  let canvas: MockedObject<fabric.Canvas>;
   let connectionEntity: ConnectionEntity;
 
   beforeEach(() => {
@@ -19,6 +21,7 @@ describe("ConnectionEntity", () => {
       "../diagram_elements/connections/Connection"
     );
     eventMediator = jest.createMockFromModule<Painter>("../painters/Painter");
+    canvas = jest.mocked(new fabric.Canvas(null));
   });
 
   describe("getObjectsToDraw", () => {
@@ -30,12 +33,16 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "name", "C1");
       setMockProperty(connection, "id", 3);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const actualObjects = connectionEntity.getObjectsToDraw();
       const expectedObject = {
         name: "C1",
-        id:3,
+        id: 3,
         pointId: 1,
         type: EntityPrefix.CONNECTION,
       };
@@ -54,7 +61,11 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "externalForces", []);
       eventMediator.updatePointPosition = jest.fn();
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const movePointEvent: MovePointEvent = {
         id: 1,
@@ -82,7 +93,11 @@ describe("ConnectionEntity", () => {
         jest.fn<(movePointEvent: MovePointEvent) => void>();
       eventMediator.updatePointPosition = updatePosition;
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const movePointEvent: MovePointEvent = {
         id: 1,
@@ -127,7 +142,11 @@ describe("ConnectionEntity", () => {
         jest.fn<(movePointEvent: MovePointEvent) => void>();
       eventMediator.updatePointPosition = updatePosition;
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const movePointEvent: MovePointEvent = {
         id: 1,
@@ -169,7 +188,11 @@ describe("ConnectionEntity", () => {
       connection.addPoint = addPoint;
       setMockProperty(connection, "points", [p1, p2]);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       connectionEntity.addPoint(p3);
 
@@ -187,7 +210,11 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "kind", ConnectionKind.PIN_JOINT);
       setMockProperty(connection, "points", [p1, p2]);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       connectionEntity.deletePoint(p2);
 
@@ -204,7 +231,11 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "kind", ConnectionKind.PIN_JOINT);
       setMockProperty(connection, "points", [p2, p3]);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       connectionEntity.deletePoint(p1);
 
@@ -223,7 +254,11 @@ describe("ConnectionEntity", () => {
       connection.addExternalForce = addExternalForce;
       setMockProperty(connection, "points", [p1, p2]);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const force = new ExternalForce("F1", 3, 1, 2);
       connectionEntity.addExternalForce(force);
@@ -242,7 +277,11 @@ describe("ConnectionEntity", () => {
       connection.addExternalForce = addExternalForce;
       setMockProperty(connection, "points", [p1, p2]);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const force = new ExternalForce("F1", 3, 1, 2);
       connectionEntity.addExternalForce(force);
@@ -262,7 +301,11 @@ describe("ConnectionEntity", () => {
       connection.removeExternalForce = removeExternalForce;
       setMockProperty(connection, "points", [p1, p2]);
 
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const force = new ExternalForce("F1", 3, 1, 2);
       connectionEntity.addExternalForce(force);
@@ -281,7 +324,11 @@ describe("ConnectionEntity", () => {
       setMockProperty(connection, "name", "C1");
       setMockProperty(connection, "kind", ConnectionKind.HORIZONTAL_ROLLER);
       connection.changeConnectionType = jest.fn();
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       const initialIcon = connectionEntity.getObjectsToDraw();
 
@@ -301,7 +348,11 @@ describe("ConnectionEntity", () => {
       const changeConnectionType =
         jest.fn<(connectionType: ConnectionKind) => void>();
       connection.changeConnectionType = changeConnectionType;
-      connectionEntity = new ConnectionEntity(connection, eventMediator);
+      connectionEntity = new ConnectionEntity(
+        connection,
+        eventMediator,
+        canvas
+      );
 
       connectionEntity.getObjectsToDraw();
 

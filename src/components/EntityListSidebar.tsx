@@ -1,23 +1,29 @@
 import { Box } from "@mui/material";
 import EntityList from "./EntityList";
 import CollapsibleButton from "./CollapsibleButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
 import ModeIcon from "@mui/icons-material/Mode";
 import { CanvasEntity } from "../models/canvas_entities/CanvasEntity";
+import { CanvasModes } from "../utils/Constants";
 
 type Props = {
   buildLinkage: () => void;
   entityList: CanvasEntity[];
   handleSelection: (entity: number) => void;
   togglePanningMode: (isActive: boolean) => void;
+  canvasMode: CanvasModes;
 };
 
 function EntityListSidebar(props: Props) {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const [isClicked, setIsClicked] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsClicked(props.canvasMode === CanvasModes.PAN);
+  }, [props.canvasMode]);
 
   const invertExpanded = () => {
     setIsExpanded(!isExpanded);

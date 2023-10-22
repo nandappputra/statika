@@ -1,22 +1,16 @@
 import { fabric } from "fabric";
-import { ExternalForce } from "../diagram_elements/ExternalForce";
 import { EventMediator } from "../painters/EventMediator";
-import {
-  EntityKind,
-  EntityPrefix,
-  RADIAN_TO_DEGREE_MULTIPLIER,
-} from "../../utils/Constants";
+import { EntityKind, EntityPrefix } from "../../utils/Constants";
 import { Point } from "../diagram_elements/Point";
 import { CanvasEntity } from "./CanvasEntity";
 import { MovePointEvent } from "../Event";
 import { ConnectionElement } from "../diagram_elements/ConnectionElement";
+import { Moment } from "../diagram_elements/Moment";
 
-const ARROW_ANGLE_ADJUSTMENT = 90;
+export class MomentEntity implements CanvasEntity {
+  private _kind = EntityKind.MOMENT;
 
-export class ExternalForceEntity implements CanvasEntity {
-  private _kind = EntityKind.FORCE;
-
-  private _externalForce: ExternalForce;
+  private _moment: Moment;
   private _eventMediator: EventMediator;
   private _icon: fabric.Object;
   private _location: Point | ConnectionElement;
@@ -24,16 +18,16 @@ export class ExternalForceEntity implements CanvasEntity {
   private _lastIndex = 0;
 
   constructor(
-    externalForce: ExternalForce,
+    moment: Moment,
     location: Point | ConnectionElement,
     eventMediator: EventMediator,
     canvas: fabric.Canvas,
     isSelectable = true,
     color = "black"
   ) {
-    this._externalForce = externalForce;
+    this._moment = moment;
     this._eventMediator = eventMediator;
-    this._icon = this._buildIcon(externalForce, location, isSelectable, color);
+    this._icon = this._buildIcon(moment, location, isSelectable, color);
     this._location = location;
     this._canvas = canvas;
   }
@@ -59,11 +53,11 @@ export class ExternalForceEntity implements CanvasEntity {
   }
 
   get name() {
-    return this._externalForce.name;
+    return this._moment.name;
   }
 
   get id() {
-    return this._externalForce.id;
+    return this._moment.id;
   }
 
   get kind() {
@@ -71,17 +65,20 @@ export class ExternalForceEntity implements CanvasEntity {
   }
 
   private _buildIcon(
-    force: ExternalForce,
+    moment: Moment,
     location: Point | ConnectionElement,
     isSelectable: boolean,
     color: string
   ) {
-    const line = new fabric.Line([0, 0, 0, 50], {
+    const circle = new fabric.Circle({
+      radius: 20,
       originY: "center",
       originX: "center",
       stroke: color,
       strokeWidth: 3,
-      fill: color,
+      fill: "transparent",
+      startAngle: 0,
+      endAngle: 270,
     });
     const cap = new fabric.Triangle({
       width: 15,
@@ -89,18 +86,15 @@ export class ExternalForceEntity implements CanvasEntity {
       originY: "bottom",
       originX: "center",
       stroke: color,
-      top: 50,
-      angle: 180,
+      angle: 90,
       fill: color,
+      left: 0,
+      top: -20,
     });
 
-    const arrow = new fabric.Group([line, cap], {
+    const arrow = new fabric.Group([circle, cap], {
       originX: "center",
-      originY: "bottom",
-      angle:
-        Math.atan2(parseFloat(force.symbolF_y), parseFloat(force.symbolF_x)) *
-          RADIAN_TO_DEGREE_MULTIPLIER -
-        ARROW_ANGLE_ADJUSTMENT,
+      originY: "center",
       left: location.x,
       top: location.y,
       lockMovementX: true,
@@ -109,14 +103,20 @@ export class ExternalForceEntity implements CanvasEntity {
       hasBorders: false,
       hoverCursor: "pointer",
       selectable: isSelectable,
-      data: { name: force.name, type: EntityPrefix.FORCE, id: force.id },
+      data: { name: moment.name, type: EntityPrefix.MOMENT, id: moment.id },
     });
+
+    if (moment.M_z >= 0) {
+      arrow.flipY = false;
+    } else {
+      arrow.flipY = true;
+    }
 
     return arrow;
   }
 
   public getElement() {
-    return this._externalForce;
+    return this._moment;
   }
 
   get location() {
@@ -127,19 +127,18 @@ export class ExternalForceEntity implements CanvasEntity {
     this._location = location;
   }
 
-  public setForceComponents(F_x: number, F_y: number) {
-    this._externalForce.F_x = F_x;
-    this._externalForce.F_y = F_y;
+  public setAmount(M_z: number) {
+    this._moment.M_z = M_z;
 
-    this._rotateIcon(F_x, F_y);
+    this._rotateIcon(M_z);
   }
 
-  private _rotateIcon(F_x: number, F_y: number) {
-    this._icon.set(
-      "angle",
-      Math.atan2(F_y, F_x) * RADIAN_TO_DEGREE_MULTIPLIER -
-        ARROW_ANGLE_ADJUSTMENT
-    );
+  private _rotateIcon(M_z: number) {
+    if (M_z >= 0) {
+      this._icon.flipY = true;
+    } else {
+      this._icon.flipY = false;
+    }
     this._icon.setCoords();
     this._icon.dirty = true;
   }

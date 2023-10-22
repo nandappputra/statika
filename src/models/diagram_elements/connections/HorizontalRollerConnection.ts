@@ -29,7 +29,7 @@ export class HorizontalRollerConnection implements Connection {
     return "0";
   }
   getF_y(name: string): string {
-    return `1*F_${name}y_ground`;
+    return `-1*F_${name}y_ground`;
   }
   getM_z(_name: string): string {
     return "0";

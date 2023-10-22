@@ -11,11 +11,15 @@ import { DiagramElement } from "../../diagram_elements/DiagramElement";
 import { CanvasEntity } from "../../canvas_entities/CanvasEntity";
 import { setMockProperty } from "../../../utils/TestUtils";
 import { ConnectionEntity } from "../../canvas_entities/ConnectionEntity";
+import { fabric } from "fabric";
+import { Canvas } from "fabric/fabric-impl";
+import { MockedObject } from "jest-mock";
 
 describe("PointSnapFeature", () => {
   let pointSnapFeature: PointSnapFeature;
   let elementFactory: ElementFactory;
   let painter: Painter;
+  let canvas: MockedObject<Canvas>;
 
   beforeEach(() => {
     painter = jest.createMockFromModule<Painter>("../Painter");
@@ -23,6 +27,7 @@ describe("PointSnapFeature", () => {
     elementFactory = jest.createMockFromModule<ElementFactory>(
       "../../../factories/ElementFactory"
     );
+    canvas = jest.mocked(new fabric.Canvas(null));
 
     pointSnapFeature = new PointSnapFeature(elementFactory);
   });
@@ -35,7 +40,7 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
           case 1:
@@ -81,14 +86,14 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const connection1 = new ConnectionElement(
         "C1",
         7,
         [point2],
         ConnectionKind.FIXED
       );
-      const connectionEntity = new ConnectionEntity(connection1, painter);
+      const connectionEntity = new ConnectionEntity(connection1, painter, canvas);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
           case 1:
@@ -139,7 +144,7 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
           case 1:
@@ -186,14 +191,14 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const connection1 = new ConnectionElement(
         "C1",
         7,
         [point2],
         ConnectionKind.FIXED
       );
-      const connectionEntity = new ConnectionEntity(connection1, painter);
+      const connectionEntity = new ConnectionEntity(connection1, painter, canvas);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
           case 1:
@@ -245,14 +250,14 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const connection1 = new ConnectionElement(
         "C1",
         7,
         [point2],
         ConnectionKind.FIXED
       );
-      const connectionEntity = new ConnectionEntity(connection1, painter);
+      const connectionEntity = new ConnectionEntity(connection1, painter, canvas);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
           case 1:
@@ -305,7 +310,7 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const point5 = new Point("P5", 7, 60, 60);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
@@ -355,7 +360,7 @@ describe("PointSnapFeature", () => {
       const point3 = new Point("P3", 4, 63, 63);
       const point4 = new Point("P4", 5, 130, 130);
       const linkage2 = new LinkageElement("L1", 6, point3, point4);
-      const pointEntity = new PointEntity(point3, painter);
+      const pointEntity = new PointEntity(point3, painter, canvas);
       const getPoint = jest.fn((id: number) => {
         switch (id) {
           case 1:

@@ -9,4 +9,6 @@ export interface CanvasEntity {
 
   updatePosition(movePointEvent: MovePointEvent): void;
   getObjectsToDraw(): fabric.Object | fabric.Group;
+  moveToFront(): void;
+  returnToOriginalPosition(): void;
 }

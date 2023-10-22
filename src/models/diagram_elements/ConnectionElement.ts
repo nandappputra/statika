@@ -1,4 +1,4 @@
-import { ConnectionKind } from "../../utils/Constants";
+import { ConnectionKind, USER_ID } from "../../utils/Constants";
 import {
   formatForceForSolver,
   formatMomentForSolver,
@@ -19,6 +19,7 @@ export class ConnectionElement implements DiagramElement {
   private _points: Point[];
   private _connection: Connection;
   private _externalForces: ExternalForce[];
+  private _boundaryCondition: Point | undefined;
 
   constructor(
     name: string,
@@ -118,6 +119,29 @@ export class ConnectionElement implements DiagramElement {
     sigmaM_z.push(this._connection.getM_z(this._name));
 
     return [sigmaF_x.join("+"), sigmaF_y.join("+"), sigmaM_z.join("+")];
+  }
+
+  loadSolution(solutionMap: Map<string, number>) {
+    this._boundaryCondition = new Point(
+      "boundary_conditon",
+      USER_ID,
+      this.x,
+      this.y
+    );
+    this._boundaryCondition.F_x =
+      solutionMap.get(`F_${this.name}x_ground`) || 0;
+    this._boundaryCondition.F_y =
+      solutionMap.get(`F_${this.name}y_ground`) || 0;
+    this._boundaryCondition.M_z =
+      solutionMap.get(`M_${this.name}z_ground`) || 0;
+  }
+
+  clearSolution() {
+    this._boundaryCondition = undefined;
+  }
+
+  get boundaryCondition() {
+    return this._boundaryCondition;
   }
 
   public addPoint(point: Point) {

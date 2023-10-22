@@ -9,6 +9,14 @@ export class Variable {
     this._value = typeof value === "number" ? value : 0;
   }
 
+  clone(): Variable {
+    if (this._known) {
+      return new Variable(this._symbol, this._value);
+    }
+
+    return new Variable(this._symbol);
+  }
+
   get symbol(): string {
     return this._symbol;
   }

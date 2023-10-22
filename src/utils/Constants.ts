@@ -8,6 +8,7 @@ export const METADATA_FACTORY = "factory";
 export enum EntityPrefix {
   LINKAGE = "L",
   CONNECTION = "C",
+  MOMENT = "M",
   POINT = "P",
   FORCE = "F",
   NONE = "",
@@ -18,6 +19,7 @@ export enum EntityKind {
   CONNECTION = "Connection",
   POINT = "Point",
   FORCE = "Force",
+  MOMENT = "Moment",
 }
 
 export enum ConnectionKind {
@@ -26,4 +28,10 @@ export enum ConnectionKind {
   FIXED = "Fixed",
   HORIZONTAL_ROLLER = "Horizontal Roller",
   VERTICAL_ROLLER = "Vertical Roller",
+}
+
+export enum CanvasModes {
+  DEFAULT = "DEFAULT",
+  FOCUS = "FOCUS",
+  PAN = "PAN",
 }
