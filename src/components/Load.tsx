@@ -3,6 +3,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Typography } from "@mui/material";
 import { FileUploader } from "react-drag-drop-files";
+import { useState } from "react";
 
 interface Props {
   open: boolean;
@@ -11,11 +12,19 @@ interface Props {
 }
 
 export default function Load(props: Props) {
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const handleChange = (file: Blob) => {
     const fileReader = new FileReader();
     fileReader.onload = () => {
-      props.load(fileReader.result as string);
-      props.handleClose();
+      try {
+        props.load(fileReader.result as string);
+        props.handleClose();
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        }
+      }
     };
     fileReader.readAsDataURL(file);
   };
@@ -52,6 +61,15 @@ export default function Load(props: Props) {
             alignItems: "center",
           }}
         >
+          {errorMessage ? (
+            <Typography
+              sx={{ padding: "1rem", textAlign: "center", color: "red" }}
+            >
+              {errorMessage}
+            </Typography>
+          ) : (
+            <></>
+          )}
           <FileUploader
             handleChange={handleChange}
             name="file"

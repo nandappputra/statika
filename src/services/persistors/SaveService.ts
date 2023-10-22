@@ -35,7 +35,9 @@ export class SaveService {
   }
 
   private _getStructureJson(painter: Painter) {
-    return JSON.stringify(painter.buildStructure());
+    const structure = painter.buildStructure();
+    structure.clearSolution();
+    return JSON.stringify(structure);
   }
 
   private _getElementFactoryJson(elementFactory: ElementFactory) {

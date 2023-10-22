@@ -177,7 +177,7 @@ export class ConnectionEntity implements CanvasEntity {
       this._eventMediator,
       this._canvas,
       false,
-      "grey"
+      "green"
     );
     this._canvas.add(reactionForce.getObjectsToDraw());
     this._internalReactions.push(reactionForce.getObjectsToDraw());
@@ -195,7 +195,7 @@ export class ConnectionEntity implements CanvasEntity {
       this._eventMediator,
       this._canvas,
       false,
-      "grey"
+      "blue"
     );
 
     this._canvas.add(reactionMoment.getObjectsToDraw());

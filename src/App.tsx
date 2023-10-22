@@ -415,6 +415,8 @@ function App() {
       return;
     }
 
+    setCurrentCanvasMode(CanvasModes.DEFAULT);
+
     const saveService = new SaveService(painterState, elementFactoryState);
     const imageUri = await saveService.buildPngWithMetadata();
 
