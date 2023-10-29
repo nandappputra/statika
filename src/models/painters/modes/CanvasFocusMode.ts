@@ -25,7 +25,13 @@ export class CanvasFocusMode implements CanvasMode {
   }
 
   public activate() {
-    this._canvas.off();
+    this._canvas.off("object:moving");
+    this._canvas.off("mouse:up");
+    this._canvas.off("selection:updated");
+    this._canvas.off("selection:created");
+    this._canvas.off("selection:created");
+    this._canvas.off("selection:cleared");
+    this._canvas.off("mouse:wheel");
     this._canvas.forEachObject((element) => {
       element.lockMovementX = true;
       element.lockMovementY = true;

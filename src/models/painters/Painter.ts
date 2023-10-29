@@ -155,7 +155,6 @@ export class Painter implements EventMediator, CanvasBinder {
   }
 
   private _handleMouseOver(event: IEvent<MouseEvent>): void {
-    console.log("OVER!", event);
     const target = event.target;
     const data: unknown = target?.data;
     if (!target || !this._isValidCanvasEntity(data)) {
@@ -167,10 +166,6 @@ export class Painter implements EventMediator, CanvasBinder {
     const height = target.height || 0;
     const width = target.width || 0;
     const name = data.name;
-
-    if (!top || !height) {
-      return;
-    }
 
     this._eventSubscribers.forEach((feature) =>
       feature.handleObjectOverEvent({ top, height, name, left, width })
