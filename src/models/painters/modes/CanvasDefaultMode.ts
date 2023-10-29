@@ -14,7 +14,6 @@ export class CanvasDefaultMode implements CanvasMode {
     this._reconstructEventListener();
   }
 
-  public disable() {
-    this._canvas.off();
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public disable() {}
 }

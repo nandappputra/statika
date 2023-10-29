@@ -38,6 +38,7 @@ import { CanvasEntity } from "./models/canvas_entities/CanvasEntity";
 import { SaveService } from "./services/persistors/SaveService";
 import Load from "./components/Load";
 import { LoadService } from "./services/persistors/LoadService";
+import { HoverFeature } from "./models/painters/canvas_event_subscribers/HoverFeature";
 
 function App() {
   let canvasRendered = false;
@@ -185,6 +186,7 @@ function App() {
       setEntityList(painter.getAllEntities());
     };
 
+    const hoverFeature = new HoverFeature(canvas);
     const pointSnapFeature = new PointSnapFeature(elementFactory);
     const guiSynchronizationFeature = new GUISynchronizationFeature(
       movePointEventCallback,
@@ -200,7 +202,7 @@ function App() {
 
     const painter = new Painter(
       canvas,
-      [pointSnapFeature, guiSynchronizationFeature],
+      [pointSnapFeature, guiSynchronizationFeature, hoverFeature],
       entityConfig
     );
 

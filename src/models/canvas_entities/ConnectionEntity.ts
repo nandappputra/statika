@@ -161,16 +161,21 @@ export class ConnectionEntity implements CanvasEntity {
     const F_y = -boundaryCondition.F_y;
     const M_z = -boundaryCondition.M_z;
 
-    this.buildInternalForces(F_x, F_y);
-    this.buildInternalMoment(M_z);
+    this.buildInternalForces(F_x, F_y, this.name);
+    this.buildInternalMoment(M_z, this.name);
   }
 
-  private buildInternalForces(F_x: number, F_y: number) {
+  private buildInternalForces(F_x: number, F_y: number, name: string) {
     if (F_x === 0 && F_y === 0) {
       return;
     }
 
-    const force = new ExternalForce("internal", USER_ID, F_x, F_y);
+    const force = new ExternalForce(
+      `internal - F_${name} = ${F_x.toFixed(2)}N i + ${F_y.toFixed(2)}N j`,
+      USER_ID,
+      F_x,
+      F_y
+    );
     const reactionForce = new ExternalForceEntity(
       force,
       this._connection,
@@ -183,12 +188,16 @@ export class ConnectionEntity implements CanvasEntity {
     this._internalReactions.push(reactionForce.getObjectsToDraw());
   }
 
-  private buildInternalMoment(M_z: number) {
+  private buildInternalMoment(M_z: number, name: string) {
     if (M_z === 0) {
       return;
     }
 
-    const moment = new Moment("internal", USER_ID, M_z);
+    const moment = new Moment(
+      `internal - M_${name} = ${M_z.toFixed(2)}Nm k` + name,
+      USER_ID,
+      M_z
+    );
     const reactionMoment = new MomentEntity(
       moment,
       this._connection,
