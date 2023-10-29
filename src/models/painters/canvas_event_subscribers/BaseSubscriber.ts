@@ -2,6 +2,7 @@
 import {
   MovePointEvent,
   ObjectDropEvent,
+  ObjectOverEvent,
   ObjectSelectionEvent,
 } from "../../Event";
 import { ConnectionElement } from "../../diagram_elements/ConnectionElement";
@@ -49,4 +50,6 @@ export abstract class BaseSubscriber implements CanvasEventSubscriber {
     _objectSelectionEvent: ObjectSelectionEvent
   ): void {}
   handleObjectSelectionClearEvent(): void {}
+  handleObjectOverEvent(_objectOverEvent: ObjectOverEvent): void {}
+  handleObjectOutEvent(): void {}
 }

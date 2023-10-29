@@ -147,6 +147,34 @@ export class Painter implements EventMediator, CanvasBinder {
       this._handleObjectSelectionClearEvent()
     );
     this._canvas.on("mouse:wheel", (event) => this._handleMouseScroll(event));
+    this._canvas.on("mouse:over", (event) => this._handleMouseOver(event));
+    this._canvas.on("mouse:out", (event) => this._handleMouseOut(event));
+  }
+  private _handleMouseOut(_event: IEvent<MouseEvent>): void {
+    this._eventSubscribers.forEach((feature) => feature.handleObjectOutEvent());
+  }
+
+  private _handleMouseOver(event: IEvent<MouseEvent>): void {
+    console.log("OVER!", event);
+    const target = event.target;
+    const data: unknown = target?.data;
+    if (!target || !this._isValidCanvasEntity(data)) {
+      return;
+    }
+
+    const top = target.top || 0;
+    const left = target.left || 0;
+    const height = target.height || 0;
+    const width = target.width || 0;
+    const name = data.name;
+
+    if (!top || !height) {
+      return;
+    }
+
+    this._eventSubscribers.forEach((feature) =>
+      feature.handleObjectOverEvent({ top, height, name, left, width })
+    );
   }
 
   private _handleMouseUpEvent(_event: IEvent<MouseEvent>) {
